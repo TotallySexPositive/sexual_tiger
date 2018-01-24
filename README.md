@@ -1,4 +1,20 @@
-#sexual_tiger
+# sexual_tiger
+
+## Setup
+
+Copy `auth.json.example` to `auth.json` and add the token.
+
+Prereq
+
+Have node installed
+
+Run
+
+`npm install`
+
+`node bot.js`
+
+This was setup using these 2 guides
 
 
 https://github.com/reactiflux/discord-irc/wiki/Creating-a-discord-bot-&-getting-a-token
