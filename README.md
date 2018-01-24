@@ -1,4 +1,4 @@
-"#sexual_tiger" 
+#sexual_tiger
 
 
 https://github.com/reactiflux/discord-irc/wiki/Creating-a-discord-bot-&-getting-a-token
