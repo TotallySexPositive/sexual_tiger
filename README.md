@@ -19,8 +19,8 @@ This was setup using these 2 guides
 
 https://github.com/reactiflux/discord-irc/wiki/Creating-a-discord-bot-&-getting-a-token
 
-
 https://medium.com/@renesansz/tutorial-creating-a-simple-discord-bot-9465a2764dc0
 
 
-https://izy521.gitbooks.io/discord-io/content/
+## Discord.js example used:
+https://discord.js.org/#/docs/main/stable/examples/ping
