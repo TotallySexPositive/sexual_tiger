@@ -5,7 +5,9 @@
   "main": "bot.js",
   "author": "YOUR-NAME-HERE",
   "dependencies": {
+    "bufferutil": "^3.0.3",
     "discord.io": "github:woor/discord.io#gateway_v6",
+    "discord.js": "^11.3.0",
     "winston": "^2.4.0"
   }
 }
