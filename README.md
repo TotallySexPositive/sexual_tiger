@@ -21,3 +21,6 @@ https://github.com/reactiflux/discord-irc/wiki/Creating-a-discord-bot-&-getting-
 
 
 https://medium.com/@renesansz/tutorial-creating-a-simple-discord-bot-9465a2764dc0
+
+
+https://izy521.gitbooks.io/discord-io/content/
