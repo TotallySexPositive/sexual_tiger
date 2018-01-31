@@ -7,7 +7,7 @@ const started = Date.now();
 
 client.on('ready', () => {
     console.log('I am ready!');
-    client.user.setActivity("Fuckin wit yo mind")
+    client.user.setActivity("Fuckin wit yo mind");
 });
 
 
@@ -16,13 +16,13 @@ client.on('message', message => {
     if (message.author.bot){
         return;
     }
+    const user = message.author.username;
 
     //Never forget foxwell
     if (message.content.includes("foxwell")){
-        var foxwell = client.emojis.find("name", "foxwell")
-        var sad = "\:crying_cat_face:"
-        var name = message.author.username;
-        message.channel.send(`${foxwell} Never forget her ${name}. ${sad} ${foxwell}`);
+        const foxwell = client.emojis.find("name", "foxwell");
+        const sad = "\:crying_cat_face:";
+        message.channel.send(`${foxwell} Never forget her ${user}. ${sad} ${foxwell}`);
     }
 
     // If the message doesn't start with our prefix, don't go further
@@ -35,10 +35,12 @@ client.on('message', message => {
 
     try {
         //Need to sanitize the user input
-        var safe = Sanitize(command)
+        var safe = Sanitize(command);
         let commandFile = require(`./commands/${safe}.js`);
         commandFile.run(client, message, args);
     } catch (err) {
+        message.channel.send(`Naughty naughty ${user}.`);
+        message.channel.send("You trying to backdoor me on the first date?");
         console.error(err);
     }
 });
@@ -53,5 +55,5 @@ client.on('guildMemberAdd', member => {
     channel.send(`Welcome to the server, ${member}`);
 });
 
-client.login(auth.token)
+client.login(auth.token);
 
