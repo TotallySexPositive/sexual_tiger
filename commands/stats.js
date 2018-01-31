@@ -7,12 +7,12 @@ exports.run = (client, message, args) => {
     const user = args[0]
     message.channel.send(`Checking for ${user}`)
     try{
-        db.each(`SELECT * FROM user WHERE user.name="${user}"`, (err, row) => {
+        db.each(`SELECT * FROM user WHERE user.name like "${user}"`, (err, row) => {
             if (!row) return message.reply(`${user} not found in the db`);
             message.reply(`Found: ${row.id} ${row.name}`);
 
         });
-        db.each(`SELECT * FROM match WHERE match.user_name="${user}" LIMIT 3`, (err2, match)=>{
+        db.each(`SELECT * FROM match WHERE match.user_name like "${user}" LIMIT 3`, (err2, match)=>{
             if (!match) return message.reply(`${user} matches not found in the db`);
             message.reply(`Found: ${match.user_name} ${match.date} ${match.kills} ${match.pubg_id} ${match.mode} ${match.knocks}`)
         })
