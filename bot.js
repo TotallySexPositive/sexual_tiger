@@ -32,15 +32,18 @@ client.on('message', message => {
     const args = message.content.slice(config.prefix.length).trim().split(/ +/g);
     //Get just the command
     const command = args.shift().toLowerCase();
-
+    //Need to sanitize the user input
+    var safe = Sanitize(command);
     try {
-        //Need to sanitize the user input
-        var safe = Sanitize(command);
         let commandFile = require(`./commands/${safe}.js`);
         commandFile.run(client, message, args);
     } catch (err) {
-        message.channel.send(`Naughty naughty ${user}.`);
-        message.channel.send("You trying to backdoor me on the first date?");
+        if (safe !== command){
+            message.channel.send(`Naughty naughty ${user}.`);
+            message.channel.send("You trying to backdoor me on the first date?");
+        } else {
+            message.channel.send(`Invalid command ${safe}`)
+        }
         console.error(err);
     }
 });
