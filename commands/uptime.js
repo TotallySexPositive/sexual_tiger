@@ -13,18 +13,9 @@ function timeConversion(millisec){
 
     var days = (millisec / (1000 * 60 * 60 * 24)).toFixed(0);
 
-    if (seconds > 59) {
-        seconds = (""+(seconds - 60*minutes));
-    }
-    if (minutes > 59) {
-        minutes = (""+(minutes - 60*hours));
-    }
-    if (hours < 23) {
-        hours = (""+(hours - 24*days));
-    }
-    seconds = seconds.padStart(2,"0");
-    minutes = minutes.padStart(2,"0");
-    hours = hours.padStart(2,"0");
+    seconds = (""+(seconds%60)).padStart(2,"0")
+    minutes = (""+(minutes%60)).padStart(2,"0")
+    hours = (""+(hours%24)).padStart(2,"0")
     days = days.padStart(2,"0");
 
     return `${days} days ${hours}:${minutes}:${seconds}`;
