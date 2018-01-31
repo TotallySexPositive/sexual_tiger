@@ -40,3 +40,5 @@ Thumbs.db
 ###############
 node_modules
 auth.json
+.idea
+*-lock.json

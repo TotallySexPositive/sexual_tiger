@@ -1,53 +1,62 @@
+const Discord = require('discord.js');
+const Sanitize = require('sanitize-filename');
+const auth = require('./auth.json');
+const config = require('./configure.json');
+const client = new Discord.Client();
+const started = Date.now();
 
-var Discord = require('discord.io');
-var logger = require('winston');
-var auth = require('./auth.json');
-// Configure logger settings
-logger.remove(logger.transports.Console);
-logger.add(logger.transports.Console, {
-    colorize: true
+client.on('ready', () => {
+    console.log('I am ready!');
+    client.user.setActivity("Fuckin wit yo mind");
 });
-logger.level = 'debug';
-// Initialize Discord Bot
-var bot = new Discord.Client({
-   token: auth.token,
-   autorun: true
+
+
+client.on('message', message => {
+    // If we are reading a bot message, ignore it
+    if (message.author.bot){
+        return;
+    }
+    const user = message.author.username;
+
+    //Never forget foxwell
+    if (message.content.includes("foxwell")){
+        const foxwell = client.emojis.find("name", "foxwell");
+        const sad = "\:crying_cat_face:";
+        message.channel.send(`${foxwell} Never forget her ${user}. ${sad} ${foxwell}`);
+    }
+
+    // If the message doesn't start with our prefix, don't go further
+    if (message.content.indexOf(config.prefix) !== 0){return;};
+
+    //Split into args
+    const args = message.content.slice(config.prefix.length).trim().split(/ +/g);
+    //Get just the command
+    const command = args.shift().toLowerCase();
+    //Need to sanitize the user input
+    var safe = Sanitize(command);
+    try {
+        let commandFile = require(`./commands/${safe}.js`);
+        commandFile.run(client, message, args);
+    } catch (err) {
+        if (safe !== command){
+            message.channel.send(`Naughty naughty ${user}.`);
+            message.channel.send("You trying to backdoor me on the first date?");
+        } else {
+            message.channel.send(`Invalid command ${safe}`)
+        }
+        console.error(err);
+    }
 });
-bot.on('ready', function (evt) {
-    logger.info('Connected');
-    logger.info('Logged in as: ');
-    logger.info(bot.username + ' - (' + bot.id + ')');
+
+// Create an event listener for new guild members
+client.on('guildMemberAdd', member => {
+    // Send the message to a designated channel on a server:
+    const channel = member.guild.channels.find('name', 'general');
+    // Do nothing if the channel wasn't found on this server
+    if (!channel) return;
+    // Send the message, mentioning the member
+    channel.send(`Welcome to the server, ${member}`);
 });
-bot.on('message', function (user, userID, channelID, message, evt) {
-	if(message.author.bot) return;
-    // Our bot needs to know if it will execute a command
-    // It will listen for messages that will start with `!`
-    if (message.substring(0, 1) == '!') {
-        var args = message.substring(1).split(' ');
-        var cmd = args[0];
-       
-        args = args.splice(1);
-        switch(cmd) {
-            // !ping
-            case 'ping':
-                bot.sendMessage({
-                    to: channelID,
-                    message: 'Pong!'
-                });
-                break;
-            case 'block':
-		bot.sendMessage({
-                    to: channelID,
-                    message: 'Blocking!'
-                });
-            	var currentTime = new Date().getTime();
-		while (currentTime + 5000 >= new Date().getTime()) {}
-		bot.sendMessage({
-                    to: channelID,
-                    message: 'Done blocking!'
-                });
-            break;
-            // Just add any case commands if you want to..
-         }
-     }
-});
+
+client.login(auth.token);
+
