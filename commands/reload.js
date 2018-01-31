@@ -1,6 +1,8 @@
+const sanitize = require("sanitize-filename");
 exports.run = (client, message, args) => {
     if(!args || args.size < 1) return message.reply("Must provide a command name to reload.");
     // the path is relative to the *current folder*, so just ./filename.js
-    delete require.cache[require.resolve(`./${args[0]}.js`)];
-    message.reply(`The command ${args[0]} has been reloaded`);
+    var f = sanitize(args[0]); //sanitize that shit
+    delete require.cache[require.resolve(`./${f}.js`)];
+    message.reply(`The command ${f} has been reloaded`);
 };
