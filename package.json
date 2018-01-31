@@ -3,11 +3,28 @@
   "version": "1.0.0",
   "description": "Discord bot, ya ya ya",
   "main": "bot.js",
-  "contributors":[{"name": "Adam", "url":"https://github.com/narayanjr"},{"name": "Steve", "url": "https://github.com/rieger07"}],
+  "contributors": [
+    {
+      "name": "Adam",
+      "url": "https://github.com/narayanjr"
+    },
+    {
+      "name": "Steve",
+      "url": "https://github.com/rieger07"
+    }
+  ],
   "repository": "https://github.com/narayanjr/sexual_tiger.git",
   "license": "Apache-2.0",
-  "keywords": ["discord","bot","hijinks","bamboozle","memememe"],
-  "issues": {"url": "https://github.com/narayanjr/sexual_tiger/issues"},
+  "keywords": [
+    "discord",
+    "bot",
+    "hijinks",
+    "bamboozle",
+    "memememe"
+  ],
+  "issues": {
+    "url": "https://github.com/narayanjr/sexual_tiger/issues"
+  },
   "dependencies": {
     "bufferutil": "^3.0.3",
     "discord.io": "github:woor/discord.io#gateway_v6",
