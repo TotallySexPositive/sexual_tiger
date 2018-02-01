@@ -26,6 +26,7 @@
     "url": "https://github.com/narayanjr/sexual_tiger/issues"
   },
   "dependencies": {
+    "asciitable": "0.0.7",
     "bufferutil": "^3.0.3",
     "discord.io": "github:woor/discord.io#gateway_v6",
     "discord.js": "^11.3.0",
