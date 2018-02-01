@@ -22,11 +22,12 @@ exports.run = (client, message, args) => {
     };
 
     try{
+
         db.each(`SELECT * FROM user WHERE user.name LIKE "${user}"`, (err, row) => {
             if (!row) return message.reply(`${user} not found in the db`);
             message.reply(`Found: ${row.id} ${row.name}`);
-
         });
+
         let matches = [];
         db.all(`SELECT * FROM match WHERE match.user_name LIKE "${user}" LIMIT 5`, (err2, rows)=>{
             if (!rows.length) return message.reply(`${user} matches not found in the db`);
