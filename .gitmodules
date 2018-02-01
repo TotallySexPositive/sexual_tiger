@@ -1,0 +1,3 @@
+[submodule "pubg_stat_scraper"]
+	path = python/pubg_stat_scraper
+	url = https://github.com/rieger07/pubg_stat_scraper.git
