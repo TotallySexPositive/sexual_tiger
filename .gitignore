@@ -42,3 +42,7 @@ node_modules
 auth.json
 .idea
 *-lock.json
+*.swp
+*.png
+*.jpeg
+*.jpg
