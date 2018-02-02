@@ -5,6 +5,8 @@ const config = require('./configure.json');
 const client = new Discord.Client();
 const started = Date.now();
 
+global.VOLUME = .125;
+
 client.on('ready', () => {
     console.log('I am ready!');
     client.user.setActivity("Fuckin wit yo mind");
