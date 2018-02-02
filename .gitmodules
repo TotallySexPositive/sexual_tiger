@@ -1,4 +1,3 @@
 [submodule "python/pubg"]
 	path = python/pubg
 	url = https://github.com/rieger07/pubg_stat_scraper.git
-        ignore = all
