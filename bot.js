@@ -7,6 +7,8 @@ const started   = Date.now();
 const jsonfile  = require('jsonfile');
 const path      = require("path");
 
+global.VOLUME = .125;
+
 client.on('ready', () => {
     console.log('I am ready!');
     client.user.setActivity("Fuckin wit yo mind");
