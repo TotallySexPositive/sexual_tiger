@@ -32,7 +32,7 @@ exports.run = (client, message, args) => {
         DB.run(`
             CREATE TRIGGER decrement_num_songs AFTER DELETE ON playlist_song
             BEGIN
-                UPDATE playlist SET num_songs = num_songs - 1 WHERE playlist.playlist_id = NEW.playlist_id;
+                UPDATE playlist SET num_songs = num_songs - 1 WHERE playlist.playlist_id = OLD.playlist_id;
             END;
         `);
         DB.run(`

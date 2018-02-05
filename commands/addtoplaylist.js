@@ -10,7 +10,9 @@ exports.run = (client, message, args) => {
         var stmt = DB.prepare("INSERT INTO playlist_song (playlist_id, song_id) VALUES (?, ?)");
         console.log(`INSERT INTO playlist_song (playlist_id, song_id) VALUES (${args[0]}, ${args[1]})`)
         stmt.run(args[0], args[1], function(err) {
-            if(err) {
+            if(err && err.code === 'SQLITE_CONSTRAINT') {
+                message.channel.send(`Sorry, ${message.author.username}, But either that playlist or song do not exist.`);
+            } else if(err) {
                 console.log(err);
                 message.channel.send(`Sorry, ${message.author.username}, it seems something unexpected happened.`);
             } else {
