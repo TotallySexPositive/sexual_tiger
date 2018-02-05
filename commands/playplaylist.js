@@ -48,7 +48,7 @@ exports.run = (client, message, args) => {
         let server = global.servers[message.guild.id];
         let playlist = {};
         let search_field = "";
-        if(isInt(args[0])) {//Got an int id, yay super easy.
+        if(isInt(args.join(" "))) {//Got an int id, yay super easy.
             search_field = "playlist_id"
         } else {//Fuck gotta search by name.
             search_field = "name"
