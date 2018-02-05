@@ -49,3 +49,4 @@ auth.json
 hashed_audio/*
 uploaded_audio/*
 stored_audio/*
+audio/*
