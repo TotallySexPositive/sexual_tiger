@@ -12,6 +12,8 @@ global.VOLUME   = .125;
 global.DB       = new sqlite3.cached.Database(path.resolve("playlists.sql"));
 global.servers  = {};
 
+global.DB.run("PRAGMA foreign_keys = ON;", (err) => {if(err) console.log("Failed to enable FK Constraints"); else console.log("Enable FK Constraints.")});
+
 client.on('ready', () => {
     console.log('I am ready!');
     client.user.setActivity("Fuckin wit yo mind");
