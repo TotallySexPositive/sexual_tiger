@@ -6,8 +6,11 @@ const client    = new Discord.Client();
 const started   = Date.now();
 const jsonfile  = require('jsonfile');
 const path      = require("path");
+const sqlite3   = require("sqlite3").verbose();
 
-global.VOLUME = .125;
+global.VOLUME   = .125;
+global.DB       = new sqlite3.cached.Database(path.resolve("playlists.sql"));
+global.servers  = {};
 
 client.on('ready', () => {
     console.log('I am ready!');

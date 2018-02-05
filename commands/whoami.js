@@ -11,6 +11,7 @@ exports.run = (client, message, args) => {
    Nickname: ${member.nickname}
    Display Name: ${member.displayName}
    Discriminator: ${author.discriminator}
+   On Server: ${message.guild.id}
    `.replace(/\n +/g, `\n`);
 
    message.channel.send(description);
