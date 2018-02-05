@@ -2,10 +2,10 @@ const Discord   = require('discord.js');
 const Sanitize  = require('sanitize-filename');
 const auth      = require('./auth.json');
 const config    = require('./configure.json');
-const client    = new Discord.Client();
-const started   = Date.now();
 const jsonfile  = require('jsonfile');
 const path      = require("path");
+const fs        = require("fs")
+const client    = new Discord.Client();
 
 global.VOLUME = .125;
 
@@ -37,16 +37,23 @@ client.on('message', message => {
     const command = args.shift().toLowerCase();
     //Need to sanitize the user input
     var safe = Sanitize(command);
+
     try {
-        let commandFile = require(`./commands/${safe}.js`);
-        commandFile.run(client, message, args);
-    } catch (err) {
-        if (safe !== command){
-            message.channel.send(`Naughty naughty ${user}.`);
-            message.channel.send("You trying to backdoor me on the first date?");
-        } else {
-            message.channel.send(`Invalid command ${safe}`)
+        let p = path.resolve("commands", `${safe}.js`)
+        if (fs.existsSync(p)){
+            let commandFile = require(`./commands/${safe}.js`);
+            commandFile.run(client, message, args);
+        } else{
+            if (safe !== command){
+                message.channel.send(`Naughty naughty ${user}.`);
+                message.channel.send("You trying to backdoor me on the first date?");
+            } else {
+                message.channel.send(`Invalid command ${safe}`)
+            }
         }
+
+    } catch (err) {
+        message.channel.send(`ERROR: ${err.message}`)
         console.error(err);
     }
 });
