@@ -9,12 +9,12 @@ exports.run = (client, message, args) => {
     }
     vc.join()
     .then(connection => {
-        play(connection)
+        play(connection, message, args)
     })
     .catch(console.error);
 }
 
-function play(connection){
+function play(connection, message, args){
     let fp = path.resolve("audio", args[0]);
 
     fs.exists(fp, function(exists) {
