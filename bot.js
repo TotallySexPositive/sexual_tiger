@@ -4,10 +4,16 @@ const auth      = require('./auth.json');
 const config    = require('./configure.json');
 const jsonfile  = require('jsonfile');
 const path      = require("path");
+<<<<<<< HEAD
 const fs        = require("fs")
 const client    = new Discord.Client();
+=======
+const sqlite3   = require("sqlite3").verbose();
+>>>>>>> origin/master
 
-global.VOLUME = .125;
+global.VOLUME   = .125;
+global.DB       = new sqlite3.cached.Database(path.resolve("playlists.sql"));
+global.servers  = {};
 
 client.on('ready', () => {
     console.log('I am ready!');

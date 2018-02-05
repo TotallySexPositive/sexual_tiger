@@ -1,7 +1,5 @@
-const sqlite3 = require("sqlite3").verbose();
 const path = require("path")
 const asciitable = require("asciitable")
-const db = new sqlite3.Database(path.resolve("commands","pubg.sql"));
 exports.run = (client, message, args) => {
     if(!args || args.length < 1 || args.length == undefined) return message.reply("Must provide a user name.");
     //Need more sanitize. Don't want a ""Johnny");DROP TABLE user";
@@ -23,13 +21,13 @@ exports.run = (client, message, args) => {
 
     try{
 
-        db.each(`SELECT * FROM user WHERE user.name LIKE "${user}"`, (err, row) => {
+        DB.each(`SELECT * FROM user WHERE user.name LIKE "${user}"`, (err, row) => {
             if (!row) return message.reply(`${user} not found in the db`);
             message.reply(`Found: ${row.id} ${row.name}`);
         });
 
         let matches = [];
-        db.all(`SELECT * FROM match WHERE match.user_name LIKE "${user}" LIMIT 5`, (err2, rows)=>{
+        DB.all(`SELECT * FROM match WHERE match.user_name LIKE "${user}" LIMIT 5`, (err2, rows)=>{
             if (!rows.length) return message.reply(`${user} matches not found in the db`);
             rows.forEach(function (row) {
                 matches.push({

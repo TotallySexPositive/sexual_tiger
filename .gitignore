@@ -46,4 +46,7 @@ auth.json
 *.png
 *.jpeg
 *.jpg
-audio
+hashed_audio/*
+uploaded_audio/*
+stored_audio/*
+audio/*
