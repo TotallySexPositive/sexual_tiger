@@ -24,9 +24,11 @@ function play(connection){
 
             dispatcher.on('end', () => {
                 // The song has finished
+                p = path.resolve("commands", "repeat.json");
+                jd = fs.readFileSync(p);
+                j = JSON.parse(jd);
                 if (j.repeat){
-                    play(connection)
-
+                    play(connection); // play it again!
                 } else{
                     vc.leave();
                 }
