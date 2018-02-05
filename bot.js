@@ -1,15 +1,18 @@
-const Discord = require('discord.js');
-const Sanitize = require('sanitize-filename');
-const auth = require('./auth.json');
-const config = require('./configure.json');
-const client = new Discord.Client();
-const started = Date.now();
+const Discord   = require('discord.js');
+const Sanitize  = require('sanitize-filename');
+const auth      = require('./auth.json');
+const config    = require('./configure.json');
+const client    = new Discord.Client();
+const started   = Date.now();
+const jsonfile  = require('jsonfile');
+const path      = require("path");
+
+global.VOLUME = .125;
 
 client.on('ready', () => {
     console.log('I am ready!');
     client.user.setActivity("Fuckin wit yo mind");
 });
-
 
 client.on('message', message => {
     // If we are reading a bot message, ignore it
@@ -59,4 +62,3 @@ client.on('guildMemberAdd', member => {
 });
 
 client.login(auth.token);
-
