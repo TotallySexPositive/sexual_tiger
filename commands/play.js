@@ -9,30 +9,42 @@ exports.run = (client, message, args) => {
     }
     vc.join()
     .then(connection => {
-        let fp = path.resolve("audio", args[0]);
-
-        fs.exists(fp, function(exists) {
-            if(exists) {
-                let dispatcher = connection.playFile(fp)
-                dispatcher.setVolume(VOLUME);
-        
-                dispatcher.on('end', () => {
-                    // The song has finished
-                    vc.leave();
-                });
-                
-                dispatcher.on('error', e => {
-                    // Catch any errors that may arise
-                    console.log(e);
-                    vc.leave();
-                    message.channel.send("all fuck, it broke!");
-                });
-            }
-            else {
-                message.channel.send("Could not find that file.")
-                vc.leave();
-            }
-        })
+        play(connection, message, args)
     })
     .catch(console.error);
+}
+
+function play(connection, message, args){
+    let fp = path.resolve("audio", args[0]);
+
+    fs.exists(fp, function(exists) {
+        if(exists) {
+            let dispatcher = connection.playFile(fp)
+            dispatcher.setVolume(VOLUME);
+
+            dispatcher.on('end', () => {
+                // The song has finished
+                p = path.resolve("commands", "repeat.json");
+                jd = fs.readFileSync(p);
+                j = JSON.parse(jd);
+                if (j.repeat){
+                    play(connection); // play it again!
+                } else{
+                    vc.leave();
+                }
+
+            });
+
+            dispatcher.on('error', e => {
+                // Catch any errors that may arise
+                console.log(e);
+                vc.leave();
+                message.channel.send("all fuck, it broke!");
+            });
+        }
+        else {
+            message.channel.send("Could not find that file.")
+            vc.leave();
+        }
+    })
 }
