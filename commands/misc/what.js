@@ -1,4 +1,5 @@
-const DAL = require("../dal.js")
+const path = require("path")
+const DAL = require(path.resolve("dal.js"))
 
 exports.run = (client, message, args) => {
     

@@ -1,16 +1,30 @@
-const Discord   = require('discord.js');
-const Sanitize  = require('sanitize-filename');
-const auth      = require('./auth.json');
-const config    = require('./configure.json');
 const jsonfile  = require('jsonfile');
 const path      = require("path");
 const fs        = require("fs")
+const Discord   = require('discord.js');
+const Sanitize  = require('sanitize-filename');
+const auth      = require(path.resolve('auth.json'));
+const config    = require(path.resolve('configure.json'));
+
 const client    = new Discord.Client();
 const sqlite3   = require("sqlite3").verbose();
 
 global.VOLUME   = .125;
 global.DB       = new sqlite3.cached.Database(path.resolve("playlists.sql"));
 global.servers  = {};
+global.commandTypes = ["admin", "fun", "misc", "music", "pubg"];
+global.commandTypeDesc = {  "admin": "Admin controls to assist in maintaining the bot.",
+                            "fun": "Random shit that lets you express yourself.",
+                            "misc": "Random shit that may or may not be worth using",
+                            "music": "Lets you play music and interact with music things",
+                            "pubg": "Pull fun stats from pubg!"
+                         } 
+global.commandTypeColor = {  "admin": 13632027,
+                            "fun": 12390624,
+                            "misc": 1,
+                            "music": 5301186,
+                            "pubg": 4289797
+                         } 
 
 global.DB.run("PRAGMA foreign_keys = ON;", (err) => {if(err) console.log("Failed to enable FK Constraints"); else console.log("Enabled FK Constraints.")});
 
@@ -44,19 +58,26 @@ client.on('message', message => {
     var safe = Sanitize(command);
 
     try {
-        let p = path.resolve("commands", `${safe}.js`)
-        if (fs.existsSync(p)){
-            let commandFile = require(`./commands/${safe}.js`);
-            commandFile.run(client, message, args);
-        } else{
-            if (safe !== command){
-                message.channel.send(`Naughty naughty ${user}.`);
-                message.channel.send("You trying to backdoor me on the first date?");
-            } else {
-                message.channel.send(`Invalid command ${safe}`)
-            }
-        }
+        d = path.resolve("commands")
+        
+        global.commandTypes.some((k)=>{
+            let p = path.resolve("commands", k,`${safe}.js`)
+            if (fs.existsSync(p)){
+                let commandFile = require(p);
+                commandFile.run(client, message, args);
+                return true;
+            } 
+            else{
+                if (safe !== command){
+                    message.channel.send(`Naughty naughty ${user}.`);
+                    message.channel.send("You trying to backdoor me on the first date?");
 
+                }
+                return false
+            }
+            
+        })
+        
     } catch (err) {
         message.channel.send(`ERROR: ${err.message}`)
         console.error(err);

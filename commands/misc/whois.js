@@ -1,5 +1,5 @@
 const path = require("path");
-const reg = require("./people.json")
+const reg = require(path.resolve("commands","people.json"))
 exports.run = (client, message, args) => {
     if (args.length < 1)return message.channel.send("Needs to pick a boi to get info on.");
 		let user = args[0].toLowerCase();
