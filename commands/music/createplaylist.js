@@ -21,3 +21,7 @@ exports.run = (client, message, args) => {
         stmt.finalize();
     });
 };
+
+exports.help = () =>{
+    return "Initialize an empty playlist.";
+};

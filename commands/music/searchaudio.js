@@ -31,3 +31,7 @@ exports.run = (client, message, args) => {
         }
     })
 };
+
+exports.help = () =>{
+    return "Search the database for a song name.";
+};

@@ -26,3 +26,7 @@ exports.run = (client, message, args) => {
         });
     });
 };
+
+exports.help = () =>{
+    return "Delet a playlist. What did it ever do to you?";
+};

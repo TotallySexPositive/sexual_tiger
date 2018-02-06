@@ -18,3 +18,6 @@ exports.run = (client, message, args) => {
 	//console.log(`Child process exited with code ${code}`)
     });
 }
+exports.help = () =>{
+    return "Scrapes the pubg data into a database.";
+};

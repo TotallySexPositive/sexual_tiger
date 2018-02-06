@@ -10,3 +10,7 @@ exports.run = (client, message, args) => {
 			message.reply(`${user} wasn't cool enough to make the list`);
 		}
 }
+
+exports.help = () =>{
+    return "Snarky list of people.";
+};

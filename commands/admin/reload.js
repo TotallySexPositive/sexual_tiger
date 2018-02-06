@@ -37,3 +37,7 @@ exports.run = (client, message, args) => {
     }
     
 };
+
+exports.help = () =>{
+    return "Refreshes a command so you can test changes.";
+};

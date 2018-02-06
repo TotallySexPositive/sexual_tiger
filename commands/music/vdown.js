@@ -12,3 +12,7 @@ exports.run = (client, message, args) => {
     let current_volume = dispatcher.volume;
     dispatcher.setVolume(current_volume/2);
 }
+
+exports.help = () =>{
+    return "Turn the volume down.";
+};

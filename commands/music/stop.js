@@ -11,3 +11,7 @@ exports.run = (client, message, args) => {
     }
     dispatcher.end();
 }
+
+exports.help = () =>{
+    return "Stop the current song. No way to rejoin the queue though. Fuk u";
+};

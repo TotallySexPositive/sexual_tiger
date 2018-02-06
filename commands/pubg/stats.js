@@ -49,3 +49,7 @@ exports.run = (client, message, args) => {
         console.error(err3);
     }
 };
+
+exports.help = () =>{
+    return "Displays some stats in a ascii table.";
+};
