@@ -24,7 +24,7 @@ function doit(client,message,args){
     const db_path = path.resolve("commands", "pubg.sql");
     var py_args = [script_path, "makeTable", "--path", db_path, "--user"]
     py_args = py_args.concat(args)
-    const py = spawn('python3', py_args);
+    const py = spawn('python', py_args);
     //message.channel.send(`python3 ${script_path} getData --path ${db_path}`);
     py.stdout.on('data', data=>{
         var p = data.toString()
@@ -39,6 +39,9 @@ function doit(client,message,args){
     py.on('close', code=>{
 	message.channel.send(`Child process exited with code ${code}`);
     });
+    py.on('error', error=>{
+        console.error(error)
+    })
 }
 
 exports.help = () =>{
