@@ -5,7 +5,7 @@ const cfg = require(path.resolve("configure.json"))
 
 exports.run = (client, message, args) => {
     var user_name = args[0]
-	message.channel.send(`Making table for ${user_name}`);
+	message.channel.send(`Making plot about drive distance.`);
     doit(client,message,args)    
 }
 function doit(client,message,args){
