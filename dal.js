@@ -5,7 +5,7 @@ const PLAYLIST_TABLE        = "playlist"
 const PLAYLIST_SONG_TABLE   = "playlist_song"
 
 const SONG_FIELDS           = "song.song_id, song.name, song.hash_id, song.source"
-const PLAYLIST_FIELDS       = "playlist.playlist_id, playlist.name, playlist.created_by "
+const PLAYLIST_FIELDS       = "playlist.playlist_id, playlist.name, playlist.num_songs, playlist.created_by "
 const PLAYLIST_SONG_FIELDS  = "playlist_song.relation_id, playlist_song.playlist_id, playlist_song.song_id "
 
 
@@ -135,8 +135,10 @@ let getSongsByPlaylist = function (search_field, id) {
         WHERE playlist.${search_field} = ?
     `;
    
+    
+
     try {
-        return {err: undefined, songs: DB.prepare(query).get(id)};
+        return {err: undefined, songs: DB.prepare(query).all(id)};
     } catch (err) {
         console.log(`getSongsByPlaylist: search_field: ${search_field} id: ${id} \nError: `)
         console.log(err);
@@ -179,7 +181,7 @@ let deletePlaylistById = function(playlist_id) {
 
 /**
  * Adds a Song to a Playlist
- * @param {Integer} playlist_id - The id of the play to add the song to
+ * @param {Integer} playlist_id - The id of the playlist to add the song to
  * @param {Integer} song_id - The id of the song to add to the playlist
  */
 let addToPlaylist = function(playlist_id, song_id) {
@@ -197,9 +199,51 @@ let addToPlaylist = function(playlist_id, song_id) {
     }
 }
 
+/**
+ * Removes a Song from a Playlist.  If the song appears on the playlist more than once, the last one added is removed.
+ * @param {Integer} playlist_id - The id of the playlist to remove the song from
+ * @param {Integer} song_id - The id of the song to remove from the playlist
+ */
+let removeFromPlaylist = function(playlist_id, song_id) {
+    if(!isInt(playlist_id) || !isInt(song_id)) {
+        let err = new Error("playlist_id and song_id must be integers.");
+        return {err: err, info: undefined};
+    }
 
+    //This crazy query makes it so if the song is on the list multiple times, it only removes the last instance.
+    let query = `
+        DELETE FROM playlist_song 
+        WHERE relation_id IN (
+            SELECT relation_id 
+            FROM playlist_song 
+            WHERE playlist_id = ? AND song_id = ? 
+            ORDER BY relation_id DESC
+            LIMIT 1
+        )`
 
+    try {
+        return {err: undefined, info: DB.prepare(query).run(playlist_id, song_id)}
+    } catch(err) {
+        console.log(`removeFromPlaylist: playlist_id: ${playlist_id} song_id: ${song_id} \nError: `);
+        console.log(err);
+        return {err: err, info: undefined};
+    }
+}
 
+/**
+ * Returns all playlists in the DB.  Hopefully we dont add too many.
+ */
+let getPlaylists = function() {
+    let query = `SELECT ${PLAYLIST_FIELDS} FROM ${PLAYLIST_TABLE}`;
+   
+    try {
+        return {err: undefined, playlists: DB.prepare(query).all()};
+    } catch (err) {
+        console.log(`getPlaylists: \nError: `)
+        console.log(err);
+        return {err: err, playlists: undefined};
+    }
+}
 
 module.exports.isInt = isInt;
 
@@ -212,3 +256,5 @@ module.exports.getSongsByPlaylistName = getSongsByPlaylistName;
 module.exports.createPlaylist = createPlaylist;
 module.exports.deletePlaylistById = deletePlaylistById;
 module.exports.addToPlaylist = addToPlaylist;
+module.exports.removeFromPlaylist = removeFromPlaylist;
+module.exports.getPlaylists = getPlaylists;
