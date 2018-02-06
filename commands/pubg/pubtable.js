@@ -1,5 +1,6 @@
 const {spawn} = require('child_process');
 const path = require("path");
+const cfg = require(path.resolve("configure.json"))
 
 //Allow user to make table for user
 //Allow user to select columns
@@ -24,7 +25,7 @@ function doit(client,message,args){
     const db_path = path.resolve("commands", "pubg.sql");
     var py_args = [script_path, "makeTable", "--path", db_path, "--user"]
     py_args = py_args.concat(args)
-    const py = spawn('python', py_args);
+    const py = spawn(cfg.python, py_args);
     //message.channel.send(`python3 ${script_path} getData --path ${db_path}`);
     py.stdout.on('data', data=>{
         var p = data.toString()

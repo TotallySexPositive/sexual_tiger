@@ -1,10 +1,11 @@
 const {spawn} = require('child_process');
 const path = require("path");
+const cfg = require(path.resolve("configure.json"))
 
 exports.run = (client, message, args) => {
     const script_path = path.resolve("python","pubg","getstuff.py");
     const db_path = path.resolve("commands", "pubg.sql");
-    const py = spawn('python', [script_path, "getData", '--path', db_path]);
+    const py = spawn(cfg.python, [script_path, "getData", '--path', db_path]);
     //message.channel.send(`python3 ${script_path} getData --path ${db_path}`);
     py.stdout.on('data', data=>{
 	message.channel.send(`stdout: ${data}`);
