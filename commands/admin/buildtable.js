@@ -20,7 +20,7 @@ exports.run = (client, message, args) => {
             relationship_id INTEGER PRIMARY KEY,
             playlist_id INTEGER NOT NULL,
             song_id INTEGER NOT NULL,
-            FOREIGN KEY(playlist_id) REFERENCES playlist(playlist_id),
+            FOREIGN KEY(playlist_id) REFERENCES playlist(playlist_id) ON DELETE CASCADE,
             FOREIGN KEY(song_id) REFERENCES song(song_id)
         );`);
         DB.run(`
