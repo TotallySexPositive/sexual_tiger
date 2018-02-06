@@ -6,12 +6,12 @@ exports.run = (client, message, args) => {
     fs.readFile(jPath, (err, data)=> {
         if(err) message.reply(err.message);
         let j = JSON.parse(data);
-        if (j.repeat === "true"){
-            j.repeat = "false";
+        if (j.repeat){
+            j.repeat = false;
             message.channel.send(`Music should not repeat.`);
         }
         else {
-            j.repeat = "true";
+            j.repeat = true;
             message.channel.send(`Music should now repeat.`);
         }
         console.log("done reading file")
