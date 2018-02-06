@@ -17,7 +17,7 @@ exports.run = (client, message, args) => {
             PRIMARY KEY(playlist_id)
         );`);
         DB.run(`CREATE TABLE IF NOT EXIST playlist_song (
-            relationship_id INTEGER PRIMARY KEY,
+            relation_id INTEGER PRIMARY KEY,
             playlist_id INTEGER NOT NULL,
             song_id INTEGER NOT NULL,
             FOREIGN KEY(playlist_id) REFERENCES playlist(playlist_id) ON DELETE CASCADE,
