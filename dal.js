@@ -40,6 +40,22 @@ var findSongById = function (song_id) {
     }
 }
 
+var findSongByName = function (name) {
+    if(isInt(name)) {
+        let err = new Error("name must NOT be an integer.")
+        return {err: err, song: undefined};
+    }
+    let query = `SELECT ${SONG_FIELDS} FROM ${SONG_TABLE} WHERE name = ?`;
+
+    try {
+        return {err: undefined, song:DB.prepare(query).get(name)};
+    } catch (err) {
+        console.log(`findSongById name: ${name} \nError: `)
+        console.log(err);
+        return {err: err, song: undefined};
+    }
+}
+
 /**
    * Find a Playlist by id.
    * 
@@ -147,11 +163,8 @@ let createPlaylist = function(name, user_id) {
 }
 
 /**
- * PRIVATE FUNCTION, DO NOT EXPORT.
- * 
  * Deletes a Playlist from the table, and deletes all references
  * @param {String} name - The name to use for the play list
- * @param {Integer} user_id - The user id of the person creating the play list.
  */
 let deletePlaylistById = function(playlist_id) {
     let query = `DELETE FROM ${PLAYLIST_TABLE} WHERE playlist_id = ?`
@@ -164,6 +177,11 @@ let deletePlaylistById = function(playlist_id) {
     }
 }
 
+/**
+ * Adds a Song to a Playlist
+ * @param {Integer} playlist_id - The id of the play to add the song to
+ * @param {Integer} song_id - The id of the song to add to the playlist
+ */
 let addToPlaylist = function(playlist_id, song_id) {
     if(!isInt(playlist_id) || !isInt(song_id)) {
         let err = new Error("playlist_id and song_id must be integers.");
@@ -186,6 +204,7 @@ let addToPlaylist = function(playlist_id, song_id) {
 module.exports.isInt = isInt;
 
 module.exports.findSongById = findSongById;
+module.exports.findSongByName = findSongByName;
 module.exports.findPlaylistById = findPlaylistById;
 module.exports.findPlaylistByName = findPlaylistByName;
 module.exports.getSongsByPlaylistId = getSongsByPlaylistId;
