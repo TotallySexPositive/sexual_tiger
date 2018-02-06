@@ -26,6 +26,8 @@ global.commandTypeColor = {  "admin": 13632027,
                             "pubg": 4289797
                          } 
 
+global.repeat = false;
+
 global.DB.run("PRAGMA foreign_keys = ON;", (err) => {if(err) console.log("Failed to enable FK Constraints"); else console.log("Enabled FK Constraints.")});
 
 client.on('ready', () => {
