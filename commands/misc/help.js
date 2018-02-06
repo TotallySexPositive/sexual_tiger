@@ -1,17 +1,14 @@
 let fs = require('fs');
 let path = require('path');
 let cfg = require('../configure.json')
-let asciitable = require("asciitable")
+
+
 exports.run = (client, message, args) => {
 
-    let options = {
-        skinny: true,
-        intersectionCharacter: "+",
-        columns: [
-            {field: "command", name: "Command"},
-            {field: "halp",    name: "Details"}
-        ],
-    };
+    let embed = new require("Discord").RichEmbed()
+    embed.setTitle("Available Commands")
+    embed.setAuthor("Fuck you")
+    embed.setColor("#3ad1c9")
 
     p  = path.resolve("commands");
     console.log(p);
