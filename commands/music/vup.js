@@ -18,3 +18,7 @@ exports.run = (client, message, args) => {
         dispatcher.setVolume(current_volume*2);
     }
 }
+
+exports.help = () =>{
+    return "Crank dat volume!";
+};

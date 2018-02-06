@@ -16,3 +16,7 @@ exports.run = (client, message, args) => {
 
    message.channel.send(description);
 }
+
+exports.help = () =>{
+    return "I don't know. Who are you people?!";
+};

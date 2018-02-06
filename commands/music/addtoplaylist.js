@@ -22,3 +22,7 @@ exports.run = (client, message, args) => {
         stmt.finalize();
     });
 };
+
+exports.help = () =>{
+    return "Add a song to your playlist.";
+};

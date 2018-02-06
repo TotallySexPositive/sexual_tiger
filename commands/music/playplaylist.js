@@ -99,3 +99,7 @@ exports.run = (client, message, args) => {
             }
         });
 }
+
+exports.help = () =>{
+    return "Will play a playlist. (But not to no-one, he's weird)";
+};

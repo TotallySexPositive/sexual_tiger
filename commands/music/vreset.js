@@ -12,3 +12,7 @@ exports.run = (client, message, args) => {
     
     dispatcher.setVolume(.125);
 }
+
+exports.help = () =>{
+    return "Resets the volume to the default setting.";
+};

@@ -16,3 +16,7 @@ function timeConversion(millisec){
 
     return `${days} days ${hours}:${minutes}:${seconds}`;
 }
+
+exports.help = () =>{
+    return "Trying to figure out how long i can keep it up?";
+};

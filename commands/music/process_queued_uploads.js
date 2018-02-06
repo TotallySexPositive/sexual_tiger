@@ -69,3 +69,7 @@ exports.run = (client, message, args) => {
         });
     });
 };
+
+exports.help = () =>{
+    return "Should most likely disappear. Pay no attention to the man behind the curtain.";
+};

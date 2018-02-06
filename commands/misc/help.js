@@ -88,3 +88,6 @@ function all_cards(client, message, args){
         });
     })
 }
+exports.help = () =>{
+    return "Really?";
+};

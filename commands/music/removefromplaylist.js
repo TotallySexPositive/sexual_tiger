@@ -24,3 +24,7 @@ exports.run = (client, message, args) => {
         });
     });
 };
+
+exports.help = () =>{
+    return "Remove a song from your playlist.";
+};

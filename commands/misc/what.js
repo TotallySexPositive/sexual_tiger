@@ -66,3 +66,6 @@ exports.run = (client, message, args) => {
             message.channel.send("Invalid thingy passed.")
     }
 };
+exports.help = () =>{
+    return "Who?";
+};
