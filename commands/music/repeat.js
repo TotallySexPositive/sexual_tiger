@@ -24,8 +24,6 @@ exports.run = (client, message, args) => {
     })
 };
 
-exports.help = (client,message,args) =>{
-    let m = "Toggles whether or not clips and songs will repeat";
-    let code = `\`\`\`${m}\`\`\``;
-    message.channel.send(code)
+exports.help = () =>{
+    return "Toggles whether or not clips and songs will repeat";
 };
