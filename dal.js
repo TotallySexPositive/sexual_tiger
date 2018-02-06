@@ -137,7 +137,7 @@ let createPlaylist = function(name, user_id) {
     try {
         return {err: undefined, info: DB.prepare(query).run(name, user_id)};
     } catch (err) {
-        if(error.message.indexOf("UNIQUE") == -1) {
+        if(err.message.indexOf("UNIQUE") == -1) {
             console.log(`createPlaylist: name: ${name}  user_id: ${user_id} \nError: `)
             console.log(err);
         }

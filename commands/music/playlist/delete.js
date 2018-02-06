@@ -16,6 +16,6 @@ exports.run = (client, message, args) => {
     } else if (info.changes == 0) { 
         message.channel.send(`Sorry, ${message.author.username}, but that playlist didnt exist.`);
     } else {
-        message.channel.send(`The playlist ${identifiername} has been deleted, You're DJ carrer is over, ${message.author.username}!`);
+        message.channel.send(`The playlist ${identifier} has been deleted, You're DJ career is over, ${message.author.username}!`);
     }
 };
