@@ -1,3 +1,5 @@
+let Database                = require('better-sqlite3')
+
 const SONG_TABLE            = "song"
 const PLAYLIST_TABLE        = "playlist"
 const PLAYLIST_SONG_TABLE   = "playlist_song"
@@ -6,7 +8,12 @@ const SONG_FIELDS           = "song.song_id, song.name, song.hash_id, song.sourc
 const PLAYLIST_FIELDS       = "playlist.playlist_id, playlist.name, playlist.created_by "
 const PLAYLIST_SONG_FIELDS  = "playlist_song.relation_id, playlist_song.playlist_id, playlist_song.song_id "
 
-const DB = global.DB;
+
+let DB = new Database('playlists.sql');
+
+DB.pragma("foreign_keys = ON;");
+
+
 function isInt(value) {
     return !isNaN(value) && (function(x) { return (x | 0) === x; })(parseFloat(value))
   }
@@ -17,28 +24,42 @@ function isInt(value) {
    * @param {Integer} song_id - The id of the song to find
    * @param {Function} callback - The callback function (err, song) =>
    */
-var findSongById = function (song_id, callback) {
-    if(!isInt(song_id)){
+var findSongById = function (song_id) {
+    if(!isInt(song_id)) {
         let err = new Error("song_id must be an integer.")
-        return callback(err, null);
-    } 
+        return null;
+    }
     let query = `SELECT ${SONG_FIELDS} FROM ${SONG_TABLE} WHERE song_id = ?`;
-    DB.get(query, song_id, callback);
+
+    try {
+        return DB.prepare(query).get(song_id);
+    } catch (err) {
+        console.log("findSongById Error: ")
+        console.log(err);
+        return null;
+    }
 }
 
-  /**
+/**
    * Find a Playlist by id.
    * 
    * @param {Integer} playlist_id - The id of the playlist to find
    * @param {Function} callback - The callback function (err, playlist) =>
    */
-var findPlaylistById = function (playlist_id, callback) {
+  var findPlaylistById = function (playlist_id, callback) {
     if(!isInt(song_id)){
         let err = new Error("playlist_id must be an integer.")
-        return callback(err, null);
-    } 
+        return null;
+    }
     let query = `SELECT ${PLAYLIST_FIELDS} FROM ${PLAYLIST_TABLE} WHERE playlist_id = ?`;
-    DB.get(query, playlist_id, callback);
+    
+    try {
+        return DB.prepare(query).get(playlist_id);
+    } catch (err) {
+        console.log("findPlaylistById Error: ")
+        console.log(err);
+        return null;
+    }
 }
 
   /**
@@ -49,7 +70,13 @@ var findPlaylistById = function (playlist_id, callback) {
    */
 var findPlaylistByName = function (name, callback) {
     let query = `SELECT ${PLAYLIST_FIELDS} FROM ${PLAYLIST_TABLE} WHERE name = ?`;
-    DB.get(query, name, callback);
+    try {
+        return DB.prepare(query).get(name);
+    } catch (err) {
+        console.log("findPlaylistByName Error: ")
+        console.log(err);
+        return null;
+    }
 }
 
   /**
@@ -89,10 +116,14 @@ let getSongsByPlaylist = function (search_field, id, callback) {
         WHERE playlist.${search_field} = ?
     `;
    
-    DB.all(query, id, callback);
+    try {
+        return DB.prepare(query).get( );
+    } catch (err) {
+        console.log(`getSongsByPlaylist: ${search_field} Error: `)
+        console.log(err);
+        return null;
+    }
 }
-
-
 
 module.exports.findSongById = findSongById;
 module.exports.findPlaylistById = findPlaylistById;
