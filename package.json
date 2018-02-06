@@ -27,6 +27,7 @@
   },
   "dependencies": {
     "asciitable": "0.0.7",
+    "better-sqlite3": "^4.1.0",
     "bufferutil": "^3.0.3",
     "discord.js": "^11.3.0",
     "erlpack": "github:discordapp/erlpack",
