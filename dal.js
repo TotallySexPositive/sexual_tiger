@@ -14,7 +14,7 @@ let DB = new Database('playlists.sql');
 DB.pragma("foreign_keys = ON;");
 
 
-function isInt(value) {
+let isInt = function(value) {
     return !isNaN(value) && (function(x) { return (x | 0) === x; })(parseFloat(value))
   }
 
@@ -22,21 +22,20 @@ function isInt(value) {
    * Find a Song by id.
    * 
    * @param {Integer} song_id - The id of the song to find
-   * @param {Function} callback - The callback function (err, song) =>
    */
 var findSongById = function (song_id) {
     if(!isInt(song_id)) {
         let err = new Error("song_id must be an integer.")
-        return null;
+        return {err: err, song: undefined};
     }
     let query = `SELECT ${SONG_FIELDS} FROM ${SONG_TABLE} WHERE song_id = ?`;
 
     try {
-        return DB.prepare(query).get(song_id);
+        return {err: undefined, song:DB.prepare(query).get(song_id)};
     } catch (err) {
-        console.log("findSongById Error: ")
+        console.log(`findSongById song_id: ${song_id} \nError: `)
         console.log(err);
-        return null;
+        return {err: err, song: undefined};
     }
 }
 
@@ -44,10 +43,9 @@ var findSongById = function (song_id) {
    * Find a Playlist by id.
    * 
    * @param {Integer} playlist_id - The id of the playlist to find
-   * @param {Function} callback - The callback function (err, playlist) =>
    */
-  var findPlaylistById = function (playlist_id, callback) {
-    if(!isInt(song_id)){
+  var findPlaylistById = function (playlist_id) {
+    if(!isInt(playlist_id)){
         let err = new Error("playlist_id must be an integer.")
         return null;
     }
@@ -56,7 +54,7 @@ var findSongById = function (song_id) {
     try {
         return DB.prepare(query).get(playlist_id);
     } catch (err) {
-        console.log("findPlaylistById Error: ")
+        console.log(`findPlaylistById playlist_id: ${playlist_id} \nError: `)
         console.log(err);
         return null;
     }
@@ -66,14 +64,13 @@ var findSongById = function (song_id) {
    * Find a Playlist by Name.
    * 
    * @param {String} name - The name of the Playlist to find
-   * @param {Function} callback - The callback function (err, playlist) =>
    */
-var findPlaylistByName = function (name, callback) {
+var findPlaylistByName = function (name) {
     let query = `SELECT ${PLAYLIST_FIELDS} FROM ${PLAYLIST_TABLE} WHERE name = ?`;
     try {
         return DB.prepare(query).get(name);
     } catch (err) {
-        console.log("findPlaylistByName Error: ")
+        console.log(`findPlaylistByName name: ${name}\nError: `)
         console.log(err);
         return null;
     }
@@ -83,20 +80,26 @@ var findPlaylistByName = function (name, callback) {
    * Get all Songs on a playlist by playlist_id.
    * 
    * @param {Integer} playlist_id - The id of the playlist to get songs from
-   * @param {Function} callback - The callback function (err, songs) =>
    */
-var getSongsByPlaylistId = function (playlist_id, callback) {
-    getSongsByPlaylist("playlist_id", playlist_id, callback)
+var getSongsByPlaylistId = function (playlist_id) {
+    if(!isInt(playlist_id)) {
+        let err = new Error("playlist_id must be an integer.")
+        return {err: err, songs: undefined};
+    }
+    return getSongsByPlaylist("playlist_id", playlist_id)
 }
 
   /**
    * Get all Songs on a playlist by Playlist name.
    * 
    * @param {String} name - The name of the playlist to get songs from
-   * @param {Function} callback - The callback function (err, songs) =>
    */
-var getSongsByPlaylistName = function (name, callback) {
-    getSongsByPlaylist("name", name, callback)
+var getSongsByPlaylistName = function (name) {
+    if(isInt(name)) {
+        let err = new Error("name must not be an integer.")
+        return {err: err, songs: undefined};
+    }
+    return getSongsByPlaylist("name", name)
 }
 
 /**
@@ -105,9 +108,8 @@ var getSongsByPlaylistName = function (name, callback) {
  * Get all songs on a playlist by id/name
  * @param {String} search_field - Which field to search on
  * @param {*} id - The value to search on
- * @param {*} callback - The callback function (err, songs)
  */
-let getSongsByPlaylist = function (search_field, id, callback) {
+let getSongsByPlaylist = function (search_field, id) {
     let query = `
         SELECT ${SONG_FIELDS} 
         FROM ${PLAYLIST_SONG_TABLE} 
@@ -117,16 +119,81 @@ let getSongsByPlaylist = function (search_field, id, callback) {
     `;
    
     try {
-        return DB.prepare(query).get( );
+        return {err: undefined, songs: DB.prepare(query).get(id)};
     } catch (err) {
-        console.log(`getSongsByPlaylist: ${search_field} Error: `)
+        console.log(`getSongsByPlaylist: search_field: ${search_field} id: ${id} \nError: `)
         console.log(err);
-        return null;
+        return {err: err, songs: undefined};
     }
 }
+
+/**
+ * Adds a new Playlist to the table.
+ * @param {String} name - The name to use for the play list
+ * @param {Integer} user_id - The user id of the person creating the play list.
+ */
+let createPlaylist = function(name, user_id) {
+    let query = `INSERT INTO ${PLAYLIST_TABLE} (name, created_by) VALUES (?, ?)`
+    try {
+        return {err: undefined, info: DB.prepare(query).run(name, user_id)};
+    } catch (err) {
+        if(error.message.indexOf("UNIQUE") == -1) {
+            console.log(`createPlaylist: name: ${name}  user_id: ${user_id} \nError: `)
+            console.log(err);
+        }
+        return {err: err, info: undefined};
+    }
+}
+
+/**
+ * Deletes a Playlist from the table, and deletes all references
+ * @param {Integer} playlist_id - The playlist_id to delete from the DB
+ */
+let deletePlaylistById = function(playlist_id) {
+    if(!isInt(playlist_id)) {
+        let err = new Error("playlist_id must be an integer.")
+        return {err: err, info: undefined};
+    }
+    return deletePlaylist("playlist_id", playlist_id)
+}
+
+/**
+ * Deletes a Playlist from the table, and deletes all references
+ * @param {Integer} playlist_id - The playlist_id to delete from the DB
+ */
+let deletePlaylistByName = function(name) {
+    if(isInt(name)) {
+        let err = new Error("name must not be an integer.")
+        return {err: err, info: undefined};
+    }
+    return deletePlaylist("name", name)
+}
+
+/**
+ * PRIVATE FUNCTION, DO NOT EXPORT.
+ * 
+ * Deletes a Playlist from the table, and deletes all references
+ * @param {String} name - The name to use for the play list
+ * @param {Integer} user_id - The user id of the person creating the play list.
+ */
+let deletePlaylist = function(search_field, id) {
+    let query = `DELETE FROM ${PLAYLIST_TABLE} WHERE ${search_field} = ?`
+    try {
+        return {err: undefined, info: DB.prepare(query).run(id)};
+    } catch (err) {
+        console.log(`deletePlaylist: search_field: ${search_field} id: ${id} \nError: `);
+        console.log(err);
+        return {err: err, info: undefined};
+    }
+}    
+
+module.exports.isInt = isInt;
 
 module.exports.findSongById = findSongById;
 module.exports.findPlaylistById = findPlaylistById;
 module.exports.findPlaylistByName = findPlaylistByName;
 module.exports.getSongsByPlaylistId = getSongsByPlaylistId;
 module.exports.getSongsByPlaylistName = getSongsByPlaylistName;
+module.exports.createPlaylist = createPlaylist;
+module.exports.deletePlaylistById = deletePlaylistById;
+module.exports.deletePlaylistByName = deletePlaylistByName;
