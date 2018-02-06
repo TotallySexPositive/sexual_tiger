@@ -7,10 +7,8 @@ const auth      = require(path.resolve('auth.json'));
 const config    = require(path.resolve('configure.json'));
 
 const client    = new Discord.Client();
-const sqlite3   = require("sqlite3").verbose();
 
 global.VOLUME   = .125;
-global.DB       = new sqlite3.cached.Database(path.resolve("playlists.sql"));
 global.servers  = {};
 global.commandTypes = ["admin", "fun", "misc", "music", "pubg"];
 global.commandTypeDesc = {  "admin": "Admin controls to assist in maintaining the bot.",
@@ -25,8 +23,6 @@ global.commandTypeColor = {  "admin": 13632027,
                             "music": 5301186,
                             "pubg": 4289797
                          } 
-
-global.DB.run("PRAGMA foreign_keys = ON;", (err) => {if(err) console.log("Failed to enable FK Constraints"); else console.log("Enabled FK Constraints.")});
 
 client.on('ready', () => {
     console.log('I am ready!');

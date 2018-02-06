@@ -28,9 +28,9 @@ function play(connection, message, args){
                 jd = fs.readFileSync(p);
                 j = JSON.parse(jd);
                 if (j.repeat){
-                    play(connection); // play it again!
+                    play(connection, message, args); // play it again!
                 } else{
-                    vc.leave();
+                    message.guild.voiceConnection.disconnect();
                 }
 
             });
@@ -38,13 +38,13 @@ function play(connection, message, args){
             dispatcher.on('error', e => {
                 // Catch any errors that may arise
                 console.log(e);
-                vc.leave();
+                message.guild.voiceConnection.disconnect();
                 message.channel.send("all fuck, it broke!");
             });
         }
         else {
             message.channel.send("Could not find that file.")
-            vc.leave();
+            message.guild.voiceConnection.disconnect();
         }
     })
 }

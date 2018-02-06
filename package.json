@@ -36,12 +36,10 @@
     "jsonfile": "^4.0.0",
     "libsodium-wrappers": "^0.7.3",
     "md5": "^2.2.1",
-    "mkdirp": "^0.5.1",
     "node-opus": "^0.2.7",
     "opusscript": "0.0.6",
     "sanitize-filename": "^1.6.1",
     "sodium": "^2.0.3",
-    "sqlite3": "^3.1.13",
     "uws": "^9.14.0",
     "winston": "^2.4.0"
   }
