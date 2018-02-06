@@ -6,7 +6,7 @@ exports.run = (client, message, args) => {
         DB.run(`CREATE TABLE song (
             song_id INTEGER PRIMARY KEY,
             hash_id TEXT NOT NULL UNIQUE,
-            name TEXT NOT NULL,
+            name TEXT NOT NULL UNIQUE,
             source TEXT NOT NULL
         );`);
         DB.run(`CREATE TABLE playlist (
