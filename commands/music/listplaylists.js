@@ -37,3 +37,7 @@ exports.run = (client, message, args) => {
         }
     })
 };
+
+exports.help = () =>{
+    return "List all available playlists.";
+};

@@ -11,3 +11,7 @@ exports.run = (client, message, args) => {
     }
     dispatcher.resume();
 }
+
+exports.help = () =>{
+    return "Resume the previously playing song.";
+};

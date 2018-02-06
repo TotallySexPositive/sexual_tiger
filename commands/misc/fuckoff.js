@@ -9,3 +9,7 @@ exports.run = (client, message, args) => {
        message.channel.send("No, you fuck off")
    }
 };
+
+exports.help = () =>{
+    return "Will tell the bot to fuck off from your voice channel.";
+};

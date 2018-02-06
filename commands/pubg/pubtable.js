@@ -40,3 +40,7 @@ function doit(client,message,args){
 	message.channel.send(`Child process exited with code ${code}`);
     });
 }
+
+exports.help = () =>{
+    return "Gives you a cool plotly table of your stats.";
+};

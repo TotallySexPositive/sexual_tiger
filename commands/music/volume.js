@@ -12,3 +12,7 @@ exports.run = (client, message, args) => {
     let current_volume = dispatcher.volume;
     message.channel.send(`Current Volume: ${current_volume*100}%`)
 }
+
+exports.help = () =>{
+    return "Displays the current volume. Not like you couldn't tell though.";
+};

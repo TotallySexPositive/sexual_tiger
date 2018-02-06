@@ -24,6 +24,8 @@ global.commandTypeColor = {  "admin": 13632027,
                             "pubg": 4289797
                          } 
 
+global.repeat = false;
+
 client.on('ready', () => {
     console.log('I am ready!');
     client.user.setActivity("Fuckin wit yo mind");

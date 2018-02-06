@@ -48,3 +48,7 @@ function play(connection, message, args){
         }
     })
 }
+
+exports.help = () =>{
+    return "Play a specific song.";
+};

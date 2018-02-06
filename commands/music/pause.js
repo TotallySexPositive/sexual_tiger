@@ -11,3 +11,7 @@ exports.run = (client, message, args) => {
     }
     dispatcher.pause();
 }
+
+exports.help = () =>{
+    return "Pause the currently playing song.";
+};
