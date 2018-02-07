@@ -8,7 +8,7 @@ const config    = require(path.resolve('configure.json'));
 
 const client    = new Discord.Client();
 
-global.VOLUME   = .125;
+global.VOLUME   = .25;
 global.servers  = {};
 global.commandTypes = ["admin", "fun", "misc", "music", "pubg"];
 global.commandTypeDesc = {  "admin": "Admin controls to assist in maintaining the bot.",

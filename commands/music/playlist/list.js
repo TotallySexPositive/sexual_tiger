@@ -3,7 +3,7 @@ const DAL = require(path.resolve("dal.js"))
 const asciitable = require("asciitable")
 
 exports.run = (client, message, args) => {
-    var options = {
+    var playlists_options = {
         skinny: true,
         intersectionCharacter: "+",
         columns: [
@@ -13,12 +13,32 @@ exports.run = (client, message, args) => {
         ],
     };
 
-    let {err, playlists} = DAL.getPlaylists();
+    var songs_options = {
+        skinny: true,
+        intersectionCharacter: "+",
+        columns: [
+            {field: "song_id",  name: "ID"},
+            {field: "name",         name: "Name"}
+        ],
+    };
 
-    if (err) { //Unhandled Error
-        message.channel.send(`Sorry, ${message.author.username}, it seems something unexpected happened.`);
+    if(!args.length) { //No args, show playlists
+        let {err, playlists} = DAL.getPlaylists();
+
+        if (err) { //Unhandled Error
+            message.channel.send(`Sorry, ${message.author.username}, it seems something unexpected happened.`);
+        } else {
+            let table = asciitable(playlists_options, playlists);
+            message.channel.send(table, {code: true, split: true});
+        }
     } else {
-        let table = asciitable(options, playlists);
-        message.channel.send(table, {code: true, split: true});
+        let playlist_identifier = args.join(" ")
+        let {err, songs} = (DAL.isInt(playlist_identifier)) ? DAL.getSongsByPlaylistId(playlist_identifier) : DAL.getSongsByPlaylistName(playlist_identifier)
+        if(err) {
+            message.channel.send(`Sorry, ${message.author.username}, it seems something unexpected happened.`)
+        } else {
+            let table = asciitable(songs_options, songs);
+            message.channel.send(table, {code: true, split: true});
+        }
     }
 };

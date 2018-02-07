@@ -8,11 +8,9 @@ const SONG_FIELDS           = "song.song_id, song.name, song.hash_id, song.sourc
 const PLAYLIST_FIELDS       = "playlist.playlist_id, playlist.name, playlist.num_songs, playlist.created_by "
 const PLAYLIST_SONG_FIELDS  = "playlist_song.relation_id, playlist_song.playlist_id, playlist_song.song_id "
 
-
 let DB = new Database('playlists.sql');
 
 DB.pragma("foreign_keys = ON;");
-
 
 let isInt = function(value) {
     var er = /^-?[0-9]+$/;
@@ -35,6 +33,18 @@ var findSongById = function (song_id) {
         return {err: undefined, song:DB.prepare(query).get(song_id)};
     } catch (err) {
         console.log(`findSongById song_id: ${song_id} \nError: `)
+        console.log(err);
+        return {err: err, song: undefined};
+    }
+}
+
+var findSongByHashId = function (hash_id) {
+    let query = `SELECT ${SONG_FIELDS} FROM ${SONG_TABLE} WHERE hash_id = ?`;
+
+    try {
+        return {err: undefined, song:DB.prepare(query).get(hash_id)};
+    } catch (err) {
+        console.log(`findSongByHashId song_id: ${hash_id} \nError: `)
         console.log(err);
         return {err: err, song: undefined};
     }
@@ -135,8 +145,6 @@ let getSongsByPlaylist = function (search_field, id) {
         WHERE playlist.${search_field} = ?
     `;
    
-    
-
     try {
         return {err: undefined, songs: DB.prepare(query).all(id)};
     } catch (err) {
@@ -245,6 +253,51 @@ let getPlaylists = function() {
     }
 }
 
+
+let searchForSongs = function(name) {
+
+    if(name.trim() === "") {
+        let err = new Error("search term must not be blank.");
+        return {err: err, info: undefined};
+    }
+
+    let clauses = [];
+    let prepped_args = [];
+    let args = name.split(" ").filter((word) => { return word.trim() !== ""});
+
+    args.forEach((arg) => {
+        clauses.push("name LIKE ?");
+        prepped_args.push(`%${arg}%`);
+    })
+    let prepped_statement = clauses.join(" AND ")
+
+    let query = `SELECT ${SONG_FIELDS} FROM ${SONG_TABLE} WHERE ${prepped_statement} LIMIT 5`;
+   
+    try {
+        return {err: undefined, songs: DB.prepare(query).all(prepped_args)};
+    } catch (err) {
+        console.log(`searchForSongs: \nError: `)
+        console.log(err);
+        return {err: err, songs: undefined};
+    }
+}
+
+
+let insertIntoSongs = function(hash_id, name, source) {
+    if(isInt(name)) {
+        let err = new Error("song name must not be an integer.");
+        return {err: err, info: undefined};
+    }
+    let query = "INSERT INTO song (hash_id, name, source) VALUES (?, ?, ?)"
+    try {
+        return {err: undefined, info: DB.prepare(query).run(hash_id, name, source)};
+    } catch (err) {
+        console.log(`insertIntoSongs: \nError: `)
+        console.log(err);
+        return {err: err, songs: undefined};
+    }
+}
+
 module.exports.isInt = isInt;
 
 module.exports.findSongById = findSongById;
@@ -258,3 +311,6 @@ module.exports.deletePlaylistById = deletePlaylistById;
 module.exports.addToPlaylist = addToPlaylist;
 module.exports.removeFromPlaylist = removeFromPlaylist;
 module.exports.getPlaylists = getPlaylists;
+module.exports.searchForSongs = searchForSongs;
+module.exports.insertIntoSongs = insertIntoSongs;
+module.exports.findSongByHashId = findSongByHashId;

@@ -14,10 +14,8 @@ function playAudio(connection, message) {
         if(server.current_song_index < server.songs.length - 1) {//More songs to play
             server.current_song_index = server.current_song_index + 1;
             server.current_song = server.songs[server.current_song_index];
-            console.log(`Current Song: ${server.current_song.name}   Index: ${server.current_song_index}`)
             playAudio(connection, message);
         } else { //End of the line?
-            console.log(`Hit end of line at, index: ${server.current_song_index}  Length: ${server.songs.length}`)
             if(global.repeat) { //Just kidding, restart.
                 server.current_song_index = 0;
                 server.current_song = server.songs[server.current_song_index];
@@ -31,7 +29,7 @@ function playAudio(connection, message) {
     server.dispatcher.on('error', e => {
         // Catch any errors that may arise
         console.log(e);
-        vc.disconnect();
+        message.guild.voiceConnection.disconnect();
         message.channel.send("all fuck, it broke!");
     });
 }
@@ -61,7 +59,6 @@ exports.run = (client, message, args) => {
         if(err) {
             return message.channel.send("Unknown error occured while fetching playlist songs.");
         } else if(songs === undefined) {
-            console.log(songs);
             return message.channel.send("This playlist has no songs, you suck as a DJ.")
         } else {
             pl_songs = songs;

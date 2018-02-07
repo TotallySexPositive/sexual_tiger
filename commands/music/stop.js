@@ -4,12 +4,13 @@ exports.run = (client, message, args) => {
         message.channel.send("I'm not even in a channel.")
         return;
     }
-    let dispatcher = vc.connection.dispatcher
+    message.guild.voiceConnection.disconnect();
+    /*let dispatcher = vc.connection.dispatcher
     if(dispatcher === undefined) {
         message.channel.send("No audio is playing.  You must be hearing things.")
         return;
     }
-    dispatcher.end();
+    dispatcher.end();*/
 }
 
 exports.help = () =>{
