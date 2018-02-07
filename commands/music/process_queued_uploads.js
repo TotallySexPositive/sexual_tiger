@@ -40,8 +40,18 @@ exports.run = (client, message, args) => {
             
         exec(`ffmpeg-normalize "${uploaded_file_path}" -c:a libmp3lame -ofmt mp3 -ext mp3 -o ${hashed_file_path} -f -t -20`, (err, stdout, stderr) => {
             if (err) {// node couldn't execute the command
-                console.log("Couldnt run command");
-                console.log(err);
+                if(err.message.indexOf("Invalid data found") == -1) { //Only output error if we dont know why it happened.
+                    console.log("Couldnt run command");
+                    console.log(err);
+                } 
+                fs.unlink(uploaded_file_path, function(err3){
+                    if(err3) {
+                        console.log(`Failed to Deleted offending file. ${uploaded_file_path}`)
+                        console.log(err3);
+                    } else {
+                        console.log(`Deleted offending file. ${uploaded_file_path}`)
+                    }
+                })
                 return;
             } else {
                 console.log(`Finished Normalizing file, ${file}`)
