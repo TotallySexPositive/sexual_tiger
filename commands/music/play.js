@@ -53,35 +53,11 @@ exports.run = (client, message, args) => {
         }
     }
 
-    if(server.voice_connection) {
-        console.log("Reusing connection")
-        //hooks(server.voice_connection)
-        console.log(server.voice_connection.status)
-        //server.voice_connection.sendVoiceStateUpdate()
-        if(server.voice_connection.status == 4){
-            vc.join()
-            .then(connection => {
-                server.voice_channel = vc;
-                server.voice_connection = connection;
-                //hooks(connection);
-                play(connection, message, song_hash)
-            }).catch(console.error);
-        }
-        else{
-            play(server.voice_connection, message, song_hash)
-        }
-        
-        
-    } else {
-        vc.join()
-        .then(connection => {
-            server.voice_channel = vc;
-            server.voice_connection = connection;
-            //hooks(connection);
-            play(connection, message, song_hash)
-        })
-        .catch(console.error);
-    }
+    vc.join()
+    .then(connection => {
+        play(connection, message, song_hash)
+    })
+    .catch(console.error);
 
 }
 
