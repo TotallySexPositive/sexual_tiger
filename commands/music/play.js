@@ -106,12 +106,11 @@ function hooks(connection){
 function play(connection, message, song_hash){
     var server = global.servers[message.guild.id]
     let dispatcher = null;
+
     if (server.dispatcher){
-        console.log("Killed stored dispatcher")
         server.dispatcher.end("Fuckoff")
     }
-    console.log(connection.status)
-    if (connection.status == 4){
+    if (connection.status == 4){ //4 = dead connection
         let vc = message.member.voiceChannel
         vc.join()
         .then(connection => {
@@ -122,19 +121,15 @@ function play(connection, message, song_hash){
 
     }else{         
         dispatcher = connection.playFile(path.resolve("hashed_audio", `${song_hash}.mp3`), {volume: VOLUME})
-        console.log("About to set new dispatcher")
         server.dispatcher = dispatcher   
     }
     
     dispatcher.on('end', (m) => {
         // The song has finished
         if (server.repeat){
-            
             play(connection, message, song_hash); // play it again!
         } else{
-            console.log("About to check dispatcher")
-            if(!server.maintain_presence && m !== "Fuckoff") {
-                
+            if(!server.maintain_presence && m !== "Fuckoff") {//Fuckoff means we have more media incoming, dont kill connection.
                 connection.disconnect();
             }
         }
