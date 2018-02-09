@@ -30,7 +30,7 @@ client.on('ready', () => {
     
     //Init servers array
     client.guilds.keyArray().forEach(server_id => {
-        global.servers[server_id] = {repeat: false, maintain_presence: false};
+        global.servers[server_id] = {repeat: false, maintain_presence: false, dispatcher: null};
     });
 });
 
