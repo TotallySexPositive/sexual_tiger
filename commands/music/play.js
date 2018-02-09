@@ -105,12 +105,25 @@ function hooks(connection){
 
 function play(connection, message, song_hash){
     var server = global.servers[message.guild.id]
+    let dispatcher = null;
     if (server.dispatcher){
         console.log("Fucked it right off")
         server.dispatcher.end("Fuckoff")
     }
-    let dispatcher = connection.playFile(path.resolve("hashed_audio", `${song_hash}.mp3`), {volume: VOLUME})
-    server.dispatcher = dispatcher
+    console.log(connection.status)
+    if (connection.status == 4){
+        let vc = message.member.voiceChannel
+        vc.join()
+        .then(connection => {
+            play(connection, message, song_hash)
+        })
+        .catch(console.error);
+        return
+
+    }else{         
+        dispatcher = connection.playFile(path.resolve("hashed_audio", `${song_hash}.mp3`), {volume: VOLUME})
+        server.dispatcher = dispatcher   
+    }
     
     dispatcher.on('end', () => {
         // The song has finished
@@ -118,7 +131,6 @@ function play(connection, message, song_hash){
             
             play(connection, message, song_hash); // play it again!
         } else{
-            console.log("zxcv")
             
             if(!server.maintain_presence) {
                 
@@ -131,8 +143,7 @@ function play(connection, message, song_hash){
         // Catch any errors that may arise
         console.log(e);
         message.channel.send("all fuck, it broke!");
-        
-        if(server.voice_connection) server.voice_connection.disconnect();
+        connection.disconnect()
     });
 }
 
