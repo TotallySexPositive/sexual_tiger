@@ -55,16 +55,76 @@ exports.run = (client, message, args) => {
 
     if(server.voice_connection) {
         console.log("Reusing connection")
-        play(server.voice_connection, message, song_hash)
+        //hooks(server.voice_connection)
+        console.log(server.voice_connection.status)
+        //server.voice_connection.sendVoiceStateUpdate()
+        if(server.voice_connection.status == 4){
+            vc.join()
+            .then(connection => {
+                server.voice_channel = vc;
+                server.voice_connection = connection;
+                //hooks(connection);
+                play(connection, message, song_hash)
+            }).catch(console.error);
+        }
+        else{
+            play(server.voice_connection, message, song_hash)
+        }
+        
+        
     } else {
         vc.join()
         .then(connection => {
             server.voice_channel = vc;
             server.voice_connection = connection;
+            //hooks(connection);
             play(connection, message, song_hash)
         })
         .catch(console.error);
     }
+
+}
+
+function hooks(connection){
+    connection.on("authenticated", ()=>{
+        console.log("authenticated")
+    })
+
+    connection.on("debug", (m)=>{
+        console.log("debug: " + m)
+    })
+
+    connection.on("disconnect", (m)=>{
+        console.log("disconnect")
+    })
+
+    connection.on("error", (m)=>{
+        console.log("error: " + m.message)
+    })
+
+    connection.on("failed", (m)=>{
+        console.log("failed: " + m.message)
+    })
+
+    connection.on("newSession", (m)=>{
+        console.log("newSession")
+    })
+
+    connection.on("ready", (m)=>{
+        console.log("ready")
+    })
+
+    connection.on("reconnecting", (m)=>{
+        console.log("reconnecting")
+    })
+
+    connection.on("speaking", (user, speaking)=>{
+        console.log(`${user.username} is speaking? ${speaking}`)
+    })
+
+    connection.on("warn", (m)=>{
+        console.log("warn: " + m)
+    })
 }
 
 function play(connection, message, song_hash){
