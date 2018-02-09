@@ -107,7 +107,7 @@ function play(connection, message, song_hash){
     var server = global.servers[message.guild.id]
     let dispatcher = null;
     if (server.dispatcher){
-        console.log("Fucked it right off")
+        console.log("Killed stored dispatcher")
         server.dispatcher.end("Fuckoff")
     }
     console.log(connection.status)
@@ -122,17 +122,18 @@ function play(connection, message, song_hash){
 
     }else{         
         dispatcher = connection.playFile(path.resolve("hashed_audio", `${song_hash}.mp3`), {volume: VOLUME})
+        console.log("About to set new dispatcher")
         server.dispatcher = dispatcher   
     }
     
-    dispatcher.on('end', () => {
+    dispatcher.on('end', (m) => {
         // The song has finished
         if (server.repeat){
             
             play(connection, message, song_hash); // play it again!
         } else{
-            
-            if(!server.maintain_presence) {
+            console.log("About to check dispatcher")
+            if(!server.maintain_presence && m !== "Fuckoff") {
                 
                 connection.disconnect();
             }
