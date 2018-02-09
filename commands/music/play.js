@@ -69,15 +69,8 @@ exports.run = (client, message, args) => {
 
 function play(connection, message, song_hash){
     var server          = global.servers[message.guild.id]
-    let dispatcher      = undefined
-    if(server.dispatcher) {
-        dispatcher = server.dispatcher
-    } else {
-        
-    }
     let dispatcher      = connection.playFile(path.resolve("hashed_audio", `${song_hash}.mp3`), {volume: VOLUME})
-    server.dispatcher   = dispatcher;
-
+    
     dispatcher.on('end', () => {
         // The song has finished
         if (server.repeat){
