@@ -24,11 +24,14 @@ global.commandTypeColor = {  "admin": 13632027,
                             "pubg": 4289797
                          } 
 
-global.repeat = false;
-
 client.on('ready', () => {
     console.log('I am ready!');
     client.user.setActivity("Fuckin wit yo mind");
+    
+    //Init servers array
+    client.guilds.keyArray().forEach(server_id => {
+        global.servers[server_id] = {repeat: false, maintain_presence: false};
+    });
 });
 
 client.on('message', message => {

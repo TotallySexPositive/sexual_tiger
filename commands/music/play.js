@@ -12,6 +12,8 @@ var options = {
 };
 
 exports.run = (client, message, args) => {
+    var server = global.servers[message.guild.id]
+
     let vc = message.member.voiceChannel
     if(vc === undefined){
         message.channel.send("You must be in a Voice Channel, I'm not gonna play this shit for no one.");
@@ -51,31 +53,48 @@ exports.run = (client, message, args) => {
         }
     }
 
-    vc.join()
-    .then(connection => {
-        play(connection, message, song_hash)
-    })
-    .catch(console.error);
+    if(server.voice_connection) {
+        console.log("Reusing connection")
+        play(server.voice_connection, message, song_hash)
+    } else {
+        vc.join()
+        .then(connection => {
+            server.voice_channel = vc;
+            server.voice_connection = connection;
+            play(connection, message, song_hash)
+        })
+        .catch(console.error);
+    }
 }
 
 function play(connection, message, song_hash){
-    let dispatcher = connection.playFile(path.resolve("hashed_audio", `${song_hash}.mp3`))
-    dispatcher.setVolume(VOLUME);
+    var server          = global.servers[message.guild.id]
+    let dispatcher      = undefined
+    if(server.dispatcher) {
+        dispatcher = server.dispatcher
+    } else {
+        
+    }
+    let dispatcher      = connection.playFile(path.resolve("hashed_audio", `${song_hash}.mp3`), {volume: VOLUME})
+    server.dispatcher   = dispatcher;
 
     dispatcher.on('end', () => {
         // The song has finished
-        if (global.repeat){
+        if (server.repeat){
             play(connection, message, song_hash); // play it again!
         } else{
-            message.guild.voiceConnection.disconnect();
+            if(!server.maintain_presence && server.voice_connection) {
+                server.voice_connection.disconnect();
+            }
         }
     });
 
     dispatcher.on('error', e => {
         // Catch any errors that may arise
         console.log(e);
-        message.guild.voiceConnection.disconnect();
         message.channel.send("all fuck, it broke!");
+        
+        if(server.voice_connection) server.voice_connection.disconnect();
     });
 }
 
