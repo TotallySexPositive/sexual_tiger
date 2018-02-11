@@ -36,7 +36,7 @@ exports.run = (client, message, args) => {
         if(err) {
             return message.channel.send("An error occured while searching for song.")
         } else if (song === undefined) { //No exact match on song. Try searching?
-            let {err, songs} = DAL.searchForSongs(song_identifier)
+            let {err, songs} = DAL.searchForSongs(song_identifier, 15)
             if(err) {
                 return message.channel.send("A song by that name didnt exist, and we crashed while searching for similar songs.")
             } else if(songs === undefined) {

@@ -254,7 +254,7 @@ let getPlaylists = function() {
 }
 
 
-let searchForSongs = function(name) {
+let searchForSongs = function(name, max_songs = 10) {
 
     if(name.trim() === "") {
         let err = new Error("search term must not be blank.");
@@ -271,7 +271,7 @@ let searchForSongs = function(name) {
     })
     let prepped_statement = clauses.join(" AND ")
 
-    let query = `SELECT ${SONG_FIELDS} FROM ${SONG_TABLE} WHERE ${prepped_statement} LIMIT 5`;
+    let query = `SELECT ${SONG_FIELDS} FROM ${SONG_TABLE} WHERE ${prepped_statement} LIMIT ${max_songs}`;
    
     try {
         return {err: undefined, songs: DB.prepare(query).all(prepped_args)};
