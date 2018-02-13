@@ -6,10 +6,10 @@ const DAL   = require(path.resolve("dal.js"))
 function playAudio(connection, message) {
     var server = global.servers[message.guild.id];
 
-    if (server.dispatcher){
+    if (server.dispatcher) {
         server.dispatcher.end("Fuckoff")
     }
-    if (connection.status == 4){ //4 = dead connection
+    if (connection.status == 4) { //4 = dead connection
         let vc = message.member.voiceChannel
         vc.join()
         .then(connection => {
@@ -18,9 +18,9 @@ function playAudio(connection, message) {
         .catch(console.error);
         return
 
-    }else{         
+    } else {         
         dispatcher = connection.playFile(path.resolve("hashed_audio", `${server.current_song.hash_id}.mp3`), {volume: server.volume})
-        server.dispatcher = dispatcher   
+        server.dispatcher = dispatcher
     }
 
     server.dispatcher.on('end', () => {

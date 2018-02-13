@@ -21,7 +21,7 @@ exports.run = (client, message, args) => {
     }
 
     let song_identifier = args.join(" ");
-    let song_hash = undefined;
+    let found_song = undefined;
     if(DAL.isInt(song_identifier)) {
         let {err, song} = DAL.findSongById(song_identifier)
         if(err) {
@@ -29,7 +29,7 @@ exports.run = (client, message, args) => {
         } else if (song === undefined) { 
             return message.channel.send("There is no song by that id.")
         } else {
-            song_hash = song.hash_id;
+            found_song = song;
         }
     } else {
         let {err, song} = DAL.findSongByName(song_identifier)
@@ -43,19 +43,19 @@ exports.run = (client, message, args) => {
                 return message.channel.send("There is no song by that name, and couldnt find any close matches.")
             } else if (songs.length === 1) {
                 message.channel.send("That song didnt exist, but we found one close match, Playing it.")
-                song_hash = songs[0].hash_id;
+                found_song = songs[0];
             } else {
                 message.channel.send("That song didnt exist and we found several close matches. Pick one to play.")
                 return message.channel.send(asciitable(options, songs),{code:true})
             }
         } else {
-            song_hash = song.hash_id;
+            found_song = song;
         }
     }
 
     vc.join()
     .then(connection => {
-        play(connection, message, song_hash)
+        play(connection, message, found_song)
     })
     .catch(console.error);
 
@@ -103,7 +103,7 @@ function hooks(connection){
     })
 }
 
-function play(connection, message, song_hash){
+function play(connection, message, song){
     var server = global.servers[message.guild.id]
     let dispatcher = null;
 
@@ -114,14 +114,14 @@ function play(connection, message, song_hash){
         let vc = message.member.voiceChannel
         vc.join()
         .then(connection => {
-            play(connection, message, song_hash)
+            play(connection, message, song)
         })
         .catch(console.error);
         return
 
     }else{         
-        dispatcher = connection.playFile(path.resolve("hashed_audio", `${song_hash}.mp3`), {volume: server.volume})
-        server.dispatcher = dispatcher   
+        dispatcher = connection.playFile(path.resolve("hashed_audio", `${song.hash_id}.mp3`), {volume: server.volume})
+        server.dispatcher = dispatcher  
     }
     
     dispatcher.on('end', (m) => {
