@@ -6,8 +6,22 @@ const DAL   = require(path.resolve("dal.js"))
 function playAudio(connection, message) {
     var server = global.servers[message.guild.id];
 
-    server.dispatcher = connection.playFile(path.resolve("hashed_audio", `${server.current_song.hash_id}.mp3`))
-    server.dispatcher.setVolume(VOLUME);
+    if (server.dispatcher){
+        server.dispatcher.end("Fuckoff")
+    }
+    if (connection.status == 4){ //4 = dead connection
+        let vc = message.member.voiceChannel
+        vc.join()
+        .then(connection => {
+            playAudio(connection, message)
+        })
+        .catch(console.error);
+        return
+
+    }else{         
+        dispatcher = connection.playFile(path.resolve("hashed_audio", `${server.current_song.hash_id}.mp3`), {volume: server.volume})
+        server.dispatcher = dispatcher   
+    }
 
     server.dispatcher.on('end', () => {
         // The song has finished
@@ -29,6 +43,7 @@ function playAudio(connection, message) {
     server.dispatcher.on('error', e => {
         // Catch any errors that may arise
         console.log(e);
+        if(message.guild.voiceConnection)
         message.guild.voiceConnection.disconnect();
         message.channel.send("all fuck, it broke!");
     });
@@ -42,14 +57,14 @@ exports.run = (client, message, args) => {
         return message.channel.send("You must be in a Voice Channel, I'm not gonna play this shit for no one.");
     }
     
-    if(!global.servers[message.guild.id]) global.servers[message.guild.id] = {
+    if(!global.servers[server_id]) global.servers[server_id] = {
         playlist: {},
         current_song: {},
         current_song_index: -1,
         songs: []
     }
 
-    let server = global.servers[message.guild.id];
+    let server = global.servers[server_id];
     let playlist = {};
     let pl_songs = [];
 
@@ -79,7 +94,6 @@ exports.run = (client, message, args) => {
     server.current_song = pl_songs[server.current_song_index];
 
     vc.join().then(connection => {
-        server.voice_connection = connection;
         playAudio(connection, message);
     })
     .catch(console.error);
