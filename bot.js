@@ -8,7 +8,6 @@ const config    = require(path.resolve('configure.json'));
 
 const client    = new Discord.Client();
 
-global.VOLUME   = .25;
 global.servers  = {};
 global.commandTypes = ["admin", "fun", "misc", "music", "pubg"];
 global.commandTypeDesc = {  "admin": "Admin controls to assist in maintaining the bot.",
@@ -30,7 +29,7 @@ client.on('ready', () => {
     
     //Init servers array
     client.guilds.keyArray().forEach(server_id => {
-        global.servers[server_id] = {repeat: false, maintain_presence: false, dispatcher: null};
+        global.servers[server_id] = {repeat: false, maintain_presence: false, dispatcher: null, volume: .25, max_volume: 1};
     });
 });
 

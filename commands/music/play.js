@@ -120,7 +120,7 @@ function play(connection, message, song_hash){
         return
 
     }else{         
-        dispatcher = connection.playFile(path.resolve("hashed_audio", `${song_hash}.mp3`), {volume: VOLUME})
+        dispatcher = connection.playFile(path.resolve("hashed_audio", `${song_hash}.mp3`), {volume: server.volume})
         server.dispatcher = dispatcher   
     }
     

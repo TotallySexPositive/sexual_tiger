@@ -1,5 +1,7 @@
 exports.run = (client, message, args) => {
-    let vc = message.member.voiceChannel
+    var server  = global.servers[message.guild.id];
+    let vc      = message.member.voiceChannel
+
     if(vc === undefined) {
         message.channel.send("I'm not even in a channel.")
         return;
@@ -9,13 +11,14 @@ exports.run = (client, message, args) => {
         message.channel.send("No audio is playing.  You must be hearing things.")
         return;
     }
-    
-    let current_volume = dispatcher.volume;
-    if(current_volume >= .5) {
+
+    let higher_volume = server.volume*2;
+    if(higher_volume > server.max_volume) {
         message.channel.send("This is plenty loud enough.")
     }
-    else{
-        dispatcher.setVolume(current_volume*2);
+    else {
+        server.volume = higher_volume;
+        dispatcher.setVolume(server.volume);
     }
 }
 

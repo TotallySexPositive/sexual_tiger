@@ -1,4 +1,5 @@
 exports.run = (client, message, args) => {
+    var server = global.servers[message.guild.id];
     let vc = message.member.voiceChannel
     if(vc === undefined) {
         message.channel.send("I'm not even in a channel.")
@@ -9,8 +10,8 @@ exports.run = (client, message, args) => {
         message.channel.send("No audio is playing.  You must be hearing things.")
         return;
     }
-    let current_volume = dispatcher.volume;
-    dispatcher.setVolume(current_volume/2);
+    server.volume = server.volume/2;
+    dispatcher.setVolume(server.volume);
 }
 
 exports.help = () =>{
