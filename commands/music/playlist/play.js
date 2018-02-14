@@ -3,13 +3,14 @@ const path  = require("path")
 const fs    = require('fs');
 const DAL   = require(path.resolve("dal.js"))
 
+
 function playAudio(connection, message) {
     var server = global.servers[message.guild.id];
 
-    if (server.dispatcher){
+    if (server.dispatcher) {
         server.dispatcher.end("Fuckoff")
     }
-    if (connection.status == 4){ //4 = dead connection
+    if (connection.status == 4) { //4 = dead connection
         let vc = message.member.voiceChannel
         vc.join()
         .then(connection => {
@@ -17,30 +18,34 @@ function playAudio(connection, message) {
         })
         .catch(console.error);
         return
-
-    }else{         
-        dispatcher = connection.playFile(path.resolve("hashed_audio", `${server.current_song.hash_id}.mp3`), {volume: server.volume})
-        server.dispatcher = dispatcher   
+    } else { 
+        dispatcher          = connection.playFile(path.resolve("hashed_audio", `${server.current_song.hash_id}.mp3`), {volume: server.volume})
+        server.dispatcher   = dispatcher
     }
 
-    server.dispatcher.on('end', () => {
+    dispatcher.on('end', (m) => {
         // The song has finished
-        if(server.current_song_index < server.songs.length - 1) {//More songs to play
+        if(server.current_song_index < server.songs.length - 1 && m !== "Fuckoff") {//More songs to play and I am not being kicked off my another audio dispatcher
             server.current_song_index = server.current_song_index + 1;
             server.current_song = server.songs[server.current_song_index];
             playAudio(connection, message);
         } else { //End of the line?
-            if(global.repeat) { //Just kidding, restart.
+            
+            if(server.repeat && m !== "Fuckoff") { //Just kidding, restart. and I am not being kicked off my another audio dispatcher
+                
                 server.current_song_index = 0;
                 server.current_song = server.songs[server.current_song_index];
                 playAudio(connection, message);
             } else {
-                connection.disconnect();
+                
+                if(!server.maintain_presence && m !== "Fuckoff") {//Fuckoff means we have more media incoming, dont kill connection.
+                    connection.disconnect();
+                } 
             }
         }
     });
     
-    server.dispatcher.on('error', e => {
+    dispatcher.on('error', e => {
         // Catch any errors that may arise
         console.log(e);
         if(message.guild.voiceConnection)
