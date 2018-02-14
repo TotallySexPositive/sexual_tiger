@@ -16,7 +16,7 @@ exports.run = (client, message, args) => {
         console.log(`Started Processing file, ${file}`)
         let uploaded_file_path  = path.resolve(uploaded_audio_folder, file);
         let file_hash           = md5(fs.readFileSync(uploaded_file_path));
-        let base_file_name      = file.replace(/\.[^/.]+$/, "")
+        let base_file_name      = file.replace(/\.[^/.]+$/, "").replace(/[_-]/g, " ").replace(/ +/g, " ") //Strip off extention, replace underscore and hypen with space, reduce more than 2 spaces to 1
         let new_file_name       = file_hash + ".mp3"
         
         let hashed_file_path    = path.resolve(hashed_audio_path, new_file_name);
