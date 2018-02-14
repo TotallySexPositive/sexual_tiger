@@ -34,6 +34,7 @@
     "erlpack": "github:discordapp/erlpack",
     "express": "^4.16.2",
     "ffmpeg-binaries": "^3.2.2-3",
+    "fs-walk": "0.0.1",
     "jsonfile": "^4.0.0",
     "libsodium-wrappers": "^0.7.3",
     "md5": "^2.2.1",
