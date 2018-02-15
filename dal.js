@@ -17,11 +17,11 @@ let isInt = function(value) {
     return er.test(value);
 }
 
-  /**
-   * Find a Song by id.
-   * 
-   * @param {Integer} song_id - The id of the song to find
-   */
+/**
+ * Find a Song by id.
+ * 
+ * @param {Integer} song_id - The id of the song to find
+ */
 var findSongById = function (song_id) {
     if(!isInt(song_id)) {
         let err = new Error("song_id must be an integer.")
@@ -66,12 +66,23 @@ var findSongByName = function (name) {
     }
 }
 
+let findSongByUrl = function(url) {
+    let query = `SELECT ${SONG_FIELDS} FROM ${SONG_TABLE} WHERE url = ?`;
+
+    try {
+        return {err: undefined, song:DB.prepare(query).get(url)};
+    } catch (err) {
+        console.log(`findSongByUrl url: ${url} \nError: `)
+        console.log(err);
+        return {err: err, song: undefined};
+    }
+}
 /**
    * Find a Playlist by id.
    * 
    * @param {Integer} playlist_id - The id of the playlist to find
    */
-  var findPlaylistById = function (playlist_id) {
+var findPlaylistById = function (playlist_id) {
     if(!isInt(playlist_id)){
         let err = new Error("playlist_id must be an integer.")
         return null;
@@ -298,6 +309,23 @@ let insertIntoSongs = function(hash_id, name, source) {
     }
 }
 
+let incrementNumPlays = function(song_id) {
+    if(!isInt(song_id)) {
+        let err = new Error("song_id must be an integer.");
+        return {err: err, info: undefined};
+    }
+    let query = "UPDATE song SET num_plays = num_plays + 1 WHERE song_id = ?"
+    try {
+        return {err: undefined, info: DB.prepare(query).run(song_id)};
+    } catch (err) {
+        console.log(`incrementNumPlays: \nError: `)
+        console.log(err);
+        return {err: err, songs: undefined};
+    }
+}
+
+
+
 module.exports.isInt = isInt;
 
 module.exports.findSongById = findSongById;
@@ -314,3 +342,5 @@ module.exports.getPlaylists = getPlaylists;
 module.exports.searchForSongs = searchForSongs;
 module.exports.insertIntoSongs = insertIntoSongs;
 module.exports.findSongByHashId = findSongByHashId;
+module.exports.findSongByUrl = findSongByUrl;
+module.exports.incrementNumPlays = incrementNumPlays;
