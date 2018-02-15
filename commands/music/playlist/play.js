@@ -2,57 +2,7 @@
 const path  = require("path")
 const fs    = require('fs');
 const DAL   = require(path.resolve("dal.js"))
-
-
-function playAudio(connection, message) {
-    var server = global.servers[message.guild.id];
-
-    if (server.dispatcher) {
-        server.dispatcher.end("Fuckoff")
-    }
-    if (connection.status == 4) { //4 = dead connection
-        let vc = message.member.voiceChannel
-        vc.join()
-        .then(connection => {
-            playAudio(connection, message)
-        })
-        .catch(console.error);
-        return
-    } else { 
-        dispatcher          = connection.playFile(path.resolve("hashed_audio", `${server.current_song.hash_id}.mp3`), {volume: server.volume})
-        server.dispatcher   = dispatcher
-    }
-
-    dispatcher.on('end', (m) => {
-        // The song has finished
-        if(server.current_song_index < server.songs.length - 1 && m !== "Fuckoff") {//More songs to play and I am not being kicked off my another audio dispatcher
-            server.current_song_index = server.current_song_index + 1;
-            server.current_song = server.songs[server.current_song_index];
-            playAudio(connection, message);
-        } else { //End of the line?
-            
-            if(server.repeat && m !== "Fuckoff") { //Just kidding, restart. and I am not being kicked off my another audio dispatcher
-                
-                server.current_song_index = 0;
-                server.current_song = server.songs[server.current_song_index];
-                playAudio(connection, message);
-            } else {
-                
-                if(!server.maintain_presence && m !== "Fuckoff") {//Fuckoff means we have more media incoming, dont kill connection.
-                    connection.disconnect();
-                } 
-            }
-        }
-    });
-    
-    dispatcher.on('error', e => {
-        // Catch any errors that may arise
-        console.log(e);
-        if(message.guild.voiceConnection)
-        message.guild.voiceConnection.disconnect();
-        message.channel.send("all fuck, it broke!");
-    });
-}
+const UTIL  = require(path.resolve("utils.js"))
 
 exports.run = (client, message, args) => {
     let vc = message.member.voiceChannel
@@ -99,7 +49,7 @@ exports.run = (client, message, args) => {
     server.current_song = pl_songs[server.current_song_index];
 
     vc.join().then(connection => {
-        playAudio(connection, message);
+        UTIL.playAudio(client, connection, message, server.current_song, UTIL.playlistPlayBasicCallBack);
     })
     .catch(console.error);
 }

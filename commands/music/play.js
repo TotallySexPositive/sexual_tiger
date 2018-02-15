@@ -1,5 +1,6 @@
 const path  = require("path")
 const DAL   = require(path.resolve("dal.js"))
+const UTIL   = require(path.resolve("utils.js"))
 const asciitable = require("asciitable")
 
 var options = {
@@ -55,92 +56,9 @@ exports.run = (client, message, args) => {
 
     vc.join()
     .then(connection => {
-        play(connection, message, found_song)
+        UTIL.playAudio(client, connection, message, found_song, UTIL.playAudioBasicCallBack)
     })
     .catch(console.error);
-
-}
-
-function hooks(connection){
-    connection.on("authenticated", ()=>{
-        console.log("authenticated")
-    })
-
-    connection.on("debug", (m)=>{
-        console.log("debug: " + m)
-    })
-
-    connection.on("disconnect", (m)=>{
-        console.log("disconnect")
-    })
-
-    connection.on("error", (m)=>{
-        console.log("error: " + m.message)
-    })
-
-    connection.on("failed", (m)=>{
-        console.log("failed: " + m.message)
-    })
-
-    connection.on("newSession", (m)=>{
-        console.log("newSession")
-    })
-
-    connection.on("ready", (m)=>{
-        console.log("ready")
-    })
-
-    connection.on("reconnecting", (m)=>{
-        console.log("reconnecting")
-    })
-
-    connection.on("speaking", (user, speaking)=>{
-        console.log(`${user.username} is speaking? ${speaking}`)
-    })
-
-    connection.on("warn", (m)=>{
-        console.log("warn: " + m)
-    })
-}
-
-function play(connection, message, song){
-    var server = global.servers[message.guild.id]
-    let dispatcher = null;
-
-    if (server.dispatcher){
-        server.dispatcher.end("Fuckoff")
-    }
-    if (connection.status == 4){ //4 = dead connection
-        let vc = message.member.voiceChannel
-        vc.join()
-        .then(connection => {
-            play(connection, message, song)
-        })
-        .catch(console.error);
-        return
-
-    }else{         
-        dispatcher = connection.playFile(path.resolve("hashed_audio", `${song.hash_id}.mp3`), {volume: server.volume})
-        server.dispatcher = dispatcher  
-    }
-    
-    dispatcher.on('end', (m) => {
-        // The song has finished
-        if (server.repeat){
-            play(connection, message, song_hash); // play it again!
-        } else{
-            if(!server.maintain_presence && m !== "Fuckoff") {//Fuckoff means we have more media incoming, dont kill connection.
-                connection.disconnect();
-            }
-        }
-    });
-
-    dispatcher.on('error', e => {
-        // Catch any errors that may arise
-        console.log(e);
-        message.channel.send("all fuck, it broke!");
-        connection.disconnect()
-    });
 }
 
 exports.help = () =>{
