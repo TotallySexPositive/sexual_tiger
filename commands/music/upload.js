@@ -9,11 +9,11 @@ exports.run = (client, message, args) => {
 	message.channel.send(`Downloading ${attachments.length} attachments.`);
 
     attachments.forEach(item=>{
-        fpath = path.resolve("uploaded_audio",item.filename)
+        fpath = path.resolve(global.audio_dirs.uploaded,item.filename)
         request(item.url)
             .pipe(fs.createWriteStream(fpath))
-            .on('finish', (ok)=>{console.log(ok)})
-            .on('error', (err)=>{console.error(err)})
+            .on('finish', () => {/*good*/})
+            .on('error', (err) => {console.error(err)})
 
     })
 	

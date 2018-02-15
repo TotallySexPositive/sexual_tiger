@@ -1,8 +1,10 @@
 "use strict";
 
-const path  = require("path")
-const fs    = require('fs');
-const DAL   = require(path.resolve("dal.js"))
+const path      = require("path")
+const fs        = require('fs');
+const DAL       = require(path.resolve("dal.js"))
+const md5       = require('md5');
+const { exec }  = require('child_process');
 
 var isInt = function(value) {
     var er = /^-?[0-9]+$/;
@@ -25,7 +27,15 @@ var playAudio = function(client, connection, message, song, callBack) {
         .catch(console.error);
         return;
     } else {         
-        dispatcher = connection.playFile(path.resolve("hashed_audio", `${song.hash_id}.mp3`), {volume: server.volume});
+        dispatcher = connection.playFile(path.resolve(global.audio_dirs.hashed, `${song.hash_id}.mp3`), {volume: server.volume});
+        let {err, info} = DAL.incrementNumPlays(song.song_id);
+        if(err) {
+            console.err(err);
+            console.log(`Failed to increment num_plays for song_id, ${song.song_id}`);
+        } else if(info.changes <= 0) {
+            console.log(`Failed to increment num_plays for song_id, ${song.song_id}`);
+            console.log("The song_id didnt exist?");
+        }
         server.dispatcher = dispatcher;
     }
     
@@ -73,7 +83,76 @@ var playlistPlayBasicCallBack = function(client, connection, message, song, call
     }
 }
 
+var processAudioFile = function(file_path, url, message) {
+    let hashed_audio_path       = global.audio_dirs.hashed;
+    let stored_audio_path       = global.audio_dirs.stored;
+    let file_name               = path.basename(file_path);
+
+    console.log(`Started Processing file, ${file_name}`)
+    message.channel.send(`Starting to process file: ${file_name}, I'll let you know when its ready.`);
+
+    let file_hash           = md5(fs.readFileSync(file_path));
+    let cleaned_file_name   = file_name.replace(/\.[^/.]+$/, "").replace(/[_-]/g, " ").replace(/ +/g, " ") //Strip off extention, replace underscore and hypen with space, reduce more than 2 spaces to 1
+    let new_file_name       = file_hash + ".mp3"
+    
+    let hashed_file_path    = path.resolve(hashed_audio_path, new_file_name);
+    let stored_file_path    = path.resolve(stored_audio_path, `${cleaned_file_name}-${file_hash}`)
+
+    let {err, song}         = DAL.findSongByHashId(file_hash);
+
+    if(err) {
+        console.log("Oops?");
+        console.log(err);
+    } else if (song !== undefined) {
+        message.channel.send(`That file already exists on the server by the name, ${song.name}`);
+        fs.unlink(file_path, function(err3) {
+            if(err3) {
+                console.log("Failed to delete duplicate file.")
+                console.log(err3);
+            }
+        })
+        return;
+    }
+        
+    exec(`ffmpeg-normalize "${file_path}" -c:a libmp3lame -ofmt mp3 -ext mp3 -o ${hashed_file_path} -f -t -20`, (err, stdout, stderr) => {
+        if (err) {// node couldn't execute the command
+            if(err.message.indexOf("Invalid data found") == -1) { //Only output error if we dont know why it happened.
+                console.log("Couldnt run command");
+                console.log(err);
+            } 
+            fs.unlink(file_path, function(err3){
+                if(err3) {
+                    console.log(`Failed to Deleted offending file. ${file_path}`)
+                    console.log(err3);
+                } else {
+                    console.log(`Deleted offending file. ${file_path}`);
+                    message.channel.send("I dont know what the fuck you just tried to be me to process, but I deleted it. :stuck_out_tongue: ")
+
+                }
+            })
+            return;
+        } else {
+            let {err, info} = DAL.insertIntoSongs(file_hash, cleaned_file_name, stored_file_path, url);
+            
+            if(err) {
+                console.log(err);
+                message.channel.send(`Sorry, ${message.author.username}, it seems something unexpected happened.`);
+            } else {
+                message.channel.send(`The song ${cleaned_file_name} has been added, You're the DJ ${message.author.username}!`);
+                
+                fs.rename(file_path, stored_file_path, (err) => {
+                    if(err) {
+                        console.log(`Failed to move file, ${file_path} to ${stored_file_path}`);
+                        console.log(err);
+                    }
+                })
+            }
+        }
+    });
+}
+
 module.exports.isInt = isInt;
 module.exports.playAudio = playAudio;
 module.exports.playAudioBasicCallBack = playAudioBasicCallBack;
 module.exports.playlistPlayBasicCallBack = playlistPlayBasicCallBack;
+module.exports.processAudioFile = processAudioFile;

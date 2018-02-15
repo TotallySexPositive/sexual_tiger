@@ -22,6 +22,28 @@ global.commandTypeColor = {  "admin": 13632027,
                             "music": 5301186,
                             "pubg": 4289797
                          } 
+global.audio_dirs = {
+    "tmp"       : path.resolve("audio", "tmp"),
+    "hashed"    : path.resolve("audio", "hashed"),
+    "stored"    : path.resolve("audio", "stored"),
+    "uploaded"  : path.resolve("audio", "uploaded")
+}
+
+//Array of directories required for bot to operate, make sure all parent directories appear before sub directories in list. IE: make sure audio exists, before trying to make audio/hashed
+let required_folders = [
+    path.resolve("audio"),
+    path.resolve("audio", "tmp"),
+    path.resolve("audio", "hashed"),
+    path.resolve("audio", "stored"),
+    path.resolve("audio", "uploaded"),
+];
+//Loop the array of required folders and create any missing ones.
+required_folders.forEach(function(dir) {
+    if (!fs.existsSync(dir)) {
+        console.log(`Created missing directory: ${dir}`);
+        fs.mkdirSync(dir);
+    }
+});
 
 client.on('ready', () => {
     console.log('I am ready!');

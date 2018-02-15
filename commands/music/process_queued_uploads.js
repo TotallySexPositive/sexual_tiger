@@ -6,9 +6,9 @@ const DAL   = require(path.resolve("dal.js"))
 
 exports.run = (client, message, args) => {
     
-    let uploaded_audio_folder   = path.resolve("uploaded_audio");
-    let hashed_audio_path       = path.resolve("hashed_audio");
-    let stored_audio_path       = path.resolve("stored_audio");
+    let uploaded_audio_folder   = global.audio_dirs.uploaded;
+    let hashed_audio_path       = global.audio_dirs.hashed;
+    let stored_audio_path       = global.audio_dirs.stored;
 
     let files_to_process        = fs.readdirSync(uploaded_audio_folder).filter(file => file !== ".placeholder")
 

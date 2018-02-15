@@ -294,14 +294,14 @@ let searchForSongs = function(name, max_songs = 10) {
 }
 
 
-let insertIntoSongs = function(hash_id, name, source) {
+let insertIntoSongs = function(hash_id, name, source, url = null) {
     if(isInt(name)) {
         let err = new Error("song name must not be an integer.");
         return {err: err, info: undefined};
     }
-    let query = "INSERT INTO song (hash_id, name, source) VALUES (?, ?, ?)"
+    let query = "INSERT INTO song (hash_id, name, source, url) VALUES (?, ?, ?, ?)"
     try {
-        return {err: undefined, info: DB.prepare(query).run(hash_id, name, source)};
+        return {err: undefined, info: DB.prepare(query).run(hash_id, name, source, url)};
     } catch (err) {
         console.log(`insertIntoSongs: \nError: `)
         console.log(err);
@@ -314,7 +314,8 @@ let incrementNumPlays = function(song_id) {
         let err = new Error("song_id must be an integer.");
         return {err: err, info: undefined};
     }
-    let query = "UPDATE song SET num_plays = num_plays + 1 WHERE song_id = ?"
+    //Update num plays and set last_played to current unix timestamp
+    let query = "UPDATE song SET num_plays = num_plays + 1, last_played = strftime('%s','now') WHERE song_id = ?"
     try {
         return {err: undefined, info: DB.prepare(query).run(song_id)};
     } catch (err) {
