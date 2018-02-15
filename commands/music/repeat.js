@@ -1,8 +1,8 @@
-//TODO Switch this to db when adam commits the createtable stuff and playlist stuff
 exports.run = (client, message, args) => {
-    global.repeat = !global.repeat;
+    let server = global.servers[message.guild.id];
+    server.repeat = !server.repeat;
     let m = ""
-    if (global.repeat){
+    if (server.repeat){
     	m = "Sounds will repeat";	
     } else{
     	m = "Sounds will not repeat";
