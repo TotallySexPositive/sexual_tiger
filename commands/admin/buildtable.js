@@ -3,11 +3,15 @@ const asciitable = require("asciitable")
 
 exports.run = (client, message, args) => {
     DB.serialize(function() {
-        DB.run(`CREATE TABLE IF NOT EXIST song (
-            song_id INTEGER PRIMARY KEY,
-            hash_id TEXT NOT NULL UNIQUE,
-            name TEXT NOT NULL UNIQUE,
-            source TEXT NOT NULL
+        DB.run(`CREATE TABLE IT NOT EXIST song (
+            song_id	INTEGER,
+            name	TEXT NOT NULL UNIQUE,
+            hash_id	TEXT NOT NULL UNIQUE,
+            num_plays	INTEGER DEFAULT 0,
+            last_played	INTEGER,
+            url	TEXT UNIQUE,
+            source	TEXT NOT NULL,
+            PRIMARY KEY(song_id)
         );`);
         DB.run(`CREATE TABLE IF NOT EXIST playlist (
             playlist_id	INTEGER,
