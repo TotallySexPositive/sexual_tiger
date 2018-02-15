@@ -4,7 +4,7 @@ const SONG_TABLE            = "song"
 const PLAYLIST_TABLE        = "playlist"
 const PLAYLIST_SONG_TABLE   = "playlist_song"
 
-const SONG_FIELDS           = "song.song_id, song.name, song.hash_id, song.source"
+const SONG_FIELDS           = "song.song_id, song.name, song.hash_id, song.source, song.num_plays, song.last_played, song.url "
 const PLAYLIST_FIELDS       = "playlist.playlist_id, playlist.name, playlist.num_songs, playlist.created_by "
 const PLAYLIST_SONG_FIELDS  = "playlist_song.relation_id, playlist_song.playlist_id, playlist_song.song_id "
 
