@@ -1,4 +1,8 @@
 let Database                = require('better-sqlite3')
+const path                  = require('path');
+
+const UTIL                  = require(path.resolve("utils.js"))
+const validator             = require('validator');
 
 const SONG_TABLE            = "song"
 const PLAYLIST_TABLE        = "playlist"
@@ -77,6 +81,36 @@ let findSongByUrl = function(url) {
         return {err: err, song: undefined};
     }
 }
+
+let findSongByIdentifier = function(identifier, identifier_type = null) {
+    let valid_identifiers = ["song_id", "hash_id", "name", "url"];
+
+    if(identifier_type === null) { //Type not specified, lets figure it out
+
+        if(isInt(identifier)) {
+            return findSongById(identifier);
+        } else if(validator.isMD5(identifier)) {
+            return findSongByHashId(identifier);
+        } else if(validator.isURL(identifier)) {
+            return findSongByUrl(identifier);
+        } else { //Welp, I guess its a song name
+            return findSongByName(identifier);
+        }
+    } else {
+        if(!valid_identifiers.includes(identifier_type)) { //Invalid identifier type sent
+            let err = new Error(`Invalid identifier_type passed. Valid types: ${valid_identifiers.join(", ")}.`);
+            return { err: err, song: undefined }
+        } else { //Valid identifier type sent, just run the query
+            switch(identifier_type) {
+                case "song_id"  : return findSongById(identifier);
+                case "hash_id"  : return findSongByHashId(identifier);
+                case "name"     : return findSongByName(identifier);
+                case "url"      : return findSongByUrl(identifier);
+            }
+        }
+    }
+}
+
 /**
    * Find a Playlist by id.
    * 
@@ -90,11 +124,11 @@ var findPlaylistById = function (playlist_id) {
     let query = `SELECT ${PLAYLIST_FIELDS} FROM ${PLAYLIST_TABLE} WHERE playlist_id = ?`;
     
     try {
-        return DB.prepare(query).get(playlist_id);
+        return {err: undefined, playlist: DB.prepare(query).get(playlist_id)};
     } catch (err) {
         console.log(`findPlaylistById playlist_id: ${playlist_id} \nError: `)
         console.log(err);
-        return null;
+        return {err: err, playlist: undefined};
     }
 }
 
@@ -111,6 +145,28 @@ var findPlaylistByName = function (name) {
         console.log(`findPlaylistByName name: ${name}\nError: `)
         console.log(err);
         return {err: err, playlist: undefined};
+    }
+}
+
+let findPlaylistByIdentifier = function(identifier, identifier_type = null) {
+    let valid_identifiers = ["playlist_id", "name"];
+
+    if(identifier_type === null) { //Type not specified, lets figure it out
+        if(isInt(identifier)) {
+            return findPlaylistById(identifier);
+        } else { //Welp, I guess its a song name
+            return findPlaylistByName(identifier);
+        }
+    } else {
+        if(!valid_identifiers.includes(identifier_type)) { //Invalid identifier type sent
+            let err = new Error(`Invalid identifier_type passed. Valid types: ${valid_identifiers.join(", ")}.`);
+            return { err: err, playlist: undefined }
+        } else { //Valid identifier type sent, just run the query
+            switch(identifier_type) {
+                case "playlist_id"  : return findPlaylistById(identifier);
+                case "name"         : return findPlaylistByName(identifier);
+            }
+        }
     }
 }
 
@@ -329,10 +385,12 @@ let incrementNumPlays = function(song_id) {
 
 module.exports.isInt = isInt;
 
+module.exports.findSongByIdentifier = findSongByIdentifier;
 module.exports.findSongById = findSongById;
 module.exports.findSongByName = findSongByName;
 module.exports.findPlaylistById = findPlaylistById;
 module.exports.findPlaylistByName = findPlaylistByName;
+module.exports.findPlaylistByIdentifier = findPlaylistByIdentifier;
 module.exports.getSongsByPlaylistId = getSongsByPlaylistId;
 module.exports.getSongsByPlaylistName = getSongsByPlaylistName;
 module.exports.createPlaylist = createPlaylist;
