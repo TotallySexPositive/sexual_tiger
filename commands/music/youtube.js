@@ -32,6 +32,8 @@ exports.run = (client, message, args) => {
             if(err) {
                 console.log(err);
                 return message.channel.send("Something happened while trying to download audio from that youtube link.");
+            } else if (info.length_seconds > 600) { //10 minutes
+                return message.channel.send("That video is too fucking long.")
             } else {
                 let save_to     = path.resolve(global.audio_dirs.tmp, sanitize(info.title) + `.mp3`);
                 let write_steam = ytdl.downloadFromInfo(info, {filter: "audioonly"}).pipe(fs.createWriteStream(save_to));
