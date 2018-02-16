@@ -1,10 +1,11 @@
 "use strict";
 
-const fs    = require('fs');
-const ytdl  = require('ytdl-core');
-const path  = require("path");
-const DAL   = require(path.resolve("dal.js"));
-const UTIL  = require(path.resolve("utils.js"));
+const fs        = require('fs');
+const ytdl      = require('ytdl-core');
+const path      = require("path");
+const DAL       = require(path.resolve("dal.js"));
+const UTIL      = require(path.resolve("utils.js"));
+const sanitize  = require("sanitize-filename");
 
 exports.run = (client, message, args) => {
     let server = global.servers[message.guild.id];
@@ -32,7 +33,7 @@ exports.run = (client, message, args) => {
                 console.log(err);
                 return message.channel.send("Something happened while trying to download audio from that youtube link.");
             } else {
-                let save_to     = path.resolve(global.audio_dirs.tmp, `${info.title}.mp3`)
+                let save_to     = path.resolve(global.audio_dirs.tmp, sanitize(info.title) + `.mp3`);
                 let write_steam = ytdl.downloadFromInfo(info, {filter: "audioonly"}).pipe(fs.createWriteStream(save_to));
     
                 write_steam.on('finish', () => {
