@@ -13,7 +13,7 @@ exports.run = (client, message, args) => {
           }
     }
 
-    let arg_string = message.content.slice(13)
+    let arg_string = message.content.slice(13); //Chop off $playlist add
     var argv = parser(arg_string.replace(/= +/g, "="), opts)
 
     if(!argv.s || !argv.p) {
@@ -41,9 +41,10 @@ exports.run = (client, message, args) => {
     song_identifiers.forEach((identifier) => {
         let {err:s_err, song}       = DAL.findSongByIdentifier(identifier)
 
-        if(s_err) return message.channel.send(`Oops, issue trying to find the specified song, ${s_err.message}`);
-    
-        if(song === undefined) {
+        if(s_err) {
+            skipped_songs.push(`X_X: ${identifier}`);
+            console.log(s_rr);
+        } else if(song === undefined) {
             skipped_songs.push(`DNE: ${identifier}`);
         } else {
             let {err, info} = DAL.addToPlaylist(playlist.playlist_id, song.song_id);
