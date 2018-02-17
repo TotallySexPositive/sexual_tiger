@@ -8,10 +8,10 @@ const parser    = require('yargs-parser')
 exports.run = (client, message, args) => {
    
     let valid_users = {
-        "231574835694796801": "narayanjr",
-        "183388696207294465": "rieger07"
+        "231574835694796801": auth.github_token,
+        "183388696207294465": auth.github_steve
     }
-
+    let token = valid_users[message.author.id];
     if(!valid_users[message.author.id]) {
         return message.channel.send("I dont know who you are.  You are the issue!")
     }
@@ -36,7 +36,7 @@ exports.run = (client, message, args) => {
     // token (https://github.com/settings/tokens)
     octokit.authenticate({
         type: 'token',
-        token: auth.github_token
+        token: token
     });
 
     let payload = {};
