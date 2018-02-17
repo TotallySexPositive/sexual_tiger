@@ -61,3 +61,7 @@ exports.run = (client, message, args) => {
         }
     })
 };
+
+exports.help = () =>{
+    return 'Creates a new issue on github.  Flags: -t "Title" [-b "Body" -l "label" -l "labal2" -a "assignee"]';
+};
