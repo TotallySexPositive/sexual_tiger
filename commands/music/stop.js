@@ -9,7 +9,8 @@ exports.run = (client, message, args) => {
     server.songs = [];
     server.current_song_index = -1;
     server.current_song = {};
-
+    server.repeat = false;
+    
     message.guild.voiceConnection.disconnect();
     /*let dispatcher = vc.connection.dispatcher
     if(dispatcher === undefined) {
