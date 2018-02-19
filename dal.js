@@ -381,6 +381,17 @@ let incrementNumPlays = function(song_id) {
     }
 }
 
+let updateSong = function(song) {
+    let query = `UPDATE song SET name = :name, is_clip = :is_clip, duration = :duration WHERE song_id = :song_id;`
+
+    try {
+        return {err: undefined, info: DB.prepare(query).run({name: song.name, is_clip: song.is_clip, duration: song.duration, song_id: song.song_id})};
+    } catch (err) {
+        console.log(`updateSongById: \nError: `)
+        console.log(err);
+        return {err: err, songs: undefined};
+    }
+}
 
 
 module.exports.isInt = isInt;
@@ -403,3 +414,4 @@ module.exports.insertIntoSongs = insertIntoSongs;
 module.exports.findSongByHashId = findSongByHashId;
 module.exports.findSongByUrl = findSongByUrl;
 module.exports.incrementNumPlays = incrementNumPlays;
+module.exports.updateSong = updateSong;

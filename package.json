@@ -40,6 +40,7 @@
     "libsodium-wrappers": "^0.7.3",
     "md5": "^2.2.1",
     "node-dir": "^0.1.17",
+    "node-ffprobe": "^1.2.2",
     "node-opus": "^0.2.7",
     "opusscript": "0.0.6",
     "request": "^2.83.0",
