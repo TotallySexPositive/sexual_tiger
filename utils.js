@@ -30,7 +30,7 @@ var playAudio = function(client, connection, message, song, callBack) {
         dispatcher = connection.playFile(path.resolve(global.audio_dirs.hashed, `${song.hash_id}.mp3`), {volume: server.volume});
         let {err, info} = DAL.incrementNumPlays(song.song_id);
         if(err) {
-            console.err(err);
+            console.log(err);
             console.log(`Failed to increment num_plays for song_id, ${song.song_id}`);
         } else if(info.changes <= 0) {
             console.log(`Failed to increment num_plays for song_id, ${song.song_id}`);
