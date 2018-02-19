@@ -23,35 +23,26 @@ exports.run = (client, message, args) => {
 
     let song_identifier = args.join(" ");
     let found_song = undefined;
-    if(DAL.isInt(song_identifier)) {
-        let {err, song} = DAL.findSongById(song_identifier)
-        if(err) {
-            return message.channel.send("An error occured while searching for song.")
-        } else if (song === undefined) { 
-            return message.channel.send("There is no song by that id.")
+
+    let {err, song} = DAL.findSongByIdentifier(song_identifier);
+
+    if(err) {
+        return message.channel.send("An error occured while searching for song.")
+    } else if (song === undefined) { 
+        let {err: err_s, songs} = DAL.searchForSongs(song_identifier, 15)
+        if(err_s) {
+            return message.channel.send("We crashed while searching for similar songs.")
+        } else if(songs === undefined || songs.length === 0) {
+            return message.channel.send("There is no song by that name/id, and couldnt find any close matches.")
+        } else if (songs.length === 1) {
+            message.channel.send(`Playing closest match. ID: ${songs[0].song_id}  Name: ${songs[0].name}`)
+            found_song = songs[0];
         } else {
-            found_song = song;
+            message.channel.send("That song didnt exist and we found several close matches. Pick one to play.")
+            return message.channel.send(asciitable(options, songs),{code:true})
         }
     } else {
-        let {err, song} = DAL.findSongByName(song_identifier)
-        if(err) {
-            return message.channel.send("An error occured while searching for song.")
-        } else if (song === undefined) { //No exact match on song. Try searching?
-            let {err, songs} = DAL.searchForSongs(song_identifier, 15)
-            if(err) {
-                return message.channel.send("A song by that name didnt exist, and we crashed while searching for similar songs.")
-            } else if(songs === undefined) {
-                return message.channel.send("There is no song by that name, and couldnt find any close matches.")
-            } else if (songs.length === 1) {
-                message.channel.send("That song didnt exist, but we found one close match, Playing it.")
-                found_song = songs[0];
-            } else {
-                message.channel.send("That song didnt exist and we found several close matches. Pick one to play.")
-                return message.channel.send(asciitable(options, songs),{code:true})
-            }
-        } else {
-            found_song = song;
-        }
+        found_song = song;
     }
 
     vc.join()
