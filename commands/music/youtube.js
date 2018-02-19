@@ -37,7 +37,7 @@ exports.run = (client, message, args) => {
             } else {
                 let save_to     = path.resolve(global.audio_dirs.tmp, sanitize(info.title) + `.mp3`);
                 let write_steam = ytdl.downloadFromInfo(info, {filter: "audioonly"}).pipe(fs.createWriteStream(save_to));
-    
+                message.channel.send(`Download of, ${info.title}, from youtube has started.`)
                 write_steam.on('finish', () => {
                     message.channel.send("Done downloading the audio from youtube.")
                     UTIL.processAudioFile(save_to, url, message);
