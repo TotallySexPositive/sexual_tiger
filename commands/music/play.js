@@ -45,6 +45,7 @@ exports.run = (client, message, args) => {
         found_song = song;
     }
 
+    server.current_song = found_song;
     vc.join()
     .then(connection => {
         UTIL.playAudio(client, connection, message, found_song, UTIL.playAudioBasicCallBack)
