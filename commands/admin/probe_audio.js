@@ -24,5 +24,5 @@ exports.run = (client, message, args) => {
 }
 
 exports.help = () =>{
-    return "Will play a playlist. (But not to no-one, he's weird)";
+    return "Gently probes all audio files from behind to find out just how 'long' :wink: they are.";
 };
