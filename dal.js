@@ -440,6 +440,15 @@ let updateSong = function(song) {
     }
 }
 
+let getTopSongs = function(num_songs = 5) {
+    let query = `SELECT ${SONG_FIELDS} FROM ${SONG_TABLE} ORDER BY num_plays DESC LIMIT ?`
+
+    try {
+        return {err: undefined, songs: DB.prepare(query).all(num_songs)};
+    } catch (err) {
+        return {err: err, songs: undefined};
+    }
+}
 
 module.exports.isInt = isInt;
 
@@ -465,4 +474,5 @@ module.exports.updateSong = updateSong;
 module.exports.getAllSongs = getAllSongs;
 module.exports.deleteSongById = deleteSongById;
 module.exports.getPlaylistsWithSong = getPlaylistsWithSong;
+module.exports.getTopSongs = getTopSongs;
 
