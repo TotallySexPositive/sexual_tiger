@@ -8,7 +8,7 @@ const { exec }  = require('child_process');
 const auth      = require(path.resolve("auth.json"));
 const octokit   = require('@octokit/rest')();
 const mdt       = require("markdown-table")
-
+const probe     = require('node-ffprobe');
 
 var isInt = function(value) {
     var er = /^-?[0-9]+$/;
@@ -143,6 +143,9 @@ var processAudioFile = function(file_path, url, message) {
                 message.channel.send(`Sorry, ${message.author.username}, it seems something unexpected happened.`);
             } else {
                 message.channel.send(`The song ${cleaned_file_name} has been added, You're the DJ ${message.author.username}!`);
+
+                probe_audio_file(file_hash);
+
                 let gist_err = rebuildAudioGist();
                 if(gist_err) {
                     console.log(gist_err);
@@ -155,6 +158,19 @@ var processAudioFile = function(file_path, url, message) {
                     }
                 })
             }
+        }
+    });
+}
+
+let probe_audio_file = function(file_hash) {
+    probe(path.resolve(global.audio_dirs.hashed, file_hash + ".mp3"), function(err, data) {
+        let {err: s_err, song} = DAL.findSongByIdentifier(file_hash)
+        if(s_err) {
+            console.log("Probe Audio File: Uh oh...");
+            console.log(file_hash);
+        } else {
+            song.duration = Math.ceil(data.streams[0].duration);
+            DAL.updateSong(song);
         }
     });
 }

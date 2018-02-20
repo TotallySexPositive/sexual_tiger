@@ -8,7 +8,7 @@ const SONG_TABLE            = "song"
 const PLAYLIST_TABLE        = "playlist"
 const PLAYLIST_SONG_TABLE   = "playlist_song"
 
-const SONG_FIELDS           = "song.song_id, song.name, song.hash_id, song.source, song.num_plays, song.last_played, song.url, song.is_clip, song.duration "
+const SONG_FIELDS           = "song.song_id, song.name, song.hash_id, song.source, song.num_plays, song.last_played, song.url, song.is_clip, song.duration, song.added_by "
 const PLAYLIST_FIELDS       = "playlist.playlist_id, playlist.name, playlist.num_songs, playlist.created_by "
 const PLAYLIST_SONG_FIELDS  = "playlist_song.relation_id, playlist_song.playlist_id, playlist_song.song_id "
 
@@ -376,6 +376,42 @@ let insertIntoSongs = function(hash_id, name, source, url = null, user_id) {
     }
 }
 
+let getPlaylistsWithSong = function(identifier) {
+    let {err: s_err, song} = findSongByIdentifier(identifier);
+    if(s_err) {
+        console.log(s_err);
+        return {err: s_err, playlists: undefined}
+    } else if (song === undefined) {
+        return {err: new Error("There is no song by that identifier"), playlists: undefined}
+    } else {
+        let query = `SELECT DISTINCT ${PLAYLIST_FIELDS} FROM ${PLAYLIST_TABLE} JOIN ${PLAYLIST_SONG_TABLE} USING (playlist_id) WHERE song_id = ?`
+
+        try {
+            return {err: undefined, playlists: DB.prepare(query).all(song.song_id)};
+        } catch (err) {
+            return {err: err, playlists: undefined};
+        }
+    }
+}
+let deleteSongById = function(song_id) {
+    if(!isInt(song_id)) {
+        let err = new Error("song_id must be an integer.");
+        return {err: err, info: undefined};
+    }
+    let query = "DELETE FROM song WHERE song_id = ?"
+    try {
+        return {err: undefined, info: DB.prepare(query).run(song_id)};
+    } catch (err) {
+        if(err.message.includes("FOREIGN KEY")) {
+            return {err: err, info: undefined};
+        } else {
+            console.log(`deleteSongById: \nError: `)
+            console.log(err);
+            return {err: err, info: undefined};
+        }
+    }
+}
+
 let incrementNumPlays = function(song_id) {
     if(!isInt(song_id)) {
         let err = new Error("song_id must be an integer.");
@@ -427,4 +463,6 @@ module.exports.findSongByUrl = findSongByUrl;
 module.exports.incrementNumPlays = incrementNumPlays;
 module.exports.updateSong = updateSong;
 module.exports.getAllSongs = getAllSongs;
+module.exports.deleteSongById = deleteSongById;
+module.exports.getPlaylistsWithSong = getPlaylistsWithSong;
 
