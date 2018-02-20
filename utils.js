@@ -5,6 +5,10 @@ const fs        = require('fs');
 const DAL       = require(path.resolve("dal.js"))
 const md5       = require('md5');
 const { exec }  = require('child_process');
+const auth      = require(path.resolve("auth.json"));
+const octokit   = require('@octokit/rest')();
+const mdt       = require("markdown-table")
+
 
 var isInt = function(value) {
     var er = /^-?[0-9]+$/;
@@ -151,8 +155,51 @@ var processAudioFile = function(file_path, url, message) {
     });
 }
 
+//Yeah its fucking inefficient but.... fuck you
+let rebuildAudioGist = function() {
+    let {err, songs} = DAL.getAllSongs();
+
+    if(err) {
+        return new Error("Failed to grab all songs to build the list");
+    } else {
+        try {
+            octokit.authenticate({
+                type: 'token',
+                token: auth.github_token
+            });
+        
+            let table = [];
+            table.push(["ID", "Song"])
+            songs.forEach((song) => {
+                table.push([song.song_id, song.name])
+            });
+    
+            let payload = {};
+            payload.id = "c76103763a2f785162d30c841094e795";
+            payload.description = "All the audio files avaiable to play."
+            payload.files = {
+                "Audio.md": {
+                    content: mdt(table)
+                }
+            };
+            
+            octokit.gists.edit(payload, (error, result) => {
+                if(error) {
+                    console.log(error);
+                    return new Error("rebuildAudioGist error'd out while PUTing gist.")
+                } else {
+                    return undefined;
+                }
+            });
+
+        } catch (err) {
+            return new Error("Something error'd out while rebuilding Gist.")
+        }
+    }
+}
 module.exports.isInt = isInt;
 module.exports.playAudio = playAudio;
 module.exports.playAudioBasicCallBack = playAudioBasicCallBack;
 module.exports.playlistPlayBasicCallBack = playlistPlayBasicCallBack;
 module.exports.processAudioFile = processAudioFile;
+module.exports.rebuildAudioGist = rebuildAudioGist;

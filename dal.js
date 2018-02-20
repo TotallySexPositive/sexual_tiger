@@ -8,7 +8,7 @@ const SONG_TABLE            = "song"
 const PLAYLIST_TABLE        = "playlist"
 const PLAYLIST_SONG_TABLE   = "playlist_song"
 
-const SONG_FIELDS           = "song.song_id, song.name, song.hash_id, song.source, song.num_plays, song.last_played, song.url "
+const SONG_FIELDS           = "song.song_id, song.name, song.hash_id, song.source, song.num_plays, song.last_played, song.url, song.is_clip, song.duration "
 const PLAYLIST_FIELDS       = "playlist.playlist_id, playlist.name, playlist.num_songs, playlist.created_by "
 const PLAYLIST_SONG_FIELDS  = "playlist_song.relation_id, playlist_song.playlist_id, playlist_song.song_id "
 
@@ -325,7 +325,7 @@ let searchForSongs = function(name, max_songs = 10) {
 
     if(name.trim() === "") {
         let err = new Error("search term must not be blank.");
-        return {err: err, info: undefined};
+        return {err: err, songs: undefined};
     }
 
     let clauses = [];
@@ -349,6 +349,17 @@ let searchForSongs = function(name, max_songs = 10) {
     }
 }
 
+let getAllSongs = function() {
+    let query = `SELECT ${SONG_FIELDS} FROM ${SONG_TABLE}`
+
+    try {
+        return {err: undefined, songs: DB.prepare(query).all()};
+    } catch (err) {
+        console.log(`getAllSongs: \nError: `)
+        console.log(err);
+        return {err: err, songs: undefined};
+    }
+}
 
 let insertIntoSongs = function(hash_id, name, source, url = null) {
     if(isInt(name)) {
@@ -361,7 +372,7 @@ let insertIntoSongs = function(hash_id, name, source, url = null) {
     } catch (err) {
         console.log(`insertIntoSongs: \nError: `)
         console.log(err);
-        return {err: err, songs: undefined};
+        return {err: err, info: undefined};
     }
 }
 
@@ -371,13 +382,13 @@ let incrementNumPlays = function(song_id) {
         return {err: err, info: undefined};
     }
     //Update num plays and set last_played to current unix timestamp
-    let query = "UPDATE song SET num_plays = num_plays + 1, last_played = strftime('%s','now') WHERE song_id = ?"
+    let query = `UPDATE ${SONG_TABLE} SET num_plays = num_plays + 1, last_played = strftime('%s','now') WHERE song_id = ?`
     try {
         return {err: undefined, info: DB.prepare(query).run(song_id)};
     } catch (err) {
         console.log(`incrementNumPlays: \nError: `)
         console.log(err);
-        return {err: err, songs: undefined};
+        return {err: err, info: undefined};
     }
 }
 
@@ -389,7 +400,7 @@ let updateSong = function(song) {
     } catch (err) {
         console.log(`updateSongById: \nError: `)
         console.log(err);
-        return {err: err, songs: undefined};
+        return {err: err, info: undefined};
     }
 }
 
@@ -415,3 +426,5 @@ module.exports.findSongByHashId = findSongByHashId;
 module.exports.findSongByUrl = findSongByUrl;
 module.exports.incrementNumPlays = incrementNumPlays;
 module.exports.updateSong = updateSong;
+module.exports.getAllSongs = getAllSongs;
+
