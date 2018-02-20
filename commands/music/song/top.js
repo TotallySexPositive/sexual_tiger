@@ -20,7 +20,7 @@ exports.run = (client, message, args) => {
 
     let top_n = 5;
     let max_songs = 10;
-    
+
     if(UTIL.isInt(r_args) && +r_args <= max_songs) {
         top_n = +r_args
     }
@@ -32,4 +32,8 @@ exports.run = (client, message, args) => {
     } else {
         return message.channel.send(asciitable(options, songs),{code:true})
     }
+};
+
+exports.help = () =>{
+    return "Lists the top played songs. $song top #";
 };
