@@ -170,6 +170,12 @@ let probe_audio_file = function(file_hash) {
             console.log(file_hash);
         } else {
             song.duration = Math.ceil(data.streams[0].duration);
+            if(song.duration > 30) {
+                song.is_clip = 1;
+            } else {
+                song.is_clip = 0;
+            }
+
             DAL.updateSong(song);
         }
     });
