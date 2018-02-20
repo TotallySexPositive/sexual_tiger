@@ -361,14 +361,14 @@ let getAllSongs = function() {
     }
 }
 
-let insertIntoSongs = function(hash_id, name, source, url = null) {
+let insertIntoSongs = function(hash_id, name, source, url = null, user_id) {
     if(isInt(name)) {
         let err = new Error("song name must not be an integer.");
         return {err: err, info: undefined};
     }
-    let query = "INSERT INTO song (hash_id, name, source, url) VALUES (?, ?, ?, ?)"
+    let query = "INSERT INTO song (hash_id, name, source, url, added_by) VALUES (?, ?, ?, ?, ?)"
     try {
-        return {err: undefined, info: DB.prepare(query).run(hash_id, name, source, url)};
+        return {err: undefined, info: DB.prepare(query).run(hash_id, name, source, url, user_id)};
     } catch (err) {
         console.log(`insertIntoSongs: \nError: `)
         console.log(err);

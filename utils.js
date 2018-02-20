@@ -136,14 +136,18 @@ var processAudioFile = function(file_path, url, message) {
             })
             return;
         } else {
-            let {err, info} = DAL.insertIntoSongs(file_hash, cleaned_file_name, stored_file_path, url);
+            let {err, info} = DAL.insertIntoSongs(file_hash, cleaned_file_name, stored_file_path, url, message.author.id);
             
             if(err) {
                 console.log(err);
                 message.channel.send(`Sorry, ${message.author.username}, it seems something unexpected happened.`);
             } else {
                 message.channel.send(`The song ${cleaned_file_name} has been added, You're the DJ ${message.author.username}!`);
-                
+                let gist_err = rebuildAudioGist();
+                if(gist_err) {
+                    console.log(gist_err);
+                    message.channel.send("Tell Adam the gist list bit the bullet.");
+                }
                 fs.rename(file_path, stored_file_path, (err) => {
                     if(err) {
                         console.log(`Failed to move file, ${file_path} to ${stored_file_path}`);
