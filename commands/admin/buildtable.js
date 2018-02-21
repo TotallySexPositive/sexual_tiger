@@ -30,6 +30,24 @@ exports.run = (client, message, args) => {
             FOREIGN KEY(playlist_id) REFERENCES playlist(playlist_id) ON DELETE CASCADE,
             FOREIGN KEY(song_id) REFERENCES song(song_id)
         );`);
+        DB.run(`CREATE TABLE image (
+            image_id	INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
+            hash_id	TEXT NOT NULL UNIQUE,
+            extension	TEXT NOT NULL,
+            added_by	TEXT NOT NULL
+        );`);
+        DB.run(`CREATE TABLE image_tag (
+            image_tag_id	INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
+            image_id	INTEGER NOT NULL,
+            tag_id	INTEGER NOT NULL,
+            FOREIGN KEY(tag_id) REFERENCES tag(tag_id) ON DELETE CASCADE,
+            FOREIGN KEY(image_id) REFERENCES image(image_id) ON DELETE CASCADE
+        );`)
+        DB.run(`CREATE TABLE tag (
+            tag_id	INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT UNIQUE,
+            name	TEXT NOT NULL UNIQUE,
+            description	TEXT
+        );`)
         DB.run(`
             CREATE TRIGGER IF NOT EXIST increment_num_songs AFTER INSERT ON playlist_song
             BEGIN
@@ -56,6 +74,21 @@ exports.run = (client, message, args) => {
         DB.run(`
             CREATE INDEX IF NOT EXIST song_name ON song (
                 name
+            );
+        `);
+        DB.run(`
+            CREATE INDEX image_hash_id ON image (
+                hash_id
+            );
+        `);
+        DB.run(`
+            CREATE INDEX image_id ON image (
+                image_id
+            );
+        `);
+        DB.run(`
+            CREATE INDEX tag_id ON tag (
+                tag_id
             );
         `);
     });
