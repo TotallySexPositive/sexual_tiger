@@ -10,9 +10,7 @@ exports.run = (client, message, args) => {
     } else if(image === undefined) {
         message.channel.send("Couldnt find any images for pout.")
     } else {
-        console.log(image)
         let file = path.resolve(global.image_dirs.hashed, image.hash_id + image.extension);
-        console.log(file)
 	    message.channel.send("", {"files": [file]})
     }
 		

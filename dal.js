@@ -521,13 +521,18 @@ let findImageByIdentifier = function(identifier, identifier_type = null) {
 }
 
 let getRandomImageByTag = function(tag) {
-    let query = `SELECT ${IMAGE_FIELDS} FROM ${TAG_TABLE} INNER JOIN ${IMAGE_TAG_TABLE} ON ${IMAGE_TAG_TABLE}.tag_id = ${TAG_TABLE}.tag_id INNER JOIN ${IMAGE_TABLE} ON ${IMAGE_TABLE}.image_id = ${IMAGE_TAG_TABLE}.image_id WHERE ${TAG_TABLE}.name = "${tag}" ORDER BY RANDOM() LIMIT 1`;
-    
-    //console.log(DB.prepare(query))
+    let query = `
+        SELECT ${IMAGE_FIELDS} 
+        FROM ${TAG_TABLE} 
+        JOIN ${IMAGE_TAG_TABLE} USING (tag_id)
+        JOIN ${IMAGE_TABLE} USING (image_id)
+        WHERE ${TAG_TABLE}.name = ? 
+        ORDER BY RANDOM() 
+        LIMIT 1
+    `;
 
     try {
-        let img = DB.prepare(query).get();
-        console.log(img);
+        let img = DB.prepare(query).get(tag);
         return {err: undefined, image:img};
     } catch (err) {
         console.log(`getRandomImageByTag tag: ${tag} \nError: `)
