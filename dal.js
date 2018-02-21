@@ -521,9 +521,9 @@ let findImageByIdentifier = function(identifier, identifier_type = null) {
 }
 
 let getRandomImageByTag = function(tag) {
-    let query = `SELECT ${IMAGE_FIELDS} FROM ${TAG_TABLE} JOIN ${IMAGE_TAG_TABLE} USING (tag_id) JOIN ${IMAGE_TABLE} USING (image_id) WHERE tag.name = "pout" ORDER BY RANDOM() LIMIT 1`;
+    let query = `SELECT ${IMAGE_FIELDS} FROM ${TAG_TABLE} INNER JOIN ${IMAGE_TAG_TABLE} ON ${IMAGE_TAG_TABLE}.tag_id = ${TAG_TABLE}.tag_id INNER JOIN ${IMAGE_TABLE} ON ${IMAGE_TABLE}.image_id = ${IMAGE_TAG_TABLE}.image_id WHERE ${TAG_TABLE}.name = "${tag}" ORDER BY RANDOM() LIMIT 1`;
     
-    console.log(DB.prepare(query))
+    //console.log(DB.prepare(query))
 
     try {
         let img = DB.prepare(query).get();

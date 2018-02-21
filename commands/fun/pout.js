@@ -12,6 +12,7 @@ exports.run = (client, message, args) => {
     } else {
         console.log(image)
         let file = path.resolve(global.image_dirs.hashed, image.hash_id + image.extension);
+        console.log(file)
 	    message.channel.send("", {"files": [file]})
     }
 		
