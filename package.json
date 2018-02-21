@@ -36,6 +36,8 @@
     "erlpack": "github:discordapp/erlpack",
     "express": "^4.16.2",
     "ffmpeg-binaries": "^3.2.2",
+    "image-downloader": "^3.3.0",
+    "images-scraper": "^2.0.11",
     "jsonfile": "^4.0.0",
     "libsodium-wrappers": "^0.7.3",
     "markdown-table": "^1.1.1",

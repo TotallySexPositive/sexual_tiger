@@ -7,10 +7,16 @@ const validator             = require('validator');
 const SONG_TABLE            = "song"
 const PLAYLIST_TABLE        = "playlist"
 const PLAYLIST_SONG_TABLE   = "playlist_song"
+const IMAGE_TABLE           = "image"
+const TAG_TABLE             = "tag"
+const IMAGE_TAG_TABLE       = "image_tag"
 
 const SONG_FIELDS           = "song.song_id, song.name, song.hash_id, song.source, song.num_plays, song.last_played, song.url, song.is_clip, song.duration, song.added_by "
 const PLAYLIST_FIELDS       = "playlist.playlist_id, playlist.name, playlist.num_songs, playlist.created_by "
 const PLAYLIST_SONG_FIELDS  = "playlist_song.relation_id, playlist_song.playlist_id, playlist_song.song_id "
+const IMAGE_FIELDS          = "image.image_id, image.hash_id, image.extension, image.added_by "
+const TAG_FIELDS            = "tag.tag_id, tag.name "
+const IMAGE_TAG_FIELDS      = "image_tag.image_tag_id, image_tag.tag_id, image_tag.image_id "
 
 let DB = new Database('playlists.sql');
 
@@ -450,6 +456,86 @@ let getTopSongs = function(num_songs = 5) {
     }
 }
 
+let insertIntoImages = function(hash, ext, user_id) {
+    
+    let query = `INSERT INTO ${IMAGE_TABLE} (hash_id, extension, added_by) VALUES (?, ?, ?)`
+    try {
+        return {err: undefined, info: DB.prepare(query).run(hash, ext, user_id)};
+    } catch (err) {
+        console.log(`insertIntoImages: \nError: `)
+        console.log(err);
+        return {err: err, info: undefined};
+    }
+}
+
+var findImageById = function (image_id) {
+    if(!isInt(image_id)) {
+        let err = new Error("image_id must be an integer.")
+        return {err: err, image: undefined};
+    }
+    let query = `SELECT ${IMAGE_FIELDS} FROM ${IMAGE_TABLE} WHERE image_id = ?`;
+
+    try {
+        return {err: undefined, image:DB.prepare(query).get(image_id)};
+    } catch (err) {
+        console.log(`findImageById image_id: ${image_id} \nError: `)
+        console.log(err);
+        return {err: err, image: undefined};
+    }
+}
+
+var findImageByHashId = function (hash_id) {
+    let query = `SELECT ${IMAGE_FIELDS} FROM ${IMAGE_TABLE} WHERE hash_id = ?`;
+
+    try {
+        return {err: undefined, sonimageg:DB.prepare(query).get(hash_id)};
+    } catch (err) {
+        console.log(`findImageByHashId hash_id: ${hash_id} \nError: `)
+        console.log(err);
+        return {err: err, image: undefined};
+    }
+}
+
+let findImageByIdentifier = function(identifier, identifier_type = null) {
+    let valid_identifiers = ["image_id", "hash_id"];
+
+    if(identifier_type === null) { //Type not specified, lets figure it out
+        if(isInt(identifier)) {
+            return findImageById(identifier);
+        } else if(validator.isMD5(identifier)) {
+            return findImageByHashId(identifier);
+        } else {
+            return { err: new Error("Invalid indentifier"), image: undefined }
+        } 
+    } else {
+        if(!valid_identifiers.includes(identifier_type)) { //Invalid identifier type sent
+            let err = new Error(`Invalid identifier_type passed. Valid types: ${valid_identifiers.join(", ")}.`);
+            return { err: err, image: undefined }
+        } else { //Valid identifier type sent, just run the query
+            switch(identifier_type) {
+                case "image_id"  : return findImageById(identifier);
+                case "hash_id"   : return findImageByHashId(identifier);
+            }
+        }
+    }
+}
+
+let getRandomImageByTag = function(tag) {
+    let query = `SELECT ${IMAGE_FIELDS} FROM ${TAG_TABLE} JOIN ${IMAGE_TAG_TABLE} USING (tag_id) JOIN ${IMAGE_TABLE} USING (image_id) WHERE tag.name = "pout" ORDER BY RANDOM() LIMIT 1`;
+    
+    console.log(DB.prepare(query))
+
+    try {
+        let img = DB.prepare(query).get();
+        console.log(img);
+        return {err: undefined, image:img};
+    } catch (err) {
+        console.log(`getRandomImageByTag tag: ${tag} \nError: `)
+        console.log(err);
+        return {err: err, image: undefined};
+    }
+}
+
 module.exports.isInt = isInt;
 
 module.exports.findSongByIdentifier = findSongByIdentifier;
@@ -476,3 +562,8 @@ module.exports.deleteSongById = deleteSongById;
 module.exports.getPlaylistsWithSong = getPlaylistsWithSong;
 module.exports.getTopSongs = getTopSongs;
 
+module.exports.insertIntoImages = insertIntoImages;
+module.exports.findImageByIdentifier = findImageByIdentifier;
+module.exports.findImageById = findImageById;
+module.exports.findImageByHashId = findImageByHashId;
+module.exports.getRandomImageByTag = getRandomImageByTag;

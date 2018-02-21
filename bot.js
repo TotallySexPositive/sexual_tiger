@@ -5,6 +5,7 @@ const Discord   = require('discord.js');
 const Sanitize  = require('sanitize-filename');
 const auth      = require(path.resolve('auth.json'));
 const config    = require(path.resolve('configure.json'));
+const UTIL      = require(path.resolve('utils.js'));
 
 const client    = new Discord.Client();
 
@@ -29,6 +30,11 @@ global.audio_dirs = {
     "uploaded"  : path.resolve("audio", "uploaded")
 }
 
+global.image_dirs = {
+    "tmp"       : path.resolve("images", "tmp"),
+    "hashed"    : path.resolve("images", "hashed"),
+}
+
 //Array of directories required for bot to operate, make sure all parent directories appear before sub directories in list. IE: make sure audio exists, before trying to make audio/hashed
 let required_folders = [
     path.resolve("audio"),
@@ -36,6 +42,9 @@ let required_folders = [
     path.resolve("audio", "hashed"),
     path.resolve("audio", "stored"),
     path.resolve("audio", "uploaded"),
+    path.resolve("images"),
+    path.resolve("images", "tmp"),
+    path.resolve("images", "hashed"),
 ];
 //Loop the array of required folders and create any missing ones.
 required_folders.forEach(function(dir) {
@@ -56,6 +65,13 @@ client.on('ready', () => {
 });
 
 client.on('message', message => {
+
+    //If message starts with k;
+    if (message.content.indexOf("k;") == 0) {
+        const kargs = message.content.slice(2).trim();
+        UTIL.parseKyubeyImages(kargs);
+    }
+
     // If we are reading a bot message, ignore it
     if (message.author.bot){
         return;

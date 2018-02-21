@@ -162,6 +162,48 @@ var processAudioFile = function(file_path, url, message) {
     });
 }
 
+var processImageFile = function(file_path, message) {
+    let hashed_image_path       = global.image_dirs.hashed;
+    let file_name               = path.basename(file_path);
+    let ext                     = path.extname(file_path);
+
+    if(ext === "" || ext === ".") ext = ".gif";
+
+
+    let file_hash           = md5(fs.readFileSync(file_path));
+    let new_file_name       = file_hash + ext
+    let hashed_file_path    = path.resolve(hashed_image_path, new_file_name);
+
+    let {err, image}        = DAL.findImageByHashId(file_hash);
+
+    if(err) {
+        console.log("Oops?");
+        console.log(err);
+    } else if (image !== undefined) {
+        fs.unlink(file_path, function(err3) {
+            if(err3) {
+                console.log("Failed to delete duplicate file.")
+                console.log(err3);
+            }
+        });
+        return new Error(`That file already exists on the server by the name`);
+    }
+        
+    let {err: err_i, info} = DAL.insertIntoImages(file_hash, ext, message.author.id);
+    
+    if(err_i) {
+        console.log(err_i);
+        return new Error(`Error while inserting image.`);
+    } else {
+        fs.rename(file_path, hashed_file_path, (err) => {
+            if(err) {
+                console.log(`Failed to move file, ${file_path} to ${hashed_file_path}`);
+                console.log(err);
+            }
+        });
+    }
+}
+
 let probe_audio_file = function(file_hash) {
     probe(path.resolve(global.audio_dirs.hashed, file_hash + ".mp3"), function(err, data) {
         let {err: s_err, song} = DAL.findSongByIdentifier(file_hash)
@@ -179,6 +221,10 @@ let probe_audio_file = function(file_hash) {
             DAL.updateSong(song);
         }
     });
+}
+
+let pareKyubeyImages = function(message) {
+
 }
 
 //Yeah its fucking inefficient but.... fuck you
@@ -229,3 +275,5 @@ module.exports.playAudioBasicCallBack = playAudioBasicCallBack;
 module.exports.playlistPlayBasicCallBack = playlistPlayBasicCallBack;
 module.exports.processAudioFile = processAudioFile;
 module.exports.rebuildAudioGist = rebuildAudioGist;
+module.exports.pareKyubeyImages = pareKyubeyImages;
+module.exports.processImageFile = processImageFile;
