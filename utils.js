@@ -162,10 +162,11 @@ var processAudioFile = function(file_path, url, message) {
     });
 }
 
-var processImageFile = function(file_path, message) {
+var processImageFile = function(file_path, tag_name, message) {
     let hashed_image_path       = global.image_dirs.hashed;
     let file_name               = path.basename(file_path);
-    let ext                     = path.extname(file_path);
+    let ext                     = path.extname(file_path).replace(/\?.*$/, "");
+    let tag_id                  = -1;
 
     if(ext === "" || ext === ".") ext = ".gif";
 
@@ -188,7 +189,24 @@ var processImageFile = function(file_path, message) {
         });
         return new Error(`That file already exists on the server by the name`);
     }
-        
+
+
+    let {err:t_err, tag} = DAL.findTagByName(tag_name);
+    if(t_err) {
+        return new Error('Crashed finding Tag with that name.')
+    } else if(tag === undefined) { //No tag with that name exists
+        let {err:nt_err, info} = DAL.insertIntoTag(name);
+        {
+            if(nt_err) {
+                return new Error('Crashed while trying to create new Tag');
+            } else {
+                tag_id = info.lastInsertROWID;
+            }
+        }
+    } else {
+        tag_id = tag.tag_id;
+    }
+ 
     let {err: err_i, info} = DAL.insertIntoImages(file_hash, ext, message.author.id);
     
     if(err_i) {
@@ -201,6 +219,10 @@ var processImageFile = function(file_path, message) {
                 console.log(err);
             }
         });
+        let {err: it_err, info:it_info} = DAL.insertIntoImageTag(info.lastInsertROWID, tag_id);
+        if(it_err) {
+            return Error(`Failed to create relationship between Image: ${info.lastInsertROWID} and Tag: ${tag_id}`)
+        }
     }
 }
 
@@ -269,6 +291,15 @@ let rebuildAudioGist = function() {
         }
     }
 }
+
+
+let getFileSizeInMegaBytes = function(file) {
+    const stats = fs.statSync(file)
+    const file_size_in_bytes = stats.size
+    const file_size_in_mb = file_size_in_bytes / 1000000.0
+    return file_size_in_mb;
+}
+
 module.exports.isInt = isInt;
 module.exports.playAudio = playAudio;
 module.exports.playAudioBasicCallBack = playAudioBasicCallBack;
@@ -277,3 +308,4 @@ module.exports.processAudioFile = processAudioFile;
 module.exports.rebuildAudioGist = rebuildAudioGist;
 module.exports.pareKyubeyImages = pareKyubeyImages;
 module.exports.processImageFile = processImageFile;
+module.exports.getFileSizeInMegaBytes = getFileSizeInMegaBytes;

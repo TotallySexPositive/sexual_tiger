@@ -65,13 +65,6 @@ client.on('ready', () => {
 });
 
 client.on('message', message => {
-
-    //If message starts with k;
-    if (message.content.indexOf("k;") == 0) {
-        const kargs = message.content.slice(2).trim();
-        UTIL.parseKyubeyImages(kargs);
-    }
-
     // If we are reading a bot message, ignore it
     if (message.author.bot){
         return;

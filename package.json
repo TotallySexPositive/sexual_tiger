@@ -46,6 +46,7 @@
     "node-ffprobe": "^1.2.2",
     "node-opus": "^0.2.7",
     "opusscript": "0.0.6",
+    "randomstring": "^1.1.5",
     "request": "^2.83.0",
     "sanitize-filename": "^1.6.1",
     "sodium": "^2.0.3",

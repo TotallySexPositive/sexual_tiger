@@ -541,6 +541,44 @@ let getRandomImageByTag = function(tag) {
     }
 }
 
+let findTagByName = function(name) {
+    if(isInt(name)) {
+        let err = new Error("name must NOT be an integer.")
+        return {err: err, song: undefined};
+    }
+    let query = `SELECT ${TAG_FIELDS} FROM ${TAG_TABLE} WHERE name LIKE ?`;
+
+    try {
+        return {err: undefined, tag:DB.prepare(query).get(name)};
+    } catch (err) {
+        console.log(`g name: ${name} \nError: `)
+        console.log(err);
+        return {err: err, tag: undefined};
+    }
+}
+
+let insertIntoTags = function(name) {
+    let query = `INSERT INTO ${TAG_TABLE} (name) VALUES (?)`
+    try {
+        return {err: undefined, info: DB.prepare(query).run(name)};
+    } catch (err) {
+        console.log(`insertIntoTags: \nError: `)
+        console.log(err);
+        return {err: err, info: undefined};
+    }
+}
+
+let insertIntoImageTag = function(image_id, tag_id) {
+    let query = `INSERT INTO ${IMAGE_TAG_TABLE} (image_id, tag_id) VALUES (?, ?)`
+    try {
+        return {err: undefined, info: DB.prepare(query).run(image_id, tag_id)};
+    } catch (err) {
+        console.log(`insertIntoImageTag: \nError: `)
+        console.log(err);
+        return {err: err, info: undefined};
+    }
+}
+
 module.exports.isInt = isInt;
 
 module.exports.findSongByIdentifier = findSongByIdentifier;
@@ -572,3 +610,6 @@ module.exports.findImageByIdentifier = findImageByIdentifier;
 module.exports.findImageById = findImageById;
 module.exports.findImageByHashId = findImageByHashId;
 module.exports.getRandomImageByTag = getRandomImageByTag;
+module.exports.findTagByName = findTagByName;
+module.exports.insertIntoTags = insertIntoTags;
+module.exports.insertIntoImageTag = insertIntoImageTag;
