@@ -557,7 +557,7 @@ let findTagByName = function(name) {
     }
 }
 
-let insertIntoTags = function(name) {
+let insertIntoTag = function(name) {
     let query = `INSERT INTO ${TAG_TABLE} (name) VALUES (?)`
     try {
         return {err: undefined, info: DB.prepare(query).run(name)};
@@ -611,5 +611,5 @@ module.exports.findImageById = findImageById;
 module.exports.findImageByHashId = findImageByHashId;
 module.exports.getRandomImageByTag = getRandomImageByTag;
 module.exports.findTagByName = findTagByName;
-module.exports.insertIntoTags = insertIntoTags;
+module.exports.insertIntoTag = insertIntoTag;
 module.exports.insertIntoImageTag = insertIntoImageTag;

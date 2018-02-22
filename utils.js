@@ -195,7 +195,7 @@ var processImageFile = function(file_path, tag_name, message) {
     if(t_err) {
         return new Error('Crashed finding Tag with that name.')
     } else if(tag === undefined) { //No tag with that name exists
-        let {err:nt_err, info} = DAL.insertIntoTag(name);
+        let {err:nt_err, info} = DAL.insertIntoTag(tag_name);
         {
             if(nt_err) {
                 return new Error('Crashed while trying to create new Tag');
