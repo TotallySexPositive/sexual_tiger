@@ -17,5 +17,5 @@ exports.run = (client, message, args) => {
 }
 
 exports.help = () =>{
-    return "Steve be creative because I cant...";
+    return "（￣へ￣）（’へ’）(￣⊿￣)";
 };
