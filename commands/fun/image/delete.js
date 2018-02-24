@@ -38,5 +38,5 @@ exports.run = (client, message, args) => {
 }
 
 exports.help = () =>{
-    return "Send an imagine into oblivion!";
+    return "Send an imagine into oblivion! $image delete [hash_id]";
 };

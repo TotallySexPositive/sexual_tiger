@@ -48,5 +48,5 @@ exports.run = (client, message, args) => {
 };
 
 exports.help = () =>{
-    return "417 I'm a teapot";
+    return `Renames a song. $song rename -i [song_id] -n "New Song Name" `;
 };
