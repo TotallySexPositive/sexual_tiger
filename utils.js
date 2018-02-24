@@ -87,9 +87,15 @@ var playlistPlayBasicCallBack = function(client, connection, message, song, call
     }
 }
 
-var processAudioFile = function(file_path, url, message) {
+var processAudioFileTask = function(t_obj, cb) {
+    return processAudioFile(t_obj.file_path, t_obj.url, t_obj.message, cb)
+}
+
+var processAudioFile = function(file_path, url, message, cb) {
     let hashed_audio_path       = global.audio_dirs.hashed;
     let stored_audio_path       = global.audio_dirs.stored;
+    console.log(`FP: ${file_path})`);
+
     let file_name               = path.basename(file_path);
 
     console.log(`Started Processing file, ${file_name}`)
@@ -108,13 +114,13 @@ var processAudioFile = function(file_path, url, message) {
         console.log("Oops?");
         console.log(err);
     } else if (song !== undefined) {
-        message.channel.send(`That file already exists on the server by the name, ${song.name}`);
         fs.unlink(file_path, function(err3) {
             if(err3) {
                 console.log("Failed to delete duplicate file.")
                 console.log(err3);
             }
         })
+        cb(new Error(`The given file already exists on the server by name, ${song.name}`), undefined);
         return;
     }
         
@@ -134,16 +140,14 @@ var processAudioFile = function(file_path, url, message) {
 
                 }
             })
-            return;
+            cb(new Error(`Failed to run ffmpeg-normalize. ${err.message}`), undefined);
         } else {
             let {err, info} = DAL.insertIntoSongs(file_hash, cleaned_file_name, stored_file_path, url, message.author.id);
             
             if(err) {
                 console.log(err);
-                message.channel.send(`Sorry, ${message.author.username}, it seems something unexpected happened.`);
+                cb(new Error(`Failed to run insert song into DB. ${err.message}`), undefined);
             } else {
-                message.channel.send(`The song ${cleaned_file_name} has been added, You're the DJ ${message.author.username}!`);
-
                 probe_audio_file(file_hash);
 
                 let gist_err = rebuildAudioGist();
@@ -157,6 +161,7 @@ var processAudioFile = function(file_path, url, message) {
                         console.log(err);
                     }
                 })
+                cb(undefined, `The song ${cleaned_file_name} has been added, You're the DJ ${message.author.username}!`);
             }
         }
     });
@@ -168,7 +173,7 @@ var processImageFile = function(file_path, tag_name, message) {
     let ext                     = path.extname(file_path).replace(/\?.*$/, "");
     let tag_id                  = -1;
 
-    if(ext === "" || ext === ".") ext = ".gif";
+    if(ext === "" || ext === "." || ext.length > 5) ext = ".gif";
 
 
     let file_hash           = md5(fs.readFileSync(file_path));
@@ -309,3 +314,4 @@ module.exports.rebuildAudioGist = rebuildAudioGist;
 module.exports.pareKyubeyImages = pareKyubeyImages;
 module.exports.processImageFile = processImageFile;
 module.exports.getFileSizeInMegaBytes = getFileSizeInMegaBytes;
+module.exports.processAudioFileTask = processAudioFileTask;

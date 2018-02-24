@@ -19,6 +19,8 @@ exports.run = (client, message, args) => {
     else {
         server.volume = higher_volume;
         dispatcher.setVolume(server.volume);
+        message.channel.send(`Raised volume: ${server.volume}`);
+
     }
 }
 

@@ -40,7 +40,13 @@ exports.run = (client, message, args) => {
                 message.channel.send(`Download of, ${info.title}, from youtube has started.`)
                 write_steam.on('finish', () => {
                     message.channel.send("Done downloading the audio from youtube.")
-                    UTIL.processAudioFile(save_to, url, message);
+                    UTIL.processAudioFile(save_to, url, message, (err, success) => {
+                        if(err) {
+                            message.channel.send(err.message);
+                        } else {
+                            message.channel.send(success);
+                        }
+                    });
                 })
             }
         });

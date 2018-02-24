@@ -29,6 +29,7 @@
     "@octokit/rest": "^15.0.1",
     "array-shuffle": "^1.0.1",
     "asciitable": "0.0.7",
+    "better-queue": "^3.8.6",
     "better-sqlite3": "^4.1.0",
     "bufferutil": "^3.0.3",
     "curl": "^0.1.4",

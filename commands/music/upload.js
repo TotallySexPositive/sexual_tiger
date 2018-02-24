@@ -14,7 +14,13 @@ exports.run = (client, message, args) => {
         request(item.url)
             .pipe(fs.createWriteStream(fpath))
             .on('finish', () => {
-                UTIL.processAudioFile(fpath, null, message);
+                UTIL.processAudioFile(fpath, null, message, (err, success) => {
+                    if(err) {
+                        message.channel.send(err.message);
+                    } else {
+                        message.channel.send(success);
+                    }
+                });
             })
             .on('error', (err) => {console.error(err)})
     })

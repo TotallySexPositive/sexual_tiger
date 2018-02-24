@@ -10,7 +10,7 @@ exports.run = (client, message, args) => {
         if(!server.current_song || server.current_song === undefined || server.current_song.name === undefined) {
             message.channel.send("Either nothing is playing or its not a playlist song.")
         } else {
-            message.channel.send(`Current Song: ${server.current_song.name}`);
+            message.channel.send(`Current Song: ID: ${server.current_song.song_id}  Name: ${server.current_song.name}`);
         }
     } else {
         var song_command    = args[0];

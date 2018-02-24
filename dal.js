@@ -520,6 +520,17 @@ let findImageByIdentifier = function(identifier, identifier_type = null) {
     }
 }
 
+let deleteImageById = function(image_id) {
+    let query = `DELETE FROM ${IMAGE_TABLE} WHERE image_id = ?`
+    try {
+        return {err: undefined, info: DB.prepare(query).run(image_id)};
+    } catch (err) {
+        console.log(`deleteImageById: image_id: ${image_id} \nError: `);
+        console.log(err);
+        return {err: err, info: undefined};
+    }
+}
+
 let getRandomImageByTag = function(tag) {
     let query = `
         SELECT ${IMAGE_FIELDS} 
@@ -613,3 +624,4 @@ module.exports.getRandomImageByTag = getRandomImageByTag;
 module.exports.findTagByName = findTagByName;
 module.exports.insertIntoTag = insertIntoTag;
 module.exports.insertIntoImageTag = insertIntoImageTag;
+module.exports.deleteImageById = deleteImageById;

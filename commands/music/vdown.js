@@ -12,6 +12,7 @@ exports.run = (client, message, args) => {
     }
     server.volume = server.volume/2;
     dispatcher.setVolume(server.volume);
+    message.channel.send(`Lowered volume: ${server.volume}`);
 }
 
 exports.help = () =>{
