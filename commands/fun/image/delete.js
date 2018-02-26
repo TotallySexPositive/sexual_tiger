@@ -9,7 +9,7 @@ exports.run = (client, message, args) => {
     } else {
         let hash = args[0]
 
-        let {err, image} = DAL.findImageByHash(hash);
+        let {err, image} = DAL.findImageByHashId(hash);
         if(err) {
             console.log(err);
             message.channel.send("Crashed while finding image.")
@@ -31,6 +31,7 @@ exports.run = (client, message, args) => {
                         console.log(err3);
                     }
                 });
+                message.channel.send(`${image.hash_id}${image.extension} has been deleted.`)
             }
         }
     }

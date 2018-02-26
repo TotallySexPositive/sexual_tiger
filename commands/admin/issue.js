@@ -9,6 +9,7 @@ exports.run = (client, message, args) => {
    
     let valid_users = {
         "231574835694796801": auth.github_token,
+        "231606224909500418": auth.github_token,
         "183388696207294465": auth.github_steve
     }
     let token = valid_users[message.author.id];
