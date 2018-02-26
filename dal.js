@@ -488,7 +488,7 @@ var findImageByHashId = function (hash_id) {
     let query = `SELECT ${IMAGE_FIELDS} FROM ${IMAGE_TABLE} WHERE hash_id = ?`;
 
     try {
-        return {err: undefined, sonimageg:DB.prepare(query).get(hash_id)};
+        return {err: undefined, image:DB.prepare(query).get(hash_id)};
     } catch (err) {
         console.log(`findImageByHashId hash_id: ${hash_id} \nError: `)
         console.log(err);
