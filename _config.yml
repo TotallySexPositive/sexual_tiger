@@ -6,4 +6,5 @@ description: Help file for Sexual Tiger Discord bot.
 
 # Build settings
 markdown: kramdown
-theme: jekyll-theme-midnight
+remote_theme: chrisbobbe/jekyll-theme-prologue
+#theme: jekyll-theme-midnight
