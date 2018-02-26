@@ -1,1 +1,10 @@
-theme: jekyll-theme-midnight
+# basic options
+title: Sexual Tiger
+author: Adam
+email: sexual@tiger.com
+description: Help file for Sexual Tiger Discord bot.
+
+# Build settings
+markdown: kramdown
+remote_theme: chrisbobbe/jekyll-theme-prologue
+#theme: jekyll-theme-midnight
