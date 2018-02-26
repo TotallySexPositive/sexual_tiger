@@ -1,1 +1,9 @@
+# basic options
+title: Sexual Tiger
+author: Adam
+email: sexual@tiger.com
+description: Help file for Sexual Tiger Discord bot.
+
+# Build settings
+markdown: kramdown
 theme: jekyll-theme-midnight
