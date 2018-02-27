@@ -33,6 +33,7 @@ global.audio_dirs = {
 global.image_dirs = {
     "tmp"       : path.resolve("images", "tmp"),
     "hashed"    : path.resolve("images", "hashed"),
+    "trash"     : path.resolve("images", "trash"),
 }
 
 //Array of directories required for bot to operate, make sure all parent directories appear before sub directories in list. IE: make sure audio exists, before trying to make audio/hashed
@@ -45,6 +46,7 @@ let required_folders = [
     path.resolve("images"),
     path.resolve("images", "tmp"),
     path.resolve("images", "hashed"),
+    path.resolve("images", "trash"),
 ];
 //Loop the array of required folders and create any missing ones.
 required_folders.forEach(function(dir) {

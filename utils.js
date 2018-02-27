@@ -15,6 +15,19 @@ var isInt = function(value) {
     return er.test(value);
 }
 
+var isAdmin = function(member) {
+    let roles = member.roles
+    let is_admin = false;
+
+    roles.some(role => {
+        if(role.hasPermission('ADMINISTRATOR')) {
+            is_admin = true;
+            return;
+        }
+    });
+    return is_admin;
+}
+
 var playAudio = function(client, connection, message, song, callBack) {
     var server = global.servers[message.guild.id]
     let dispatcher = null;
@@ -250,10 +263,6 @@ let probe_audio_file = function(file_hash) {
     });
 }
 
-let pareKyubeyImages = function(message) {
-
-}
-
 //Yeah its fucking inefficient but.... fuck you
 let rebuildAudioGist = function() {
     let {err, songs} = DAL.getAllSongs();
@@ -305,13 +314,79 @@ let getFileSizeInMegaBytes = function(file) {
     return file_size_in_mb;
 }
 
+
+let postRandomImageByTag = function(message, tag) {
+    let {err, image} = DAL.getRandomImageByTag(tag);
+    if(err) {
+        console.log(err);
+        message.channel.send("Crashed finding image");
+    } else if(image === undefined) {
+        message.channel.send("Couldnt find any images for pout.")
+    } else {
+        let file = path.resolve(global.image_dirs.hashed, image.hash_id + image.extension);
+        message.channel.send("", {"files": [file]})
+            .then(post => {
+                const filter = (reaction, user) => reaction.emoji.name === '❌' /*This is a speical x*/ && isAdmin(message.member)
+                const collector = post.createReactionCollector(filter, { time: 30000 });
+                collector.on('collect', r => {
+                    console.log(`Collected ${r.emoji.name}`);
+                    let attachments = post.attachments.array()
+                    let hash = attachments[0].filename.replace(/\.[^/.]+$/, "")//Strip off extention
+                    let {err, image} = deleteImageByHash(hash);
+                    if(err) {
+                        message.channel.send(err.message);
+                    } else if (image === undefined) {
+                        message.channel.send("No image to delete/")
+                    } else {
+                        message.channel.send(`Image: ${image.hash_id}${image.extension}  has been removed.`)
+                        post.delete();
+                    }
+                    
+                });
+            })
+            .catch(console.error);
+    }
+}
+
+//{err: Error, image: {}}
+let deleteImageByHash = function(hash) {
+    let {err, image} = DAL.findImageByHashId(hash);
+    if(err) {
+        console.log(err);
+        return {err: new Error("Crashed while finding image."), image: undefined}
+    } else if (image === undefined) {
+        return {err: undefined, image: undefined} //no image
+    } else {
+        let {err: d_err, info} = DAL.deleteImageById(image.image_id);
+        if(d_err) {
+            console.log(d_err);
+            return {err: new Error("Crashed while deleting image."), image: undefined} //no image
+        } else if (info.changes === 0) {
+            message.channel.send("There was no image with that hash.")
+            return {err: undefined, image: undefined} //no image
+        } else {
+            let file_path = path.resolve(global.image_dirs.hashed, image.hash_id + image.extension)
+            let trash_path = path.resolve(global.image_dirs.trash, image.hash_id + image.extension)
+            fs.rename(file_path, trash_path, (err) => {
+                if(err) {
+                    console.log(`Failed to move deleted image, ${file_path} to ${trash_path}`);
+                    console.log(err);
+                }
+            })
+           return {err: undefined, image: image}
+        }
+    }
+}
+
 module.exports.isInt = isInt;
+module.exports.isAdmin = isAdmin;
 module.exports.playAudio = playAudio;
 module.exports.playAudioBasicCallBack = playAudioBasicCallBack;
 module.exports.playlistPlayBasicCallBack = playlistPlayBasicCallBack;
 module.exports.processAudioFile = processAudioFile;
 module.exports.rebuildAudioGist = rebuildAudioGist;
-module.exports.pareKyubeyImages = pareKyubeyImages;
 module.exports.processImageFile = processImageFile;
 module.exports.getFileSizeInMegaBytes = getFileSizeInMegaBytes;
 module.exports.processAudioFileTask = processAudioFileTask;
+module.exports.deleteImageByHash = deleteImageByHash;
+module.exports.postRandomImageByTag = postRandomImageByTag;
