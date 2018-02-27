@@ -11,6 +11,12 @@ exports.run = (client, message, args) => {
     On Server: ${message.guild.id}
     `.replace(/\n +/g, `\n`);
 
+    console.log(member.roles)
+    let roles = member.roles;
+
+    roles.forEach(r => {
+        console.log(`ID: ${r.id}\nName:${r.name}\nisAdmin: ${r.hasPermission('ADMINISTRATOR')}`)
+    })
    message.channel.send(description);
 }
 
