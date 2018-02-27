@@ -71,6 +71,7 @@ client.on('message', message => {
     if (message.author.bot){
         return;
     }
+    
     const user = message.author.username;
 
     //Never forget foxwell

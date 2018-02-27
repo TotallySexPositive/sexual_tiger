@@ -321,27 +321,30 @@ let postRandomImageByTag = function(message, tag) {
         console.log(err);
         message.channel.send("Crashed finding image");
     } else if(image === undefined) {
-        message.channel.send("Couldnt find any images for pout.")
+        message.channel.send("Couldnt find any images for pout.");
     } else {
         let file = path.resolve(global.image_dirs.hashed, image.hash_id + image.extension);
         message.channel.send("", {"files": [file]})
             .then(post => {
-                const filter = (reaction, user) => reaction.emoji.name === '❌' /*This is a speical x*/ && isAdmin(message.member)
+                const filter = (reaction, user) => {
+                    return reaction.emoji.name === '❌' && isAdmin(message.guild.members.get(user.id))
+                };
+
                 const collector = post.createReactionCollector(filter, { time: 30000 });
                 collector.on('collect', r => {
                     console.log(`Collected ${r.emoji.name}`);
-                    let attachments = post.attachments.array()
-                    let hash = attachments[0].filename.replace(/\.[^/.]+$/, "")//Strip off extention
+
+                    let attachments = post.attachments.array();
+                    let hash = attachments[0].filename.replace(/\.[^/.]+$/, ""); //Strip off extention
                     let {err, image} = deleteImageByHash(hash);
                     if(err) {
                         message.channel.send(err.message);
                     } else if (image === undefined) {
-                        message.channel.send("No image to delete/")
+                        message.channel.send("No image to delete");
                     } else {
-                        message.channel.send(`Image: ${image.hash_id}${image.extension}  has been removed.`)
+                        message.channel.send(`Image: ${image.hash_id}${image.extension}  has been removed.`);
                         post.delete();
                     }
-                    
                 });
             })
             .catch(console.error);
