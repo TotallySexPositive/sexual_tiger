@@ -568,6 +568,25 @@ let findTagByName = function(name) {
     }
 }
 
+let findTagsByNames = function(names) {
+    let term_clauses = [];
+    names.forEach(name => {
+        term_clauses.push("name LIKE ?")
+    })
+
+    let where = term_clauses.join(" OR ")
+    let query = `SELECT ${TAG_FIELDS} FROM ${TAG_TABLE} WHERE ${where}`;
+
+
+    try {
+        return {err: undefined, tags:DB.prepare(query).all(names)};
+    } catch (err) {
+        console.log(`names:`, names)
+        console.log(`Error: `, err);
+        return {err: err, tags: undefined};
+    }
+}
+
 let insertIntoTag = function(name) {
     let query = `INSERT INTO ${TAG_TABLE} (name) VALUES (?)`
     try {
@@ -579,10 +598,18 @@ let insertIntoTag = function(name) {
     }
 }
 
-let insertIntoImageTag = function(image_id, tag_id) {
-    let query = `INSERT INTO ${IMAGE_TAG_TABLE} (image_id, tag_id) VALUES (?, ?)`
+let insertIntoImageTag = function(image_ids, tag_ids) {
+    let terms = [];
+    image_ids.forEach(i_id => {
+        tag_ids.forEach(t_id => {
+            terms.push(`(${i_id}, ${t_id})`);
+        })
+    })
+
+    let query = `INSERT OR IGNORE INTO ${IMAGE_TAG_TABLE} (image_id, tag_id) VALUES ${terms.join(',')}`
+
     try {
-        return {err: undefined, info: DB.prepare(query).run(image_id, tag_id)};
+        return {err: undefined, info: DB.prepare(query).run()};
     } catch (err) {
         console.log(`insertIntoImageTag: \nError: `)
         console.log(err);
@@ -622,6 +649,8 @@ module.exports.findImageById = findImageById;
 module.exports.findImageByHashId = findImageByHashId;
 module.exports.getRandomImageByTag = getRandomImageByTag;
 module.exports.findTagByName = findTagByName;
+module.exports.findTagsByNames = findTagsByNames;
+
 module.exports.insertIntoTag = insertIntoTag;
 module.exports.insertIntoImageTag = insertIntoImageTag;
 module.exports.deleteImageById = deleteImageById;

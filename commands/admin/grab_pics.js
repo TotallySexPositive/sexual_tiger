@@ -60,7 +60,7 @@ exports.run = (client, message, args) => {
                 } else {
                     //Downloaded file to tmp.  Lets process it.
                     console.log(filename)
-                    let i_err = UTIL.processImageFile(filename, argv.t, message);
+                    let i_err = UTIL.processImageFile(filename, argv.t, message.author.id);
                     if(i_err) {
                         console.log(i_err);
                     }
