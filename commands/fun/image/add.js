@@ -14,9 +14,6 @@ exports.run = (client, message, args) => {
        return message.channel.send("You must also tag the image.  EX: $image add http://coolimages.com/coolimage.jpg cry pout death");
    } else {
         const [url, ...tags] = args;
-        console.log(url);
-        console.log(tags);
-
 
         if(!validator.isURL(url)) {
             return message.channel.send("Invalid url sent.")
@@ -44,7 +41,7 @@ exports.run = (client, message, args) => {
 
                     let image = imageType(buffer);
 
-                    if(image === undefined || image === null || !mime.includes("image")) {
+                    if(image === undefined || image === null || !image.mime.includes("image")) {
                         return message.channel.send("That doesnt look like an image to me.")
                     } else {
                         //Downloaded file to tmp.  Lets process it.
@@ -57,14 +54,10 @@ exports.run = (client, message, args) => {
                         }
                     }
                 }
-                
             }).catch((err) => {
                 throw err
             })
-
-
-            
-            }
+        }
     }
 }
 

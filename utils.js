@@ -237,7 +237,7 @@ var processImageFile = function(file_path, tag_name, user_id) {
                 console.log(err);
             }
         });
-        let {err: it_err, info:it_info} = DAL.insertIntoImageTag(info.lastInsertROWID, tag_id);
+        let {err: it_err, info:it_info} = DAL.insertIntoImageTag([info.lastInsertROWID], [tag_id]);
         if(it_err) {
             return Error(`Failed to create relationship between Image: ${info.lastInsertROWID} and Tag: ${tag_id}`)
         }
