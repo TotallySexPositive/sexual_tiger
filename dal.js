@@ -618,7 +618,6 @@ let insertIntoImageTag = function(image_ids, tag_ids) {
             terms.push(`(${i_id}, ${t_id})`);
         })
     })
-
     let query = `INSERT OR IGNORE INTO ${IMAGE_TAG_TABLE} (image_id, tag_id) VALUES ${terms.join(',')}`
 
     try {

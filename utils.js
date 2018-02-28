@@ -248,7 +248,7 @@ var processImageFile = function(file_path, tag_names, user_id) {
         let tag_ids = tags.map(function(tag) {return tag['tag_id'];})
         let {err: it_err, info:it_info} = DAL.insertIntoImageTag([image_id], tag_ids);
         if(it_err) {
-            return Error(`Failed to create relationship between Image: ${info.lastInsertROWID} and Tag: ${tag_id}`)
+            return Error(`Failed to create relationship between Image: ${it_info.lastInsertROWID} and Tag: ${tag_id}`)
         }
     }
 }
@@ -333,29 +333,38 @@ let postRandomImageByTag = function(message, tag) {
     } else {
         let file = path.resolve(global.image_dirs.hashed, image.hash_id + image.extension);
         message.channel.send("", {"files": [file]})
-            .then(post => {
-                const filter = (reaction, user) => {
-                    return reaction.emoji.name === '❌' && isAdmin(message.guild.members.get(user.id))
-                };
+        .then(post => {
+            //Store the posted image message_id to the tag/cmd that was called.  For use in untagging/retagging
+            global.img_resp_to_tag[post.id] = tag
+            global.img_resp_to_tag_order.push(post.id)
 
-                const collector = post.createReactionCollector(filter, { time: 30000 });
-                collector.on('collect', r => {
-                    console.log(`Collected ${r.emoji.name}`);
+            if(global.img_resp_to_tag_order.length > global.img_resp_to_tag_max_len) {
+                let old_id = global.img_resp_to_tag_order.shift()
+                delete global.img_resp_to_tag[old_id]
+            }
 
-                    let attachments = post.attachments.array();
-                    let hash = attachments[0].filename.replace(/\.[^/.]+$/, ""); //Strip off extention
-                    let {err, image} = deleteImageByHash(hash);
-                    if(err) {
-                        message.channel.send(err.message);
-                    } else if (image === undefined) {
-                        message.channel.send("No image to delete");
-                    } else {
-                        message.channel.send(`Image: ${image.hash_id}${image.extension}  has been removed.`);
-                        post.delete();
-                    }
-                });
-            })
-            .catch(console.error);
+            const filter = (reaction, user) => {
+                return reaction.emoji.name === '❌' && isAdmin(message.guild.members.get(user.id))
+            };
+
+            const collector = post.createReactionCollector(filter, { time: 30000 });
+            collector.on('collect', r => {
+                console.log(`Collected ${r.emoji.name}`);
+
+                let attachments = post.attachments.array();
+                let hash = attachments[0].filename.replace(/\.[^/.]+$/, ""); //Strip off extention
+                let {err, image} = deleteImageByHash(hash);
+                if(err) {
+                    message.channel.send(err.message);
+                } else if (image === undefined) {
+                    message.channel.send("No image to delete");
+                } else {
+                    message.channel.send(`Image: ${image.hash_id}${image.extension}  has been removed.`);
+                    post.delete();
+                }
+            });
+        })
+        .catch(console.error);
     }
 }
 

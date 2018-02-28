@@ -11,18 +11,20 @@ const client    = new Discord.Client();
 
 global.servers  = {};
 global.commandTypes = ["admin", "fun", "misc", "music", "pubg"];
-global.commandTypeDesc = {  "admin": "Admin controls to assist in maintaining the bot.",
-                            "fun": "Random shit that lets you express yourself.",
-                            "misc": "Random shit that may or may not be worth using",
-                            "music": "Lets you play music and interact with music things",
-                            "pubg": "Pull fun stats from pubg!"
-                         } 
-global.commandTypeColor = {  "admin": 13632027,
-                            "fun": 12390624,
-                            "misc": 1,
-                            "music": 5301186,
-                            "pubg": 4289797
-                         } 
+global.commandTypeDesc = {  
+    "admin" : "Admin controls to assist in maintaining the bot.",
+    "fun"   : "Random shit that lets you express yourself.",
+    "misc"  : "Random shit that may or may not be worth using",
+    "music" : "Lets you play music and interact with music things",
+    "pubg"  : "Pull fun stats from pubg!"
+} 
+global.commandTypeColor = {  
+    "admin" : 13632027,
+    "fun"   : 12390624,
+    "misc"  : 1,
+    "music" : 5301186,
+    "pubg"  : 4289797
+} 
 global.audio_dirs = {
     "tmp"       : path.resolve("audio", "tmp"),
     "hashed"    : path.resolve("audio", "hashed"),
@@ -35,6 +37,10 @@ global.image_dirs = {
     "hashed"    : path.resolve("images", "hashed"),
     "trash"     : path.resolve("images", "trash"),
 }
+
+global.img_resp_to_tag = {}
+global.img_resp_to_tag_order = []
+global.img_resp_to_tag_max_len = 100;
 
 //Array of directories required for bot to operate, make sure all parent directories appear before sub directories in list. IE: make sure audio exists, before trying to make audio/hashed
 let required_folders = [
