@@ -52,8 +52,9 @@ exports.run = (client, message, args) => {
                             if(err) {
                                 console.log(`Failed to rename file, ${filename} to ${corrected_filename}`);
                                 console.log(err);
+                                message.channel.send(`Crashed while adjusting image extension. ${err.message}`)
                             } else {                                 
-                                let i_err = UTIL.processImageFile2(corrected_filename, tags, message.author.id);
+                                let i_err = UTIL.processImageFile(corrected_filename, tags, message.author.id);
                                 if(i_err) {
                                     console.log(i_err);
                                     message.channel.send(i_err.message)

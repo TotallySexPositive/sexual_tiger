@@ -180,71 +180,7 @@ var processAudioFile = function(file_path, url, message, cb) {
     });
 }
 
-var processImageFile = function(file_path, tag_name, user_id) {
-    let hashed_image_path       = global.image_dirs.hashed;
-    let file_name               = path.basename(file_path);
-    let ext                     = path.extname(file_path).replace(/\?.*$/, "");
-    let tag_id                  = -1;
-
-    if(ext === "" || ext === "." || ext.length > 5) ext = ".gif";
-
-
-    let file_hash           = md5(fs.readFileSync(file_path));
-    let new_file_name       = file_hash + ext
-    let hashed_file_path    = path.resolve(hashed_image_path, new_file_name);
-
-    let {err, image}        = DAL.findImageByHashId(file_hash);
-
-    if(err) {
-        console.log("Oops?");
-        console.log(err);
-    } else if (image !== undefined) {
-        fs.unlink(file_path, function(err3) {
-            if(err3) {
-                console.log("Failed to delete duplicate file.")
-                console.log(err3);
-            }
-        });
-        return new Error(`That file already exists on the server by the name`);
-    }
-
-
-    let {err:t_err, tag} = DAL.findTagByName(tag_name);
-    if(t_err) {
-        return new Error('Crashed finding Tag with that name.')
-    } else if(tag === undefined) { //No tag with that name exists
-        let {err:nt_err, info} = DAL.insertIntoTag(tag_name);
-        {
-            if(nt_err) {
-                return new Error('Crashed while trying to create new Tag');
-            } else {
-                tag_id = info.lastInsertROWID;
-            }
-        }
-    } else {
-        tag_id = tag.tag_id;
-    }
- 
-    let {err: err_i, info} = DAL.insertIntoImages(file_hash, ext, user_id);
-    
-    if(err_i) {
-        console.log(err_i);
-        return new Error(`Error while inserting image.`);
-    } else {
-        fs.rename(file_path, hashed_file_path, (err) => {
-            if(err) {
-                console.log(`Failed to move file, ${file_path} to ${hashed_file_path}`);
-                console.log(err);
-            }
-        });
-        let {err: it_err, info:it_info} = DAL.insertIntoImageTag([info.lastInsertROWID], [tag_id]);
-        if(it_err) {
-            return Error(`Failed to create relationship between Image: ${info.lastInsertROWID} and Tag: ${tag_id}`)
-        }
-    }
-}
-
-var processImageFile2 = function(file_path, tag_names, user_id) {
+var processImageFile = function(file_path, tag_names, user_id) {
     let hashed_image_path       = global.image_dirs.hashed;
     let file_name               = path.basename(file_path);
     let ext                     = path.extname(file_path).replace(/\?.*$/, "");
@@ -461,7 +397,6 @@ module.exports.playlistPlayBasicCallBack = playlistPlayBasicCallBack;
 module.exports.processAudioFile = processAudioFile;
 module.exports.rebuildAudioGist = rebuildAudioGist;
 module.exports.processImageFile = processImageFile;
-module.exports.processImageFile2 = processImageFile2;
 module.exports.getFileSizeInMegaBytes = getFileSizeInMegaBytes;
 module.exports.processAudioFileTask = processAudioFileTask;
 module.exports.deleteImageByHash = deleteImageByHash;

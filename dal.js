@@ -587,6 +587,19 @@ let findTagsByNames = function(names) {
     }
 }
 
+let createTag = function(name) {
+    let query = `INSERT INTO ${TAG_TABLE} (name) VALUES (?)`
+    try {
+        return {err: undefined, info: DB.prepare(query).run(name)};
+    } catch (err) {
+        if(err.message.indexOf("UNIQUE") == -1) {
+            console.log(`createTag: name: ${name} \nError: `)
+            console.log(err);
+        }
+        return {err: err, info: undefined};
+    }
+}
+
 let insertIntoTag = function(name) {
     let query = `INSERT INTO ${TAG_TABLE} (name) VALUES (?)`
     try {
@@ -650,6 +663,7 @@ module.exports.findImageByHashId = findImageByHashId;
 module.exports.getRandomImageByTag = getRandomImageByTag;
 module.exports.findTagByName = findTagByName;
 module.exports.findTagsByNames = findTagsByNames;
+module.exports.createTag = createTag;
 
 module.exports.insertIntoTag = insertIntoTag;
 module.exports.insertIntoImageTag = insertIntoImageTag;
