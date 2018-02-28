@@ -19,6 +19,7 @@ exports.run = (client, message, args) => {
         message.channel.send({embed})
     }else{
         if (global.commandTypes.includes(args[0])){
+            let excess_commands = 0;
             let t = args[0]
             let embed = new Discord.RichEmbed()
             embed.setTitle(`${t} Commands`)
@@ -30,25 +31,32 @@ exports.run = (client, message, args) => {
                     if(!item.endsWith('.js')){
                         return
                     }else{
-                      script = path.resolve("commands", t, item);
-                    temp = require(script);
-                    k = Object.keys(temp);
-                    
-                    let cmd = `${cfg.prefix}${item.replace(".js","")}`
-                    if (k.includes("help")){
-                        hlp = `${temp.help()}`;
+                        script = path.resolve("commands", t, item);
+                        temp = require(script);
+                        k = Object.keys(temp);
                         
-                    } else{
-                        hlp = "empty";
-                    }
-                    embed.addField(cmd, hlp)  
+                        let cmd = `${cfg.prefix}${item.replace(".js","")}`
+                        if (k.includes("help")){
+                            hlp = `${temp.help()}`;
+                            
+                        } else{
+                            hlp = "empty";
+                        }
+                        
+                        try {
+                            embed.addField(cmd, hlp)  
+                        } catch (err) {
+                            excess_commands = excess_commands + 1;
+                        }
                     }
                 });
 
-                
                 message.channel.send({embed}).catch((err)=>{console.error(err.message);console.log(table)});
-
+                if(excess_commands > 0) {
+                    message.channel.send(`It looks like there were ${excess_commands} more commands we cant display here because we have too many fucking commands.  Oops?`);
+                }
             })
+            
         }
     };
 }
