@@ -387,14 +387,13 @@ let getFileSizeInMegaBytes = function(file) {
     return file_size_in_mb;
 }
 
-
 let postRandomImageByTag = function(message, tag) {
     let {err, image} = DAL.getRandomImageByTag(tag);
     if(err) {
         console.log(err);
         message.channel.send("Crashed finding image");
     } else if(image === undefined) {
-        message.channel.send("Couldnt find any images for pout.");
+        message.channel.send(`Couldnt find any images for ${tag}.`);
     } else {
         let file = path.resolve(global.image_dirs.hashed, image.hash_id + image.extension);
         message.channel.send("", {"files": [file]})

@@ -23,8 +23,8 @@ exports.run = (client, message, args) => {
     let arg_string = message.content.slice(10); //Chop off $grab_pics
     var argv = parser(arg_string.replace(/= +/g, "="), opts)
 
-    if(!argv.s || !argv.t) {
-        return message.channel.send('You must provide a tag and a search term. EX: $grab_pics -t pout -s "anime pout"')
+    if(!argv.s || !argv.t || argv.t.indexOf(" ") > -1) {
+        return message.channel.send('You must provide a tag and a search term. Tag must be one word only. EX: $grab_pics -t pout -s "anime pout"')
     }
 
 
@@ -60,14 +60,14 @@ exports.run = (client, message, args) => {
                 } else {
                     //Downloaded file to tmp.  Lets process it.
                     console.log(filename)
-                    let i_err = UTIL.processImageFile(filename, argv.t, message.author.id);
+                    let i_err = UTIL.processImageFile2(filename, [argv.t], message.author.id);
                     if(i_err) {
                         console.log(i_err);
                     }
                 }
                 
             }).catch((err) => {
-                throw err
+                console.log(err);
             })
         })
     }).catch(function(err) {
