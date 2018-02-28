@@ -5,7 +5,7 @@ const UTIL      = require(path.resolve("utils.js"))
 
 exports.run = (client, message, args) => {
     if(args.length <= 1) {
-        message.channel.send("Must send message id and tag names. EX: $image tag [MESSAGE_ID] cry\nTo get message_id, Go to Discord Settings -> Appearance -> Toggle Developer Mode on.\nThen right click image/post and click 'Copy Id'");
+        message.channel.send("Must send message id. EX: $image retag [MESSAGE_ID] pout\nTo get message_id, Go to Discord Settings -> Appearance -> Toggle Developer Mode on.\nThen right click image/post and click 'Copy Id'");
     } else {
         const [message_id, ...tag_names] = args;
 
@@ -18,25 +18,38 @@ exports.run = (client, message, args) => {
             return new Error(`The following tags do not exist. ${tags.join(', ')}`);
         } //All tags are valid, lets just move on.
 
+
         message.channel.fetchMessage(message_id)
         .then(target_message => {
             let attachment_arr = target_message.attachments.array();
             if(attachment_arr.length === 0) {
                 return message.channel.send("That message didnt have any images attached.")
             } else {
-                let file_hash = attachment_arr[0].filename.replace(/\.[^/.]+$/, "");
-                let {err, image} = DAL.findImageByHashId(file_hash);
+                let file_hash       = attachment_arr[0].filename.replace(/\.[^/.]+$/, "");
+                let {err, image}    = DAL.findImageByHashId(file_hash);
+
                 if(err) {
                     message.channel.send("Crashed finding image.")
                 } else if (image === undefined) { //No error, but no image, most likely it got deleted but is still in chat.
                     message.channel.send("Looks like that image has been deleted.")
                 } else {
-                    let tag_ids = tags.map(function(tag) {return tag['tag_id'];})
-                    let {err: it_err, info} = DAL.insertIntoImageTag([image.image_id], tag_ids)
+                    let tag                 = global.img_resp_to_tag[message_id]
+                    let {err: it_err, info} = DAL.deleteFromImageTag(image.image_id, tag.tag_id)
+
                     if(it_err) {
-                        return message.channel.send("Crashed adding tags to image.")
+                        return message.channel.send("Crashed removing tag from image.")
+                    } else if (info.changes === 0) {
+                        return message.channel.send("You can only retag an image once per appearance.  The original tag on that post has already been changed.")
                     } else {
-                        return message.channel.send("Tags have been updated.")
+                        let tag_ids             = tags.map(function(tag) {return tag['tag_id'];})
+                        let tag_names           = tags.map(function(tag) {return tag['name'];})
+                        let {err: it_err, info} = DAL.insertIntoImageTag([image.image_id], tag_ids)
+                        
+                        if(it_err) {
+                            return message.channel.send("Crashed adding tags to image.")
+                        } else {
+                            return message.channel.send(`${tag.name} removed, ${tag_names.join(', ')} added.`)
+                        }
                     }
                 }
             }
@@ -46,5 +59,5 @@ exports.run = (client, message, args) => {
 }
 
 exports.help = () =>{
-    return "Adds a tag to an image. EX: $image tag [MESSAGE_ID] cry";
+    return "Removes a tag from an image. EX: $image detag [MESSAGE_ID]";
 };

@@ -531,22 +531,21 @@ let deleteImageById = function(image_id) {
     }
 }
 
-let getRandomImageByTag = function(tag) {
+let getRandomImageByTag = function(tag_id) {
     let query = `
         SELECT ${IMAGE_FIELDS} 
-        FROM ${TAG_TABLE} 
-        JOIN ${IMAGE_TAG_TABLE} USING (tag_id)
-        JOIN ${IMAGE_TABLE} USING (image_id)
-        WHERE ${TAG_TABLE}.name = ? 
+        FROM ${IMAGE_TABLE}
+        JOIN ${IMAGE_TAG_TABLE} USING (image_id)
+        WHERE tag_id = ? 
         ORDER BY RANDOM() 
         LIMIT 1
     `;
 
     try {
-        let img = DB.prepare(query).get(tag);
+        let img = DB.prepare(query).get(tag_id);
         return {err: undefined, image:img};
     } catch (err) {
-        console.log(`getRandomImageByTag tag: ${tag} \nError: `)
+        console.log(`getRandomImageByTag tag: ${tag_id} \nError: `)
         console.log(err);
         return {err: err, image: undefined};
     }
@@ -629,41 +628,68 @@ let insertIntoImageTag = function(image_ids, tag_ids) {
     }
 }
 
-module.exports.isInt = isInt;
+let deleteFromImageTag = function(image_id, tag_id) {
+    let query = `DELETE FROM ${IMAGE_TAG_TABLE} WHERE image_id = ? AND tag_id = ?`
 
-module.exports.findSongByIdentifier = findSongByIdentifier;
-module.exports.findSongById = findSongById;
-module.exports.findSongByName = findSongByName;
-module.exports.findPlaylistById = findPlaylistById;
-module.exports.findPlaylistByName = findPlaylistByName;
+    try {
+        return {err: undefined, info: DB.prepare(query).run(image_id, tag_id)};
+    } catch (err) {
+        console.log(`deleteFromImageTag: \nError: `, err);
+        return {err: err, info: undefined};
+    }
+}
+
+let searchImageTagByImageId = function(image_id) {
+    let query = `SELECT ${IMAGE_TAG_FIELDS} FROM ${IMAGE_TAG_TABLE} WHERE image_id = ?`;
+   
+    try {
+        return {err: undefined, image_tags: DB.prepare(query).all(image_id)};
+    } catch (err) {
+        console.log(`searchImageTagByImageId: \nError: `)
+        console.log(err);
+        return {err: err, image_tags: undefined};
+    }
+}
+
+module.exports.isInt                    = isInt;
+
+module.exports.findSongByIdentifier     = findSongByIdentifier;
+module.exports.findSongById             = findSongById;
+module.exports.findSongByName           = findSongByName;
+module.exports.findPlaylistById         = findPlaylistById;
+module.exports.findPlaylistByName       = findPlaylistByName;
 module.exports.findPlaylistByIdentifier = findPlaylistByIdentifier;
-module.exports.getSongsByPlaylistId = getSongsByPlaylistId;
-module.exports.getSongsByPlaylistName = getSongsByPlaylistName;
-module.exports.createPlaylist = createPlaylist;
-module.exports.deletePlaylistById = deletePlaylistById;
-module.exports.addToPlaylist = addToPlaylist;
-module.exports.removeFromPlaylist = removeFromPlaylist;
-module.exports.getPlaylists = getPlaylists;
-module.exports.searchForSongs = searchForSongs;
-module.exports.insertIntoSongs = insertIntoSongs;
-module.exports.findSongByHashId = findSongByHashId;
-module.exports.findSongByUrl = findSongByUrl;
-module.exports.incrementNumPlays = incrementNumPlays;
-module.exports.updateSong = updateSong;
-module.exports.getAllSongs = getAllSongs;
-module.exports.deleteSongById = deleteSongById;
-module.exports.getPlaylistsWithSong = getPlaylistsWithSong;
-module.exports.getTopSongs = getTopSongs;
+module.exports.getSongsByPlaylistId     = getSongsByPlaylistId;
+module.exports.getSongsByPlaylistName   = getSongsByPlaylistName;
+module.exports.createPlaylist           = createPlaylist;
+module.exports.deletePlaylistById       = deletePlaylistById;
+module.exports.addToPlaylist            = addToPlaylist;
+module.exports.removeFromPlaylist       = removeFromPlaylist;
+module.exports.getPlaylists             = getPlaylists;
+module.exports.searchForSongs           = searchForSongs;
+module.exports.insertIntoSongs          = insertIntoSongs;
+module.exports.findSongByHashId         = findSongByHashId;
+module.exports.findSongByUrl            = findSongByUrl;
+module.exports.incrementNumPlays        = incrementNumPlays;
+module.exports.updateSong               = updateSong;
+module.exports.getAllSongs              = getAllSongs;
+module.exports.deleteSongById           = deleteSongById;
+module.exports.getPlaylistsWithSong     = getPlaylistsWithSong;
+module.exports.getTopSongs              = getTopSongs;
 
-module.exports.insertIntoImages = insertIntoImages;
-module.exports.findImageByIdentifier = findImageByIdentifier;
-module.exports.findImageById = findImageById;
-module.exports.findImageByHashId = findImageByHashId;
-module.exports.getRandomImageByTag = getRandomImageByTag;
-module.exports.findTagByName = findTagByName;
-module.exports.findTagsByNames = findTagsByNames;
-module.exports.createTag = createTag;
+module.exports.insertIntoImages         = insertIntoImages;
+module.exports.findImageByIdentifier    = findImageByIdentifier;
+module.exports.findImageById            = findImageById;
+module.exports.findImageByHashId        = findImageByHashId;
+module.exports.getRandomImageByTag      = getRandomImageByTag;
+module.exports.findTagByName            = findTagByName;
+module.exports.findTagsByNames          = findTagsByNames;
+module.exports.createTag                = createTag;
 
-module.exports.insertIntoTag = insertIntoTag;
-module.exports.insertIntoImageTag = insertIntoImageTag;
-module.exports.deleteImageById = deleteImageById;
+module.exports.insertIntoTag            = insertIntoTag;
+module.exports.insertIntoImageTag       = insertIntoImageTag;
+module.exports.deleteFromImageTag       = deleteFromImageTag;
+
+module.exports.deleteImageById          = deleteImageById;
+module.exports.searchImageTagByImageId  = searchImageTagByImageId;
+

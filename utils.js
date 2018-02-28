@@ -193,24 +193,16 @@ var processImageFile = function(file_path, tag_names, user_id) {
     let hashed_file_path    = path.resolve(hashed_image_path, new_file_name);
 
     //Check if the tags passed in exist.
-    let {err:t_err, tags} = DAL.findTagsByNames(tag_names)
-    if(t_err) {
-        console.log(t_err)
-        return new Error("Crashed while verifying tags.");
-    } else if(tag_names.length !== tags.length) {
-        //At least one of the tags didnt exist.
-        var found_tags = tags.map(function(tag) {
-            return tag['name'];
-            });
-
-        let invalid_tags = tag_names.filter(tag => !found_tags.includes(tag));
-        console.log("invalid_tags", invalid_tags)
-        return new Error(`The following tags do not exist. ${invalid_tags.join(', ')}`);
+    let {err: v_err, tags} = verifyTags(tag_names)
+    if(v_err && tags === undefined) {
+        console.log(v_err)
+        return v_err;
+    } else if(v_err && tags !== undefined) { //At least one of the tags didnt exist.
+        return new Error(`The following tags do not exist. ${tags.join(', ')}`);
     } //All tags are valid, lets just move on.
 
-
-    let image_id = undefined;
-    let {err, image}        = DAL.findImageByHashId(file_hash);
+    let image_id        = undefined;
+    let {err, image}    = DAL.findImageByHashId(file_hash);
 
     if(err) {
         console.log(err);
@@ -250,6 +242,23 @@ var processImageFile = function(file_path, tag_names, user_id) {
         if(it_err) {
             return Error(`Failed to create relationship between Image: ${it_info.lastInsertROWID} and Tag: ${tag_id}`)
         }
+    }
+}
+
+let verifyTags = function(tag_names) {
+    let {err, tags} = DAL.findTagsByNames(tag_names)
+    if(err) {
+        console.log(err)
+        return {err: new Error("Crashed while verifying tags."), tags: undefined};
+    } else if(tag_names.length !== tags.length) { //At least one of the tags didnt exist.
+        var found_tags = tags.map(function(tag) {
+            return tag['name'];
+        });
+
+        let invalid_tags = tag_names.filter(tag => !found_tags.includes(tag));
+        return {err: new Error(`Invalid tags passed.`), tags: invalid_tags};
+    } else {
+        return {err: undefined, tags: tags}
     }
 }
 
@@ -323,13 +332,21 @@ let getFileSizeInMegaBytes = function(file) {
     return file_size_in_mb;
 }
 
-let postRandomImageByTag = function(message, tag) {
-    let {err, image} = DAL.getRandomImageByTag(tag);
+let postRandomImageByTag = function(message, tag_name) {
+
+    let {err: t_err, tag} = DAL.findTagByName(tag_name);
+    if(t_err) {
+        return message.channel.send("Crashed while finding tag.")
+    } else if (tag === undefined) {
+        return message.channel.send(`There is no tag with the name. ${tag}.`)
+    } //Valid tag.
+
+    let {err, image} = DAL.getRandomImageByTag(tag.tag_id);
     if(err) {
         console.log(err);
         message.channel.send("Crashed finding image");
     } else if(image === undefined) {
-        message.channel.send(`Couldnt find any images for ${tag}.`);
+        message.channel.send(`Couldnt find any images for ${tag.name}.`);
     } else {
         let file = path.resolve(global.image_dirs.hashed, image.hash_id + image.extension);
         message.channel.send("", {"files": [file]})
@@ -410,3 +427,4 @@ module.exports.getFileSizeInMegaBytes = getFileSizeInMegaBytes;
 module.exports.processAudioFileTask = processAudioFileTask;
 module.exports.deleteImageByHash = deleteImageByHash;
 module.exports.postRandomImageByTag = postRandomImageByTag;
+module.exports.verifyTags = verifyTags;
