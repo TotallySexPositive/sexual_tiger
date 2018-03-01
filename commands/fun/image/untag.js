@@ -27,6 +27,7 @@ exports.run = (client, message, args) => {
                     if(it_err) {
                         return message.channel.send("Crashed removing tag from image.")
                     } else {
+                        target_message.delete();
                         //Check if image has other tags
                         let {err: s_err, image_tags} = DAL.searchImageTagByImageId(image.image_id)
                         if(s_err) {
