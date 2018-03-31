@@ -21,6 +21,9 @@ exports.run = (client, message, args) => {
         return;
     }
 
+    if(args.length <= 1) {
+        return message.channel.send("You forgot to type in a song name.")
+    }
     let song_identifier = args.join(" ");
     let found_song = undefined;
 
