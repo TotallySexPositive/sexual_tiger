@@ -28,7 +28,7 @@ exports.run = (client, message, args) => {
         let {err, songs} = DAL.getSongsByPlaylistId(playlist_identifier)
         if(err) {
             return message.channel.send("Unknown error occured while fetching playlist songs.");
-        } else if(songs === undefined) {
+        } else if(songs === undefined || songs.length == 0) {
             return message.channel.send("This playlist has no songs, you suck as a DJ.")
         } else {
             pl_songs = songs;
@@ -37,8 +37,8 @@ exports.run = (client, message, args) => {
         let {err, songs} = DAL.getSongsByPlaylistName(playlist_identifier)
         if(err) {
             return message.channel.send("Unknown error occured while fetching playlist songs.");
-        } else if(songs === undefined) {
-            return message.channel.send("This playlist has no gets, you suck as a DJ.")
+        } else if(songs === undefined || songs.length == 0) {
+            return message.channel.send("This playlist has no songs, you suck as a DJ.")
         } else {
             pl_songs = songs;
         }
