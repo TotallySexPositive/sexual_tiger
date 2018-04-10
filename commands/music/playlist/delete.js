@@ -29,3 +29,26 @@ exports.run = (client, message, args) => {
         message.channel.send(`The playlist ${identifier} has been deleted, your DJ career is over, ${message.author.username}!`);
     }
 };
+
+exports.docs = () => {
+    let docs = {
+        tab: "music",
+        link: "playlists",
+        parent: "playlist",
+        full_command: "playlist delete",
+        command: "delete",
+        description: "Delete a playlist.  Can delete by ID or name.  Name must match exactly.",
+        syntax: "$playlist delete [playlist_identifer]",
+        examples: [
+            {
+                description: "Delete playlist 14 by id.",
+                code: "$playlist delete 14"
+            },
+            {
+                description: "Delete playlist, 'DubStep', by name.",
+                code: "$playlist delete DubStep"
+            }
+        ]
+    }
+    return docs;
+};

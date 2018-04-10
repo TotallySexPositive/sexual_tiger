@@ -42,3 +42,22 @@ exports.run = (client, message, args) => {
         }
     }
 };
+
+exports.docs = () => {
+    let docs = {
+        tab: "music",
+        link: "playlists",
+        parent: "playlist",
+        full_command: "playlist list",
+        command: "list",
+        description: "List all playlists",
+        syntax: "$playlist list",
+        examples: [
+            {
+                description: "List playlists",
+                code: "$playlist list"
+            }
+        ]
+    }
+    return docs;
+};

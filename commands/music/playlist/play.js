@@ -58,3 +58,26 @@ exports.run = (client, message, args) => {
 exports.help = () =>{
     return "Will play a playlist. (But not to no-one, he's weird)";
 };
+
+exports.docs = () => {
+    let docs = {
+        tab: "music",
+        link: "playlists",
+        parent: "playlist",
+        full_command: "playlist play",
+        command: "play",
+        description: "Play a playlist by identifier",
+        syntax: "$playlist play [playlist_identifier]",
+        examples: [
+            {
+                description: "Play playlist, 'Viscera' by name.",
+                code: "$playlist play Viscera"
+            },
+            {
+                description: "Play playlist, 5 by id.",
+                code: "$playlist play 5"
+            }
+        ]
+    }
+    return docs;
+};

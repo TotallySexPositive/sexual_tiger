@@ -81,7 +81,7 @@ exports.run = (client, message, args) => {
             var template = handlebars.compile(source);
             var html = template(test);
 
-            //let index_path = path.resolve("website", "index.html")
+            let index_path = path.resolve("website", "index.html")
             
             fs.writeFile("/var/www/html/index.html", html, function(err) {
                 if(err) {

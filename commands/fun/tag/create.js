@@ -26,7 +26,7 @@ exports.run = (client, message, args) => {
 exports.docs = () => {
     let docs = {
         tab: "image",
-        link: "tqg",
+        link: "tag",
         parent: "tag",
         full_command: "tag create",
         command: "create",

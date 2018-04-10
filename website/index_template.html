@@ -7,6 +7,19 @@
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  <script type="text/javascript">
+        window.onload = function() {
+            $('[name="trigger-tab-change"]').on( "click", function() {
+                $('#home').hide();
+                $('.current.tab').toggleClass('current hidden');
+                $("#" + $(this).data("id")).toggleClass('hidden current');
+            });
+            $('[name="trigger-link-change"]').on( "click", function() {
+                $('.current.link').toggleClass('current hidden');
+                $("#" + $(this).data("id")).toggleClass('hidden current');
+            });
+        }
+  </script>
   <style>
     /* Remove the navbar's default margin-bottom and rounded borders */ 
     .navbar {
@@ -73,24 +86,46 @@
         <ul class="nav navbar-nav navbar-right">
             <li class="active"><a href="#">Home</a></li>
             {{#each tabs}}
-                <li><a href="#">{{capitalize name}}</a></li>
+                <li><a name="trigger-tab-change" data-id="tab-{{name}}" href="#">{{capitalize name}}</a></li>
             {{/each}}
         </ul>
         </div>
     </div>
 </nav>
+
+<div id="home" class="container-fluid text-center">    
+    <div class="row content">
+        <div class="col-sm-2 sidenav">
+                <p><a href="#">I'm the side bar.</a></p>
+        </div>
+        <div class="col-sm-8 text-left"> 
+            <h1>Welcome</h1>
+            <p>Here you will find all of Sexual Tigers commands.  Use the tab at the top right, then the links on the left side bar to navigate.</p>
+            <hr>
+        </div>
+        <div class="col-sm-2 sidenav">
+            <div class="well">
+            <p>ADS</p>
+            </div>
+            <div class="well">
+            <p>ADS</p>
+            </div>
+        </div>
+    </div>
+</div>
+
 {{#each tabs}}
-    <div class="container-fluid text-center">    
+    <div id="tab-{{name}}" class="container-fluid text-center hidden tab">    
         <div class="row content">
-            {{this.name}}
-                <div class="col-sm-2 sidenav">
-                    {{#each links}}
-                        <p><a href="#">{{capitalize name}}</a></p>
-                    {{/each}}
-                </div>
+            <div class="col-sm-2 sidenav">
+                {{#each links}}
+                    <p><a name="trigger-link-change" data-id="link-{{name}}" href="#">{{capitalize name}}</a></p>
+                {{/each}}
+            </div>
+            <h2>{{this.name}}</h2>
             {{#each links}}
-                <div class="col-sm-8 text-left"> 
-                    <h1>${{name}}</h1>
+                <div id="link-{{name}}" class="col-sm-8 text-left hidden link"> 
+                    <h1>{{name}}</h1>
                     <p>All {{name}} {{../name}} commands.</p>
                     <hr>
                     {{#each commands}}
@@ -105,14 +140,6 @@
                             </div>
                         {{/each}}
                     {{/each}}
-                </div>
-                <div class="col-sm-2 sidenav">
-                    <div class="well">
-                    <p>ADS</p>
-                    </div>
-                    <div class="well">
-                    <p>ADS</p>
-                    </div>
                 </div>
             {{/each}}
         </div>
