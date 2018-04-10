@@ -67,15 +67,15 @@ exports.docs = () => {
         full_command: "playlist play",
         command: "play",
         description: "Play a playlist by identifier",
-        syntax: "$playlist play [playlist_identifier]",
+        syntax: "playlist play [playlist_identifier]",
         examples: [
             {
                 description: "Play playlist, 'Viscera' by name.",
-                code: "$playlist play Viscera"
+                code: "playlist play Viscera"
             },
             {
                 description: "Play playlist, 5 by id.",
-                code: "$playlist play 5"
+                code: "playlist play 5"
             }
         ]
     }

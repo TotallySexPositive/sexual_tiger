@@ -14,3 +14,22 @@ exports.run = (client, message, args) => {
 exports.help = () =>{
     return "Toggles whether or not clips and songs will repeat";
 };
+
+exports.docs = () => {
+    let docs = {
+        tab: "music",
+        link: "general",
+        parent: "",
+        full_command: "repeat",
+        command: "repeat",
+        description: "Repeats the current song/playlist when the song/playlist ends.",
+        syntax: "repeat",
+        examples: [
+            {
+                description: "Repeat the current song.",
+                code: "repeat"
+            }
+        ]
+    }
+    return docs;
+};

@@ -19,3 +19,22 @@ exports.run = (client, message, args) => {
 exports.help = () => {
     return "Shuffles the order of songs in the playlist for the current play through, also restarts the playlist.";
 };
+
+exports.docs = () => {
+    let docs = {
+        tab: "music",
+        link: "playlists",
+        parent: "playlist",
+        full_command: "playlist shuffle",
+        command: "shuffle",
+        description: "Shuffle the currently playing playlist.",
+        syntax: "playlist shuffle",
+        examples: [
+            {
+                description: "Shuffle the currently playing playlist",
+                code: "playlist shuffle"
+            }
+        ]
+    }
+    return docs;
+};

@@ -25,3 +25,22 @@ exports.run = (client, message, args) => {
 exports.help = () =>{
     return "Crank dat volume! But not to high ya hear?";
 };
+
+exports.docs = () => {
+    let docs = {
+        tab: "music",
+        link: "general",
+        parent: "",
+        full_command: "vup",
+        command: "vup",
+        description: "Turn up the volume the bot is playing at.  There is a max volume, so dont be an ass.",
+        syntax: "vup",
+        examples: [
+            {
+                description: "Turn down the volume",
+                code: "vup"
+            }
+        ]
+    }
+    return docs;
+};

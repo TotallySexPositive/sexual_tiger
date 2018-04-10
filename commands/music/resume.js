@@ -15,3 +15,22 @@ exports.run = (client, message, args) => {
 exports.help = () =>{
     return "Resume the previously playing song.";
 };
+
+exports.docs = () => {
+    let docs = {
+        tab: "music",
+        link: "general",
+        parent: "",
+        full_command: "resume",
+        command: "resume",
+        description: "Resumes playing a previously paused song where it left off.",
+        syntax: "resume",
+        examples: [
+            {
+                description: "Resume the currently paused song.",
+                code: "resume"
+            }
+        ]
+    }
+    return docs;
+};

@@ -67,3 +67,22 @@ exports.run = (client, message, args) => {
         }
     }
 };
+
+exports.docs = () => {
+    let docs = {
+        tab: "music",
+        link: "song",
+        parent: "song",
+        full_command: "song delete",
+        command: "delete",
+        description: "Deletes a song from the database.  The song must not be on a playlist, and songs can only be deleted by the user that uploaded them.",
+        syntax: "song delete",
+        examples: [
+            {
+                description: "Delete song 66 from the DB.",
+                code: "song delete 66"
+            }
+        ]
+    }
+    return docs;
+};

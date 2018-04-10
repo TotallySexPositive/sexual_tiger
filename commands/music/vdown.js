@@ -16,3 +16,22 @@ exports.run = (client, message, args) => {
 exports.help = () =>{
     return "Turn the volume down.";
 };
+
+exports.docs = () => {
+    let docs = {
+        tab: "music",
+        link: "general",
+        parent: "",
+        full_command: "vdown",
+        command: "vdown",
+        description: "Turn down the volume the bot is playing at.",
+        syntax: "vdown",
+        examples: [
+            {
+                description: "Turn down the volume",
+                code: "vdown"
+            }
+        ]
+    }
+    return docs;
+};

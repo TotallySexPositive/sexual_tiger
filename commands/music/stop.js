@@ -23,3 +23,22 @@ exports.run = (client, message, args) => {
 exports.help = () =>{
     return "Stop the current song. No way to rejoin the queue though. Fuk u";
 };
+
+exports.docs = () => {
+    let docs = {
+        tab: "music",
+        link: "general",
+        parent: "",
+        full_command: "stop",
+        command: "stop",
+        description: "Stops any playing audio.  If a playlist is playing it also emptys the queue.  The bot will leave when stopped, even when presence is active.",
+        syntax: "stop",
+        examples: [
+            {
+                description: "Stop the current audio.",
+                code: "stop"
+            }
+        ]
+    }
+    return docs;
+};

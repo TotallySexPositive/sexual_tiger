@@ -29,3 +29,22 @@ exports.run = (client, message, args) => {
 exports.help = () =>{
     return "Upload a music file!";
 };
+
+exports.docs = () => {
+    let docs = {
+        tab: "music",
+        link: "general",
+        parent: "",
+        full_command: "upload",
+        command: "upload",
+        description: "Upload a song to the bot so it can be played back.  Max file size is 8MB due to discord limitations.  Most audio and video formats accepted.  Upload a file and type the command as the comment on the upload.",
+        syntax: "upload",
+        examples: [
+            {
+                description: "Upload a song.",
+                code: "upload"
+            }
+        ]
+    }
+    return docs;
+};

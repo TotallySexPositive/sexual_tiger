@@ -29,3 +29,22 @@ exports.run = (client, message, args) => {
 exports.help = () =>{
     return "Displays the current song. And more later?";
 };
+
+exports.docs = () => {
+    let docs = {
+        tab: "music",
+        link: "general",
+        parent: "",
+        full_command: "song",
+        command: "song",
+        description: "Display the currently playing songs name and id.",
+        syntax: "song",
+        examples: [
+            {
+                description: "Display info on current song.",
+                code: "song"
+            }
+        ]
+    }
+    return docs;
+};

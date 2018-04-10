@@ -16,3 +16,22 @@ exports.run = (client, message, args) => {
 exports.help = () =>{
     return "Displays the current volume. Not like you couldn't tell though.";
 };
+
+exports.docs = () => {
+    let docs = {
+        tab: "music",
+        link: "general",
+        parent: "",
+        full_command: "volume",
+        command: "volume",
+        description: "Display the current volume the bot is set to.",
+        syntax: "volume",
+        examples: [
+            {
+                description: "Display current volume",
+                code: "volume"
+            }
+        ]
+    }
+    return docs;
+};

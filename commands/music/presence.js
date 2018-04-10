@@ -15,3 +15,22 @@ exports.run =  (client, message, args)=>{
 exports.help = ()=>{
 	return "Toggles whether or not the bot should stay in voice channel or not."
 }
+
+exports.docs = () => {
+    let docs = {
+        tab: "music",
+        link: "general",
+        parent: "",
+        full_command: "presence",
+        command: "presence",
+        description: "Make the bot stay in the channel after it is done playing a clip.  Presence command acts as a toggle..",
+        syntax: "presence",
+        examples: [
+            {
+                description: "Keep bot in the channel after song ends.",
+                code: "presence"
+            }
+        ]
+    }
+    return docs;
+};

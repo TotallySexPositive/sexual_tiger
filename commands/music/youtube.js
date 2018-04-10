@@ -56,3 +56,22 @@ exports.run = (client, message, args) => {
 exports.help = () =>{
     return "Downloads a youtube video's audio and stores it in the DB";
 };
+
+exports.docs = () => {
+    let docs = {
+        tab: "music",
+        link: "general",
+        parent: "",
+        full_command: "youtube",
+        command: "youtube",
+        description: "Download a video from youtube and add the audio to the bot",
+        syntax: "youtube [youtube_url]",
+        examples: [
+            {
+                description: "Add a song from youtube to the bot",
+                code: "youtube https://www.youtube.com/watch?v=U9t-slLl30E"
+            }
+        ]
+    }
+    return docs;
+};

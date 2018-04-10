@@ -99,15 +99,15 @@ exports.docs = () => {
         full_command: "playlist remove",
         command: "remove",
         description: "Remove a song from a playlist.  If the song occurs more than once, the last occurence is removed.",
-        syntax: "$playlist remove [playlist_identifier] | [song_identifier]",
+        syntax: "playlist remove [playlist_identifier] | [song_identifier]",
         examples: [
             {
                 description: "Remove song 'Goo' from playlist, 'Viscera'.",
-                code: "$playlist remove Viscera | Goo"
+                code: "playlist remove Viscera | Goo"
             },
             {
                 description: "Play playlist, 5 by id.",
-                code: "$playlist play 5"
+                code: "playlist play 5"
             }
         ]
     }

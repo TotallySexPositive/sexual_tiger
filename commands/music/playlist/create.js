@@ -28,11 +28,11 @@ exports.docs = () => {
         full_command: "playlist create",
         command: "create",
         description: "Create a new playlist.",
-        syntax: "$playlist create [playlist_name]",
+        syntax: "playlist create [playlist_name]",
         examples: [
             {
                 description: "Create a playlist named, 'Royalty Free'.",
-                code: "$playlist create Royalty Free"
+                code: "playlist create Royalty Free"
             }
         ]
     }

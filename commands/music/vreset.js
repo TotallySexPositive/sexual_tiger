@@ -12,3 +12,22 @@ exports.run = (client, message, args) => {
 exports.help = () =>{
     return "Resets the volume to the default setting.";
 };
+
+exports.docs = () => {
+    let docs = {
+        tab: "music",
+        link: "general",
+        parent: "",
+        full_command: "vreset",
+        command: "vreset",
+        description: "Reset the bot volume to default.",
+        syntax: "vreset",
+        examples: [
+            {
+                description: "Rest volume",
+                code: "vreset"
+            }
+        ]
+    }
+    return docs;
+};

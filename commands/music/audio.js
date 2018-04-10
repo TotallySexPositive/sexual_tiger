@@ -6,3 +6,22 @@ exports.run = (client, message, args) => {
 exports.help = () =>{
     return "Sends the link to all the audio....";
 };
+
+exports.docs = () => {
+    let docs = {
+        tab: "music",
+        link: "general",
+        parent: "",
+        full_command: "audio",
+        command: "audio",
+        description: "Display the link to the Gist that contains info on all the songs in the DB.",
+        syntax: "audio",
+        examples: [
+            {
+                description: "Display link to list of songs.",
+                code: "audio"
+            }
+        ]
+    }
+    return docs;
+};

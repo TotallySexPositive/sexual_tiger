@@ -51,11 +51,11 @@ exports.docs = () => {
         full_command: "playlist list",
         command: "list",
         description: "List all playlists",
-        syntax: "$playlist list",
+        syntax: "playlist list",
         examples: [
             {
                 description: "List playlists",
-                code: "$playlist list"
+                code: "playlist list"
             }
         ]
     }

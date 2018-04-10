@@ -38,15 +38,15 @@ exports.docs = () => {
         full_command: "playlist delete",
         command: "delete",
         description: "Delete a playlist.  Can delete by ID or name.  Name must match exactly.",
-        syntax: "$playlist delete [playlist_identifer]",
+        syntax: "playlist delete [playlist_identifer]",
         examples: [
             {
                 description: "Delete playlist 14 by id.",
-                code: "$playlist delete 14"
+                code: "playlist delete 14"
             },
             {
                 description: "Delete playlist, 'DubStep', by name.",
-                code: "$playlist delete DubStep"
+                code: "playlist delete DubStep"
             }
         ]
     }

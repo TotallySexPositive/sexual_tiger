@@ -37,3 +37,26 @@ exports.run = (client, message, args) => {
 exports.help = () =>{
     return "Lists the top played songs. $song top #";
 };
+
+exports.docs = () => {
+    let docs = {
+        tab: "music",
+        link: "song",
+        parent: "song",
+        full_command: "song top",
+        command: "top",
+        description: "Get the most played songs in the database.  A number is optional, if no number is specified, Top 5 are returned.  1-10 are allowed.",
+        syntax: "song top [#]'",
+        examples: [
+            {
+                description: "Display top songs.",
+                code: "song top"
+            },
+            {
+                description: "Display top 7 songs.",
+                code: "song top 7"
+            }
+        ]
+    }
+    return docs;
+};

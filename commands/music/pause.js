@@ -15,3 +15,22 @@ exports.run = (client, message, args) => {
 exports.help = () =>{
     return "Pause the currently playing song.";
 };
+
+exports.docs = () => {
+    let docs = {
+        tab: "music",
+        link: "general",
+        parent: "",
+        full_command: "pause",
+        command: "pause",
+        description: "Pauses the currently playing song.",
+        syntax: "pause",
+        examples: [
+            {
+                description: "Pause the current song.",
+                code: "pause"
+            }
+        ]
+    }
+    return docs;
+};
