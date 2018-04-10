@@ -8,3 +8,22 @@ exports.run = (client, message, args) => {
 exports.help = () =>{
     return "eeek";
 };
+
+exports.docs = () => {
+    let docs = {
+        tab: "image",
+        link: "Pictures",
+        parent: "",
+        full_command: "scared",
+        command: "scared",
+        description: "Post an image of anime scared.",
+        syntax: 'scared',
+        examples: [
+            {
+                description: "Post image of scared",
+                code: `scared`
+            }
+        ]
+    }
+    return docs;
+};

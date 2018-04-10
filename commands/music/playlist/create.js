@@ -19,3 +19,22 @@ exports.run = (client, message, args) => {
         message.channel.send(`The playlist ${name} has been created, You're the DJ ${message.author.username}!`);
     }
 };
+
+exports.docs = () => {
+    let docs = {
+        tab: "music",
+        link: "playlists",
+        parent: "playlist",
+        full_command: "playlist create",
+        command: "create",
+        description: "Create a new playlist.",
+        syntax: "$playlist create [playlist_name]",
+        examples: [
+            {
+                description: "Create a playlist named, 'Royalty Free'.",
+                code: "$playlist create Royalty Free"
+            }
+        ]
+    }
+    return docs;
+};

@@ -76,3 +76,26 @@ exports.run = (client, message, args) => {
 exports.help = () =>{
     return "Adds an image to the DB. EX: $image add http://coolimages.com/coolimage.jpg cry pout death";
 };
+
+exports.docs = () => {
+    let docs = {
+        tab: "image",
+        link: "image",
+        parent: "image",
+        full_command: "image add",
+        command: "add",
+        description: "Add a new image to the database.",
+        syntax: 'image add [url] [...tag_name, tag_name, tag_name]',
+        examples: [
+            {
+                description: "Add the image 'coolimage.jpg' to the bot and tag it as flex",
+                code: `image add http://coolimages.com/coolimage.jpg flex`
+            },
+            {
+                description: "Add the image 'coolimage.jpg' to the bot and tag it as clap, slap, flip",
+                code: `image add http://coolimages.com/coolimage.jpg clap slap flip`
+            }
+        ]
+    }
+    return docs;
+};

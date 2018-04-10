@@ -22,3 +22,22 @@ exports.run = (client, message, args) => {
         message.channel.send(`The tag ${name} has been created!`);
     }
 };
+
+exports.docs = () => {
+    let docs = {
+        tab: "image",
+        link: "tqg",
+        parent: "tag",
+        full_command: "tag create",
+        command: "create",
+        description: "Create a new Tag in the database. Tag names must be 1 word.  Use this before grab_pics when adding a new set of images.",
+        syntax: 'tag create [tag_name]',
+        examples: [
+            {
+                description: "Create new tag called, 'dance'",
+                code: `tag create dance`
+            }
+        ]
+    }
+    return docs;
+};

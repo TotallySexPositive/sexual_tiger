@@ -64,3 +64,26 @@ exports.run = (client, message, args) => {
         message.channel.send(`The following songs either didnt exist or crashed the query and were not add:\n${skipped_songs.join('\n')}`)
     }
 };
+
+exports.docs = () => {
+    let docs = {
+        tab: "music",
+        link: "playlists",
+        parent: "playlist",
+        full_command: "playlist add",
+        command: "add",
+        description: "Add a song(s) to a playlist.",
+        syntax: "$playlist add -p [playlist_id] -s [song_id]",
+        examples: [
+            {
+                description: "Add one song to a playlist.",
+                code: "$playlist add -p 2 -s 74"
+            },
+            {
+                description: "Add more than one song to a playlist.",
+                code: "$playlist add -p 2 -s 74 -s 66 -s 12"
+            }
+        ]
+    }
+    return docs;
+};

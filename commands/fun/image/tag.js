@@ -48,3 +48,26 @@ exports.run = (client, message, args) => {
 exports.help = () =>{
     return "Adds a tag to an image. EX: $image tag [MESSAGE_ID] cry";
 };
+
+exports.docs = () => {
+    let docs = {
+        tab: "image",
+        link: "image",
+        parent: "image",
+        full_command: "image tag",
+        command: "tag",
+        description: "Tag an image in the database.  You can only add pre-existing tags using this command.  To get message_id, Go to Discord Settings -> Appearance -> Toggle Developer Mode on.  Then right click image/post and click 'Copy Id'",
+        syntax: 'image tag [message_id] [...tag_name, tag_name, tag_name]',
+        examples: [
+            {
+                description: "Tag an image of punching.",
+                code: `image tag 433008356190322688 punch`
+            },
+            {
+                description: "Tag an image of a death as flex and punch",
+                code: `image tag 433008356190322688 punch flex`
+            }
+        ]
+    }
+    return docs;
+};

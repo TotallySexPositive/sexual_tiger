@@ -20,3 +20,22 @@ function timeConversion(millisec){
 exports.help = () =>{
     return "Trying to figure out how long i can keep it up?";
 };
+
+exports.docs = () => {
+    let docs = {
+        tab: "Misc",
+        link: "general",
+        parent: "",
+        full_command: "uptime",
+        command: "uptime",
+        description: "Display how long the bot has been up.",
+        syntax: 'uptime',
+        examples: [
+            {
+                description: "Get bots up time",
+                code: `uptime`
+            }
+        ]
+    }
+    return docs;
+};

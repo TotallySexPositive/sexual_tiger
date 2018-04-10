@@ -1,4 +1,4 @@
-const path  = require("path");
+/*const path  = require("path");
 const fs    = require("fs");
 const DAL   = require(path.resolve("dal.js"))
 const UTIL  = require(path.resolve("utils.js"))
@@ -22,3 +22,26 @@ exports.run = (client, message, args) => {
 exports.help = () =>{
     return "Send an imagine into oblivion! $image delete [hash_id]";
 };
+
+exports.docs = () => {
+    let docs = {
+        tab: "image",
+        link: "image",
+        parent: "image",
+        full_command: "image delete",
+        command: "delete",
+        description: "Delete an image from the database.  This will completely delete an image.  If an image is just tagged wrong please use 'image untag' instead of delete.  In order to ",
+        syntax: 'image delete [post_id]',
+        examples: [
+            {
+                description: "Add the image 'coolimage.jpg' to the bot and tag it as flex",
+                code: `image add http://coolimages.com/coolimage.jpg flex`
+            },
+            {
+                description: "Add the image 'coolimage.jpg' to the bot and tag it as clap, slap, flip",
+                code: `image add http://coolimages.com/coolimage.jpg clap slap flip`
+            }
+        ]
+    }
+    return docs;
+};*/

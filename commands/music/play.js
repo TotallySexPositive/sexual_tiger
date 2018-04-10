@@ -59,3 +59,26 @@ exports.run = (client, message, args) => {
 exports.help = () =>{
     return "Play a specific song.";
 };
+
+exports.docs = () => {
+    let docs = {
+        tab: "music",
+        link: "general",
+        parent: null,
+        full_command: "play",
+        command: "play",
+        description: "Play a song by name or ID.  If a number is specified an ID lookup is assumed.  Otherwise a search is performed for the entered value.  If an exact match or only 1 close match is found the clip is played.  Otherwise a list of options is displayed.",
+        syntax: "$play [song_identifier]",
+        examples: [
+            {
+                description: "Play the song 'Wagon Wheel' by name.",
+                code: "$play Wagon Wheel"
+            },
+            {
+                description: "Play the song 'Wagon Wheel' by id .",
+                code: "$play 1650"
+            }
+        ]
+    }
+    return docs;
+};

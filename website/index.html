@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Bootstrap Example</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  <style>
+    /* Remove the navbar's default margin-bottom and rounded borders */ 
+    .navbar {
+      margin-bottom: 0;
+      border-radius: 0;
+    }
+    
+    /* Set height of the grid so .sidenav can be 100% (adjust as needed) */
+    .row.content {height: 450px}
+    
+    /* Set gray background color and 100% height */
+    .sidenav {
+      padding-top: 20px;
+      background-color: #f1f1f1;
+      height: 100%;
+    }
+    
+    .example {
+      margin: 20px;
+    }
+    .description {
+      display: block;
+      font-size: 15px;
+      margin: 0px 0px 10px 0px;
+    }
+    .indent {
+      margin: 0px 0px 0px 20px
+    }
+    /* Set black background color, white text and some padding */
+    footer {
+      background-color: #555;
+      color: white;
+      padding: 15px;
+    }
+    pre, code {
+      white-space: pre-line;
+    }
+    /* On small screens, set height to 'auto' for sidenav and grid */
+    @media screen and (max-width: 767px) {
+      .sidenav {
+        height: auto;
+        padding: 15px;
+      }
+      .row.content {height:auto;} 
+    }
+  </style>
+</head>
+<body>
+
+<nav class="navbar navbar-inverse">
+    <div class="container-fluid">
+        <div class="navbar-header">
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>                        
+        </button>
+        <a class="navbar-brand" href="#">Logo</a>
+        </div>
+        <div class="collapse navbar-collapse" id="myNavbar">
+        <ul class="nav navbar-nav">
+            
+        </ul>
+        <ul class="nav navbar-nav navbar-right">
+            <li class="active"><a href="#">Home</a></li>
+                <li><a href="#">Admin</a></li>
+                <li><a href="#">Misc</a></li>
+                <li><a href="#">Image</a></li>
+                <li><a href="#">Music</a></li>
+        </ul>
+        </div>
+    </div>
+</nav>
+    <div class="container-fluid text-center">    
+        <div class="row content">
+            admin
+                <div class="col-sm-2 sidenav">
+                        <p><a href="#">General</a></p>
+                </div>
+                <div class="col-sm-8 text-left"> 
+                    <h1>$general</h1>
+                    <p>All general admin commands.</p>
+                    <hr>
+                        <h3>Build_gist</h3>
+                        <p>Rebuilds the &#x27;audio&#x27; gist.  Rescans the entire DB and regenerates the list of songs..</p>
+                        <code>$build_gist</code>
+                            <div class="example">
+                                <span class="description">Rebuild audio gist.</span>
+                                <code class="indent">$build_gist</code>
+                            </div>
+                        <h3>Clean_db</h3>
+                        <p>Deletes all Song entries from the DB where the source file no longer exists.</p>
+                        <code>$clean_db</code>
+                            <div class="example">
+                                <span class="description">Clean up all records to missing songs.</span>
+                                <code class="indent">$clean_db</code>
+                            </div>
+                        <h3>Gen_docs</h3>
+                        <p>Generates new Docs dynamically based on what commands exist and have a docs value.</p>
+                        <code>$gen_docs</code>
+                            <div class="example">
+                                <span class="description">Generate updated Docs.</span>
+                                <code class="indent">$gen_docs</code>
+                            </div>
+                        <h3>Grab_pics</h3>
+                        <p>Grabs 100 animated images from google and stores them in the DB.  A new tag must be made using the tag create command.  Make sure your search terms are quoted.  NOTE: This does NOT create the command to display the images.</p>
+                        <code>$grab_pics -s &quot;[search_terms]&quot; -t [tag_name]</code>
+                            <div class="example">
+                                <span class="description">Grab Anime clapping images.</span>
+                                <code class="indent">$grag_pics -s &quot;anime clapping&quot; -t clap</code>
+                            </div>
+                        <h3>Issue</h3>
+                        <p>Creates a new issue on the Github tracker.</p>
+                        <code>$issue -t &quot;[titel]&quot; -b &quot;[body] -l [label]</code>
+                            <div class="example">
+                                <span class="description">Create a new issue with label bug..</span>
+                                <code class="indent">$issue -t &quot;play command crashes bot&quot; -b &quot;When playing a song with a long name the bot crashes&quot; -l bug</code>
+                            </div>
+                        <h3>Prob_audio</h3>
+                        <p>Probes all hashed audio files and updates their length in the database.</p>
+                        <code>$prob_audio</code>
+                            <div class="example">
+                                <span class="description">Probe all audio clips to update length.</span>
+                                <code class="indent">$prob_audio</code>
+                            </div>
+                </div>
+                <div class="col-sm-2 sidenav">
+                    <div class="well">
+                    <p>ADS</p>
+                    </div>
+                    <div class="well">
+                    <p>ADS</p>
+                    </div>
+                </div>
+        </div>
+    </div>
+    <div class="container-fluid text-center">    
+        <div class="row content">
+            Misc
+                <div class="col-sm-2 sidenav">
+                        <p><a href="#">General</a></p>
+                </div>
+                <div class="col-sm-8 text-left"> 
+                    <h1>$general</h1>
+                    <p>All general Misc commands.</p>
+                    <hr>
+                        <h3>Fuckoff</h3>
+                        <p>Removes the bot from the voice channel at all costs</p>
+                        <code>$fuckoff</code>
+                            <div class="example">
+                                <span class="description">Force the bot out of the channel</span>
+                                <code class="indent">$fuckoff</code>
+                            </div>
+                        <h3>Help</h3>
+                        <p>Displays general usage info for commands.  Not so good when looking for image commands.</p>
+                        <code>$help [category]</code>
+                            <div class="example">
+                                <span class="description">Get help with admin commands</span>
+                                <code class="indent">$help admin</code>
+                            </div>
+                        <h3>Home</h3>
+                        <p>Displays the link to the Sexual Tiger website.</p>
+                        <code>$home</code>
+                            <div class="example">
+                                <span class="description">Get link</span>
+                                <code class="indent">$home</code>
+                            </div>
+                        <h3>Tabletop</h3>
+                        <p>Display link for Table Top games calendar</p>
+                        <code>$tabletop</code>
+                            <div class="example">
+                                <span class="description">Get calendar link</span>
+                                <code class="indent">$tabletop</code>
+                            </div>
+                        <h3>Uptime</h3>
+                        <p>Display how long the bot has been up.</p>
+                        <code>$uptime</code>
+                            <div class="example">
+                                <span class="description">Get bots up time</span>
+                                <code class="indent">$uptime</code>
+                            </div>
+                </div>
+                <div class="col-sm-2 sidenav">
+                    <div class="well">
+                    <p>ADS</p>
+                    </div>
+                    <div class="well">
+                    <p>ADS</p>
+                    </div>
+                </div>
+        </div>
+    </div>
+    <div class="container-fluid text-center">    
+        <div class="row content">
+            image
+                <div class="col-sm-2 sidenav">
+                        <p><a href="#">Pictures</a></p>
+                        <p><a href="#">Tqg</a></p>
+                        <p><a href="#">Image</a></p>
+                </div>
+                <div class="col-sm-8 text-left"> 
+                    <h1>$Pictures</h1>
+                    <p>All Pictures image commands.</p>
+                    <hr>
+                        <h3>Cheer</h3>
+                        <p>Post an image of anime cheer.</p>
+                        <code>$cheer</code>
+                            <div class="example">
+                                <span class="description">Post image of cheer</span>
+                                <code class="indent">$cheer</code>
+                            </div>
+                        <h3>Burn</h3>
+                        <p>Post an image of anime burn.</p>
+                        <code>$burn</code>
+                            <div class="example">
+                                <span class="description">Post image of burn</span>
+                                <code class="indent">$burn</code>
+                            </div>
+                        <h3>Clap</h3>
+                        <p>Post an image of anime clap.</p>
+                        <code>$clap</code>
+                            <div class="example">
+                                <span class="description">Post image of clap</span>
+                                <code class="indent">$clap</code>
+                            </div>
+                        <h3>Cry</h3>
+                        <p>Post an image of anime cry.</p>
+                        <code>$cry</code>
+                            <div class="example">
+                                <span class="description">Post image of cry</span>
+                                <code class="indent">$cry</code>
+                            </div>
+                        <h3>Dance</h3>
+                        <p>Post an image of anime dance.</p>
+                        <code>$dance</code>
+                            <div class="example">
+                                <span class="description">Post image of dance</span>
+                                <code class="indent">$dance</code>
+                            </div>
+                        <h3>Flex</h3>
+                        <p>Post an image of anime flex.</p>
+                        <code>$flex</code>
+                            <div class="example">
+                                <span class="description">Post image of flex</span>
+                                <code class="indent">$flex</code>
+                            </div>
+                        <h3>Flip</h3>
+                        <p>Post an image of anime flip.</p>
+                        <code>$flip</code>
+                            <div class="example">
+                                <span class="description">Post image of flip</span>
+                                <code class="indent">$flip</code>
+                            </div>
+                        <h3>Death</h3>
+                        <p>Post an image of anime death.</p>
+                        <code>$death</code>
+                            <div class="example">
+                                <span class="description">Post image of death</span>
+                                <code class="indent">$death</code>
+                            </div>
+                        <h3>Goodbye</h3>
+                        <p>Post an image of anime goodbye.</p>
+                        <code>$goodbye</code>
+                            <div class="example">
+                                <span class="description">Post image of goodbye</span>
+                                <code class="indent">$goodbye</code>
+                            </div>
+                        <h3>Hug</h3>
+                        <p>Post an image of anime hug.</p>
+                        <code>$hug</code>
+                            <div class="example">
+                                <span class="description">Post image of hug</span>
+                                <code class="indent">$hug</code>
+                            </div>
+                        <h3>Kiss</h3>
+                        <p>Post an image of anime kiss.</p>
+                        <code>$kiss</code>
+                            <div class="example">
+                                <span class="description">Post image of kiss</span>
+                                <code class="indent">$kiss</code>
+                            </div>
+                        <h3>Laugh</h3>
+                        <p>Post an image of anime laugh.</p>
+                        <code>$laugh</code>
+                            <div class="example">
+                                <span class="description">Post image of laugh</span>
+                                <code class="indent">$laugh</code>
+                            </div>
+                        <h3>Lewd</h3>
+                        <p>Post an image of anime lewd.</p>
+                        <code>$lewd</code>
+                            <div class="example">
+                                <span class="description">Post image of lewd</span>
+                                <code class="indent">$lewd</code>
+                            </div>
+                        <h3>Nosebleed</h3>
+                        <p>Post an image of anime nosebleed.</p>
+                        <code>$nosebleed</code>
+                            <div class="example">
+                                <span class="description">Post image of nosebleed</span>
+                                <code class="indent">$nosebleed</code>
+                            </div>
+                        <h3>Nuke</h3>
+                        <p>Post an image of anime nuke.</p>
+                        <code>$nuke</code>
+                            <div class="example">
+                                <span class="description">Post image of nuke</span>
+                                <code class="indent">$nuke</code>
+                            </div>
+                        <h3>Pat</h3>
+                        <p>Post an image of anime pat.</p>
+                        <code>$pat</code>
+                            <div class="example">
+                                <span class="description">Post image of pat</span>
+                                <code class="indent">$pat</code>
+                            </div>
+                        <h3>Pout</h3>
+                        <p>Post an image of anime pout.</p>
+                        <code>$pout</code>
+                            <div class="example">
+                                <span class="description">Post image of pout</span>
+                                <code class="indent">$pout</code>
+                            </div>
+                        <h3>Punch</h3>
+                        <p>Post an image of anime punch.</p>
+                        <code>$punch</code>
+                            <div class="example">
+                                <span class="description">Post image of punch</span>
+                                <code class="indent">$punch</code>
+                            </div>
+                        <h3>Rage</h3>
+                        <p>Post an image of anime rage.</p>
+                        <code>$rage</code>
+                            <div class="example">
+                                <span class="description">Post image of rage</span>
+                                <code class="indent">$rage</code>
+                            </div>
+                        <h3>Rock</h3>
+                        <p>Post an image of anime rock.</p>
+                        <code>$rock</code>
+                            <div class="example">
+                                <span class="description">Post image of rock</span>
+                                <code class="indent">$rock</code>
+                            </div>
+                        <h3>Scared</h3>
+                        <p>Post an image of anime scared.</p>
+                        <code>$scared</code>
+                            <div class="example">
+                                <span class="description">Post image of scared</span>
+                                <code class="indent">$scared</code>
+                            </div>
+                        <h3>Slap</h3>
+                        <p>Post an image of anime slap.</p>
+                        <code>$slap</code>
+                            <div class="example">
+                                <span class="description">Post image of slap</span>
+                                <code class="indent">$slap</code>
+                            </div>
+                        <h3>Sleep</h3>
+                        <p>Post an image of anime sleep.</p>
+                        <code>$sleep</code>
+                            <div class="example">
+                                <span class="description">Post image of sleep</span>
+                                <code class="indent">$sleep</code>
+                            </div>
+                        <h3>Smug</h3>
+                        <p>Post an image of anime smug.</p>
+                        <code>$smug</code>
+                            <div class="example">
+                                <span class="description">Post image of smug</span>
+                                <code class="indent">$smug</code>
+                            </div>
+                        <h3>Sorry</h3>
+                        <p>Post an image of anime sorry.</p>
+                        <code>$sorry</code>
+                            <div class="example">
+                                <span class="description">Post image of sorry</span>
+                                <code class="indent">$sorry</code>
+                            </div>
+                        <h3>Sports</h3>
+                        <p>Post an image of anime sports.</p>
+                        <code>$sports</code>
+                            <div class="example">
+                                <span class="description">Post image of sports</span>
+                                <code class="indent">$sports</code>
+                            </div>
+                        <h3>Tigerfucking</h3>
+                        <p>Post an image of anime tigerfucking.</p>
+                        <code>$tigerfucking</code>
+                            <div class="example">
+                                <span class="description">Post image of tigerfucking</span>
+                                <code class="indent">$tigerfucking</code>
+                            </div>
+                        <h3>Wave</h3>
+                        <p>Post an image of anime wave.</p>
+                        <code>$wave</code>
+                            <div class="example">
+                                <span class="description">Post image of wave</span>
+                                <code class="indent">$wave</code>
+                            </div>
+                </div>
+                <div class="col-sm-2 sidenav">
+                    <div class="well">
+                    <p>ADS</p>
+                    </div>
+                    <div class="well">
+                    <p>ADS</p>
+                    </div>
+                </div>
+                <div class="col-sm-8 text-left"> 
+                    <h1>$tqg</h1>
+                    <p>All tqg image commands.</p>
+                    <hr>
+                        <h3>Create</h3>
+                        <p>Create a new Tag in the database. Tag names must be 1 word.  Use this before grab_pics when adding a new set of images.</p>
+                        <code>$tag create [tag_name]</code>
+                            <div class="example">
+                                <span class="description">Create new tag called, &#x27;dance&#x27;</span>
+                                <code class="indent">$tag create dance</code>
+                            </div>
+                </div>
+                <div class="col-sm-2 sidenav">
+                    <div class="well">
+                    <p>ADS</p>
+                    </div>
+                    <div class="well">
+                    <p>ADS</p>
+                    </div>
+                </div>
+                <div class="col-sm-8 text-left"> 
+                    <h1>$image</h1>
+                    <p>All image image commands.</p>
+                    <hr>
+                        <h3>Add</h3>
+                        <p>Add a new image to the database.</p>
+                        <code>$image add [url] [...tag_name, tag_name, tag_name]</code>
+                            <div class="example">
+                                <span class="description">Add the image &#x27;coolimage.jpg&#x27; to the bot and tag it as flex</span>
+                                <code class="indent">$image add http://coolimages.com/coolimage.jpg flex</code>
+                            </div>
+                            <div class="example">
+                                <span class="description">Add the image &#x27;coolimage.jpg&#x27; to the bot and tag it as clap, slap, flip</span>
+                                <code class="indent">$image add http://coolimages.com/coolimage.jpg clap slap flip</code>
+                            </div>
+                        <h3>Retag</h3>
+                        <p>Retag an image in the database.  This will remove the tag that triggered the image in the first place, and add the new tags in its place.  To get message_id, Go to Discord Settings -&gt; Appearance -&gt; Toggle Developer Mode on.  Then right click image/post and click &#x27;Copy Id&#x27;</p>
+                        <code>$image retag [message_id] [...tag_name, tag_name, tag_name]</code>
+                            <div class="example">
+                                <span class="description">Retag an image of punching that was displayed when using the flex command.</span>
+                                <code class="indent">$image retag 433008356190322688 punch</code>
+                            </div>
+                            <div class="example">
+                                <span class="description">Retag an image of a punch and flex that was displayed when using the cry command.</span>
+                                <code class="indent">$image retag 433008356190322688 punch flex</code>
+                            </div>
+                        <h3>Tag</h3>
+                        <p>Tag an image in the database.  You can only add pre-existing tags using this command.  To get message_id, Go to Discord Settings -&gt; Appearance -&gt; Toggle Developer Mode on.  Then right click image/post and click &#x27;Copy Id&#x27;</p>
+                        <code>$image tag [message_id] [...tag_name, tag_name, tag_name]</code>
+                            <div class="example">
+                                <span class="description">Tag an image of punching.</span>
+                                <code class="indent">$image tag 433008356190322688 punch</code>
+                            </div>
+                            <div class="example">
+                                <span class="description">Tag an image of a death as flex and punch</span>
+                                <code class="indent">$image tag 433008356190322688 punch flex</code>
+                            </div>
+                        <h3>Untag</h3>
+                        <p>Untag an image in the database.  This will remove the tag that trigger the image to be posted.  If the image has no more tags, the image will be deleted.  To get message_id, Go to Discord Settings -&gt; Appearance -&gt; Toggle Developer Mode on.  Then right click image/post and click &#x27;Copy Id&#x27;</p>
+                        <code>$image untag [message_id]</code>
+                            <div class="example">
+                                <span class="description">Untag an image of a banana.</span>
+                                <code class="indent">$image untag 433008356190322688</code>
+                            </div>
+                </div>
+                <div class="col-sm-2 sidenav">
+                    <div class="well">
+                    <p>ADS</p>
+                    </div>
+                    <div class="well">
+                    <p>ADS</p>
+                    </div>
+                </div>
+        </div>
+    </div>
+    <div class="container-fluid text-center">    
+        <div class="row content">
+            music
+                <div class="col-sm-2 sidenav">
+                        <p><a href="#">General</a></p>
+                        <p><a href="#">Playlists</a></p>
+                </div>
+                <div class="col-sm-8 text-left"> 
+                    <h1>$general</h1>
+                    <p>All general music commands.</p>
+                    <hr>
+                        <h3>Play</h3>
+                        <p>Play a song by name or ID.  If a number is specified an ID lookup is assumed.  Otherwise a search is performed for the entered value.  If an exact match or only 1 close match is found the clip is played.  Otherwise a list of options is displayed.</p>
+                        <code>$$play [song_identifier]</code>
+                            <div class="example">
+                                <span class="description">Play the song &#x27;Wagon Wheel&#x27; by name.</span>
+                                <code class="indent">$$play Wagon Wheel</code>
+                            </div>
+                            <div class="example">
+                                <span class="description">Play the song &#x27;Wagon Wheel&#x27; by id .</span>
+                                <code class="indent">$$play 1650</code>
+                            </div>
+                </div>
+                <div class="col-sm-2 sidenav">
+                    <div class="well">
+                    <p>ADS</p>
+                    </div>
+                    <div class="well">
+                    <p>ADS</p>
+                    </div>
+                </div>
+                <div class="col-sm-8 text-left"> 
+                    <h1>$playlists</h1>
+                    <p>All playlists music commands.</p>
+                    <hr>
+                        <h3>Add</h3>
+                        <p>Add a song(s) to a playlist.</p>
+                        <code>$$playlist add -p [playlist_id] -s [song_id]</code>
+                            <div class="example">
+                                <span class="description">Add one song to a playlist.</span>
+                                <code class="indent">$$playlist add -p 2 -s 74</code>
+                            </div>
+                            <div class="example">
+                                <span class="description">Add more than one song to a playlist.</span>
+                                <code class="indent">$$playlist add -p 2 -s 74 -s 66 -s 12</code>
+                            </div>
+                        <h3>Create</h3>
+                        <p>Create a new playlist.</p>
+                        <code>$$playlist create [playlist_name]</code>
+                            <div class="example">
+                                <span class="description">Create a playlist named, &#x27;Royalty Free&#x27;.</span>
+                                <code class="indent">$$playlist create Royalty Free</code>
+                            </div>
+                </div>
+                <div class="col-sm-2 sidenav">
+                    <div class="well">
+                    <p>ADS</p>
+                    </div>
+                    <div class="well">
+                    <p>ADS</p>
+                    </div>
+                </div>
+        </div>
+    </div>
+
+<footer class="container-fluid text-center">
+  <p>Footer Text</p>
+</footer>
+
+</body>
+</html>

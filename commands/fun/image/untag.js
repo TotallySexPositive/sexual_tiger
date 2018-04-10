@@ -5,7 +5,7 @@ const UTIL      = require(path.resolve("utils.js"))
 
 exports.run = (client, message, args) => {
     if(args.length !== 1) {
-        message.channel.send("Must send message id. EX: $image detag [MESSAGE_ID]\nTo get message_id, Go to Discord Settings -> Appearance -> Toggle Developer Mode on.\nThen right click image/post and click 'Copy Id'");
+        message.channel.send("Must send message id. EX: $image untag [MESSAGE_ID]\nTo get message_id, Go to Discord Settings -> Appearance -> Toggle Developer Mode on.\nThen right click image/post and click 'Copy Id'");
     } else {
         const message_id = args[0];
 
@@ -61,4 +61,23 @@ exports.run = (client, message, args) => {
 
 exports.help = () =>{
     return "Removes a tag from an image. EX: $image detag [MESSAGE_ID]";
+};
+
+exports.docs = () => {
+    let docs = {
+        tab: "image",
+        link: "image",
+        parent: "image",
+        full_command: "image untag",
+        command: "untag",
+        description: "Untag an image in the database.  This will remove the tag that trigger the image to be posted.  If the image has no more tags, the image will be deleted.  To get message_id, Go to Discord Settings -> Appearance -> Toggle Developer Mode on.  Then right click image/post and click 'Copy Id'",
+        syntax: 'image untag [message_id]',
+        examples: [
+            {
+                description: "Untag an image of a banana.",
+                code: `image untag 433008356190322688`
+            }
+        ]
+    }
+    return docs;
 };

@@ -26,3 +26,22 @@ exports.run = (client, message, args) => {
 exports.help = () =>{
     return "Searches the DB for any songs that are in the DB but the files do not exist.  Then destroys the records.";
 };
+
+exports.docs = () => {
+    let docs = {
+        tab: "admin",
+        link: "general",
+        parent: "",
+        full_command: "clean_db",
+        command: "clean_db",
+        description: "Deletes all Song entries from the DB where the source file no longer exists.",
+        syntax: "clean_db",
+        examples: [
+            {
+                description: "Clean up all records to missing songs.",
+                code: "clean_db"
+            }
+        ]
+    }
+    return docs;
+};

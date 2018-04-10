@@ -13,3 +13,22 @@ exports.run = (client, message, args) => {
 exports.help = () =>{
     return "Rebuilds the Audio Gist on github from the current DB.";
 };
+
+exports.docs = () => {
+    let docs = {
+        tab: "admin",
+        link: "general",
+        parent: "",
+        full_command: "build_gist",
+        command: "build_gist",
+        description: "Rebuilds the 'audio' gist.  Rescans the entire DB and regenerates the list of songs..",
+        syntax: "build_gist",
+        examples: [
+            {
+                description: "Rebuild audio gist.",
+                code: "build_gist"
+            }
+        ]
+    }
+    return docs;
+};

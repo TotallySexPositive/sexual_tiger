@@ -94,3 +94,22 @@ exports.run = (client, message, args) => {
 exports.help = () =>{
     return "Gently probes all audio files from behind to find out just how 'long' :wink: they are.";
 };
+
+exports.docs = () => {
+    let docs = {
+        tab: "admin",
+        link: "general",
+        parent: "",
+        full_command: "grab_pics",
+        command: "grab_pics",
+        description: "Grabs 100 animated images from google and stores them in the DB.  A new tag must be made using the tag create command.  Make sure your search terms are quoted.  NOTE: This does NOT create the command to display the images.",
+        syntax: 'grab_pics -s "[search_terms]" -t [tag_name]',
+        examples: [
+            {
+                description: "Grab Anime clapping images.",
+                code: `grag_pics -s "anime clapping" -t clap`
+            }
+        ]
+    }
+    return docs;
+};

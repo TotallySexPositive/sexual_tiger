@@ -26,3 +26,22 @@ exports.run = (client, message, args) => {
 exports.help = () =>{
     return "Gently probes all audio files from behind to find out just how 'long' :wink: they are.";
 };
+
+exports.docs = () => {
+    let docs = {
+        tab: "admin",
+        link: "general",
+        parent: "",
+        full_command: "prob_audio",
+        command: "prob_audio",
+        description: "Probes all hashed audio files and updates their length in the database.",
+        syntax: 'prob_audio',
+        examples: [
+            {
+                description: "Probe all audio clips to update length.",
+                code: `prob_audio`
+            }
+        ]
+    }
+    return docs;
+};

@@ -61,3 +61,26 @@ exports.run = (client, message, args) => {
 exports.help = () =>{
     return "Removes a tag from an image. EX: $image detag [MESSAGE_ID]";
 };
+
+exports.docs = () => {
+    let docs = {
+        tab: "image",
+        link: "image",
+        parent: "image",
+        full_command: "image retag",
+        command: "retag",
+        description: "Retag an image in the database.  This will remove the tag that triggered the image in the first place, and add the new tags in its place.  To get message_id, Go to Discord Settings -> Appearance -> Toggle Developer Mode on.  Then right click image/post and click 'Copy Id'",
+        syntax: 'image retag [message_id] [...tag_name, tag_name, tag_name]',
+        examples: [
+            {
+                description: "Retag an image of punching that was displayed when using the flex command.",
+                code: `image retag 433008356190322688 punch`
+            },
+            {
+                description: "Retag an image of a punch and flex that was displayed when using the cry command.",
+                code: `image retag 433008356190322688 punch flex`
+            }
+        ]
+    }
+    return docs;
+};

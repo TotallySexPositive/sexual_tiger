@@ -66,3 +66,22 @@ exports.run = (client, message, args) => {
 exports.help = () =>{
     return 'Creates a new issue on github.  Flags: -t "Title" [-b "Body" -l "label" -l "labal2" -a "assignee"]';
 };
+
+exports.docs = () => {
+    let docs = {
+        tab: "admin",
+        link: "general",
+        parent: "",
+        full_command: "issue",
+        command: "issue",
+        description: "Creates a new issue on the Github tracker.",
+        syntax: 'issue -t "[titel]" -b "[body] -l [label]',
+        examples: [
+            {
+                description: "Create a new issue with label bug..",
+                code: `issue -t "play command crashes bot" -b "When playing a song with a long name the bot crashes" -l bug`
+            }
+        ]
+    }
+    return docs;
+};

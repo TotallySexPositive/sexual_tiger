@@ -99,3 +99,22 @@ function all_cards(client, message, args){
 exports.help = () =>{
     return "Really?";
 };
+
+exports.docs = () => {
+    let docs = {
+        tab: "Misc",
+        link: "general",
+        parent: "",
+        full_command: "help",
+        command: "help",
+        description: "Displays general usage info for commands.  Not so good when looking for image commands.",
+        syntax: 'help [category]',
+        examples: [
+            {
+                description: "Get help with admin commands",
+                code: `help admin`
+            }
+        ]
+    }
+    return docs;
+};

@@ -6,3 +6,22 @@ exports.run = (client, message, args) => {
 exports.help = () =>{
     return "Sends the link to teh Tabel Top Calendar...";
 };
+
+exports.docs = () => {
+    let docs = {
+        tab: "Misc",
+        link: "general",
+        parent: "",
+        full_command: "tabletop",
+        command: "tabletop",
+        description: "Display link for Table Top games calendar",
+        syntax: 'tabletop',
+        examples: [
+            {
+                description: "Get calendar link",
+                code: `tabletop`
+            }
+        ]
+    }
+    return docs;
+};
