@@ -119,12 +119,12 @@
         <div class="row content">
             <div class="col-sm-2 sidenav">
                 {{#each links}}
-                    <p><a name="trigger-link-change" data-id="link-{{name}}" href="#">{{capitalize name}}</a></p>
+                    <p><a name="trigger-link-change" data-id="tab-{{../name}}-link-{{name}}" href="#">{{capitalize name}}</a></p>
                 {{/each}}
             </div>
             <h2>{{this.name}}</h2>
             {{#each links}}
-                <div id="link-{{name}}" class="col-sm-8 text-left hidden link"> 
+                <div id="tab-{{../name}}-link-{{name}}" class="col-sm-8 text-left hidden link"> 
                     <h1>{{name}}</h1>
                     <p>All {{name}} {{../name}} commands.</p>
                     <hr>
@@ -147,7 +147,7 @@
 {{/each}}
 
 <footer class="container-fluid text-center">
-  <p>Footer Text</p>
+  <p>Socks are for your feet silly!</p>
 </footer>
 
 </body>
