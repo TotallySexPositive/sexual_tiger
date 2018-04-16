@@ -39,6 +39,7 @@
     "erlpack": "github:discordapp/erlpack",
     "express": "^4.16.2",
     "ffmpeg-binaries": "^3.2.2",
+    "giphy-api": "^1.2.7",
     "google-auth-library": "^0.12.0",
     "googleapis": "^24.0.0",
     "handlebars": "^4.0.11",
