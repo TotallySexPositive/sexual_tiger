@@ -23,14 +23,14 @@ exports.docs = () => {
         tab: "image",
         link: "Pictures",
         parent: "",
-        full_command: "cheer",
-        command: "cheer",
-        description: "Post an image of anime cheer.",
-        syntax: 'cheer',
+        full_command: "gif",
+        command: "gif",
+        description: "Grab a random image from Giphy with the specified tags, or completely random if no tags",
+        syntax: 'gif [tags]',
         examples: [
             {
-                description: "Post image of cheer",
-                code: `cheer`
+                description: "Post image of jumping",
+                code: `gif jump`
             }
         ]
     }
