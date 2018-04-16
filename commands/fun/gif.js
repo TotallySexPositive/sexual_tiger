@@ -9,13 +9,17 @@ exports.run = (client, message, args) => {
             console.log(err);
             return message.channel.send("Error while searching for gif.")
         } else {
-            return message.channel.send(res.data.images.original.url);
+            if(res.data && res.data.images && res.data.images.original) {
+                return message.channel.send(res.data.images.original.url);
+            } else {
+                return message.channel.send("Couldnt find anything with those tags.")
+            }
         }
     });	
 }
 
 exports.help = () =>{
-    return "Give me an A!";
+    return "Grab random image from Giphy!";
 };
 
 exports.docs = () => {
