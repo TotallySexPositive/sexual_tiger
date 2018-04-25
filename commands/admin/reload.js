@@ -5,7 +5,8 @@ const dir = require("node-dir")
 exports.run = (client, message, args) => {
     if(!args || args.length < 1 || args.length == undefined) return message.reply("Must provide a command name to reload.");
     // the path is relative to the *current folder*, so just ./filename.js
-    if(args[0]==="all"){
+    let arg = args[0];
+    if(arg==="all"){
         //reload all modules
         dir.files(path.resolve("commands"), (err, files)=>{
             if(err)console.error(err);
@@ -21,14 +22,26 @@ exports.run = (client, message, args) => {
         dir.files(path.resolve("commands"), (err, files)=>{
             if(err)console.error(err);
             files.some((filename)=>{
-                if(filename.endsWith(".js") && filename.includes(args[0])){
-                    console.log(filename)
-                    delete require.cache[filename];
-                    return true;
+                if(filename.endsWith(".js")){
+                    word = arg.substr(0, arg.length - 3)
+                    if (filename === arg)
+                    {
+                        console.log("Exact match, reloading " + filename + ".")
+                        delete require.cache[filename];
+                        return true;
+                        
+
+                    } else if(filename.includes(arg))
+                    {
+                        console.log("Not exact match, reloading " + filename + " just to be sure.")
+                        delete require.cache[filename];
+                        return false
+                    }
+                    
                 }else return false;
             })
         })
-        message.reply(`Reloaded ${args[0]}.`);
+        message.reply(`Reloaded ${arg}.`);
     }
     
 };
