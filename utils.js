@@ -44,7 +44,14 @@ var playAudio = function(client, connection, message, song, callBack) {
         .catch(console.error);
         return;
     } else {         
-        dispatcher = connection.playFile(path.resolve(global.audio_dirs.hashed, `${song.hash_id}.mp3`), {volume: server.volume});
+        if (song.is_clip)
+        {
+            dispatcher = connection.playFile(path.resolve(global.audio_dirs.hashed, `${song.hash_id}.mp3`), {volume: server.max_volume});
+        }else
+        {
+            dispatcher = connection.playFile(path.resolve(global.audio_dirs.hashed, `${song.hash_id}.mp3`), {volume: server.volume});
+        }
+        
         let {err, info} = DAL.incrementNumPlays(song.song_id);
         if(err) {
             console.log(err);
@@ -303,7 +310,7 @@ let probe_audio_file = function(file_hash) {
             console.log(file_hash);
         } else {
             song.duration = Math.ceil(data.streams[0].duration);
-            if(song.duration > 30) {
+            if(song.duration <= 30) {
                 song.is_clip = 1;
             } else {
                 song.is_clip = 0;
