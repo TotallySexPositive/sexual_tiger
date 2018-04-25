@@ -69,6 +69,39 @@ var playAudio = function(client, connection, message, song, callBack) {
     });
 }
 
+var playUrl = function(client, connection, message, url, callBack) {
+    var server = global.servers[message.guild.id]
+    let dispatcher = null;
+
+    if (server.dispatcher) {
+        server.dispatcher.end("remain")
+    }
+    if (connection.status == 4) { //4 = dead connection
+        let vc = message.member.voiceChannel;
+        vc.join()
+        .then(connection => {
+            playUrl(client, connection, message, url, callBack);
+        })
+        .catch(console.error);
+        return;
+    } else {         
+        dispatcher = connection.playArbitraryInput(url, {volume: server.volume});
+        server.dispatcher = dispatcher;
+    }
+    
+    dispatcher.on('end', (m) => {
+        // The song has finished
+        callBack(client, connection, message, url, callBack, m);
+    });
+
+    dispatcher.on('error', e => {
+        // Catch any errors that may arise
+        console.log(e);
+        message.channel.send("all fuck, it broke!");
+        connection.disconnect()
+    });
+}
+
 var playAudioBasicCallBack = function(client, connection, message, song, callBack, end_m) {
     let server = global.servers[message.guild.id];
     if (server.repeat && end_m !== "remain"){
@@ -418,6 +451,8 @@ let deleteImageByHash = function(hash) {
 module.exports.isInt = isInt;
 module.exports.isAdmin = isAdmin;
 module.exports.playAudio = playAudio;
+module.exports.playUrl = playUrl;
+
 module.exports.playAudioBasicCallBack = playAudioBasicCallBack;
 module.exports.playlistPlayBasicCallBack = playlistPlayBasicCallBack;
 module.exports.processAudioFile = processAudioFile;
