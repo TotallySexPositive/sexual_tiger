@@ -67,7 +67,7 @@ exports.help = () =>{
 exports.docs = () => {
     let docs = {
         tab: "Misc",
-        link: "General",
+        link: "general",
         parent: "",
         full_command: "tts",
         command: "tts",
