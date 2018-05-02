@@ -11,13 +11,12 @@ exports.run = (client, message, args) => {
     server.current_song = {};
     server.repeat = false;
     
-    message.guild.voiceConnection.disconnect();
-    /*let dispatcher = vc.connection.dispatcher
-    if(dispatcher === undefined) {
+    //message.guild.voiceConnection.disconnect();
+    if(server.dispatcher === undefined) {
         message.channel.send("No audio is playing.  You must be hearing things.")
         return;
     }
-    dispatcher.end();*/
+    server.dispatcher.end();
 }
 
 exports.help = () =>{

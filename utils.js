@@ -76,6 +76,39 @@ var playAudio = function(client, connection, message, song, callBack) {
     });
 }
 
+var playUrl = function(client, connection, message, url, callBack) {
+    var server = global.servers[message.guild.id]
+    let dispatcher = null;
+
+    if (server.dispatcher) {
+        server.dispatcher.end("remain")
+    }
+    if (connection.status == 4) { //4 = dead connection
+        let vc = message.member.voiceChannel;
+        vc.join()
+        .then(connection => {
+            playUrl(client, connection, message, url, callBack);
+        })
+        .catch(console.error);
+        return;
+    } else {         
+        dispatcher = connection.playArbitraryInput(url, {volume: server.volume});
+        server.dispatcher = dispatcher;
+    }
+    
+    dispatcher.on('end', (m) => {
+        // The song has finished
+        callBack(client, connection, message, url, callBack, m);
+    });
+
+    dispatcher.on('error', e => {
+        // Catch any errors that may arise
+        console.log(e);
+        message.channel.send("all fuck, it broke!");
+        connection.disconnect()
+    });
+}
+
 var playAudioBasicCallBack = function(client, connection, message, song, callBack, end_m) {
     let server = global.servers[message.guild.id];
     if (server.repeat && end_m !== "remain"){
@@ -144,7 +177,7 @@ var processAudioFile = function(file_path, url, message, cb) {
         return;
     }
         
-    exec(`ffmpeg-normalize "${file_path}" -c:a libmp3lame -ofmt mp3 -ext mp3 -o ${hashed_file_path} -f -t -20`, (err, stdout, stderr) => {
+    exec(`nice ffmpeg-normalize "${file_path}" -c:a libmp3lame -ofmt mp3 -ext mp3 -o ${hashed_file_path} -f -t -20`, (err, stdout, stderr) => {
         if (err) {// node couldn't execute the command
             if(err.message.indexOf("Invalid data found") == -1) { //Only output error if we dont know why it happened.
                 console.log("Couldnt run command");
@@ -340,6 +373,8 @@ let getFileSizeInMegaBytes = function(file) {
 }
 
 let postRandomImageByTag = function(message, tag_name) {
+    const time = process.hrtime();
+    const NS_PER_SEC = 1e9;
 
     let {err: t_err, tag} = DAL.findTagByName(tag_name);
     if(t_err) {
@@ -358,6 +393,8 @@ let postRandomImageByTag = function(message, tag_name) {
         let file = path.resolve(global.image_dirs.hashed, image.hash_id + image.extension);
         message.channel.send("", {"files": [file]})
         .then(post => {
+            const diff = process.hrtime(time);
+            console.log(`Posted ${(diff[0] * NS_PER_SEC + diff[1])/1000000} ms`);
             //Store the posted image message_id to the tag/cmd that was called.  For use in untagging/retagging
             global.img_resp_to_tag[post.id] = tag
             global.img_resp_to_tag_order.push(post.id)
@@ -425,6 +462,8 @@ let deleteImageByHash = function(hash) {
 module.exports.isInt = isInt;
 module.exports.isAdmin = isAdmin;
 module.exports.playAudio = playAudio;
+module.exports.playUrl = playUrl;
+
 module.exports.playAudioBasicCallBack = playAudioBasicCallBack;
 module.exports.playlistPlayBasicCallBack = playlistPlayBasicCallBack;
 module.exports.processAudioFile = processAudioFile;

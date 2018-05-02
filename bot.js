@@ -77,6 +77,7 @@ client.on('message', message => {
     if (message.author.bot){
         return;
     }
+    const NS_PER_SEC = 1e9;
     
     const user = message.author.username;
 
@@ -104,7 +105,11 @@ client.on('message', message => {
             let p = path.resolve("commands", k,`${safe}.js`)
             if (fs.existsSync(p)){
                 let commandFile = require(p);
+                const time = process.hrtime();
                 commandFile.run(client, message, args);
+                const diff = process.hrtime(time);
+                console.log(`Run comand ${(diff[0] * NS_PER_SEC + diff[1])/1000000} ms`);
+
                 return true;
             } 
             else{
