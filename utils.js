@@ -373,6 +373,8 @@ let getFileSizeInMegaBytes = function(file) {
 }
 
 let postRandomImageByTag = function(message, tag_name) {
+    const time = process.hrtime();
+    const NS_PER_SEC = 1e9;
 
     let {err: t_err, tag} = DAL.findTagByName(tag_name);
     if(t_err) {
@@ -391,6 +393,8 @@ let postRandomImageByTag = function(message, tag_name) {
         let file = path.resolve(global.image_dirs.hashed, image.hash_id + image.extension);
         message.channel.send("", {"files": [file]})
         .then(post => {
+            const diff = process.hrtime(time);
+            console.log(`Posted ${(diff[0] * NS_PER_SEC + diff[1])/1000000} ms`);
             //Store the posted image message_id to the tag/cmd that was called.  For use in untagging/retagging
             global.img_resp_to_tag[post.id] = tag
             global.img_resp_to_tag_order.push(post.id)

@@ -40,7 +40,6 @@ exports.run = (client, message, args) => {
     }
     TTS(text, lang, rate)   // speed normal = 1 (default), slow = 0.24
     .then(function (url) {
-        console.log(url); // https://translate.google.com/translate_tts?...
         var server = global.servers[message.guild.id]
 
         let vc = message.member.voiceChannel
