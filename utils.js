@@ -46,7 +46,7 @@ var playAudio = function(client, connection, message, song, callBack) {
     } else {         
         if (song.is_clip)
         {
-            dispatcher = connection.playFile(path.resolve(global.audio_dirs.hashed, `${song.hash_id}.mp3`), {volume: server.max_volume});
+            dispatcher = connection.playFile(path.resolve(global.audio_dirs.hashed, `${song.hash_id}.mp3`), {volume: server.clip_volume});
         }else
         {
             dispatcher = connection.playFile(path.resolve(global.audio_dirs.hashed, `${song.hash_id}.mp3`), {volume: server.volume});

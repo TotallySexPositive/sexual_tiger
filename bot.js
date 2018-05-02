@@ -68,7 +68,7 @@ client.on('ready', () => {
     
     //Init servers array
     client.guilds.keyArray().forEach(server_id => {
-        global.servers[server_id] = {repeat: false, maintain_presence: false, dispatcher: null, default_volume: .25, volume: .25, max_volume: 1, super_admins:["231574835694796801","183388696207294465"]};
+        global.servers[server_id] = {repeat: false, maintain_presence: false, dispatcher: null, default_volume: .25, volume: .25, max_volume: 1, clip_volume: .75, super_admins:["231574835694796801","183388696207294465"]};
     });
 });
 
