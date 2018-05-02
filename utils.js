@@ -177,7 +177,7 @@ var processAudioFile = function(file_path, url, message, cb) {
         return;
     }
         
-    exec(`ffmpeg-normalize "${file_path}" -c:a libmp3lame -ofmt mp3 -ext mp3 -o ${hashed_file_path} -f -t -20`, (err, stdout, stderr) => {
+    exec(`nice ffmpeg-normalize "${file_path}" -c:a libmp3lame -ofmt mp3 -ext mp3 -o ${hashed_file_path} -f -t -20`, (err, stdout, stderr) => {
         if (err) {// node couldn't execute the command
             if(err.message.indexOf("Invalid data found") == -1) { //Only output error if we dont know why it happened.
                 console.log("Couldnt run command");
