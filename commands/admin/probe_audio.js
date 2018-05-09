@@ -8,7 +8,7 @@ const UTIL  = require(path.resolve("utils.js"))
 exports.run = (client, message, args) => {
     let hashed_audio_path       = global.audio_dirs.hashed;
     let files_to_process        = fs.readdirSync(global.audio_dirs.hashed)
-
+    console.log("Probing audio!")
     files_to_process.some(function(file){
         probe(path.resolve(global.audio_dirs.hashed, file), function(err, data) {
             let {err: s_err, song} = DAL.findSongByIdentifier(file.substring(0, 32))
@@ -19,8 +19,10 @@ exports.run = (client, message, args) => {
                 song.duration = Math.ceil(data.streams[0].duration);
                 DAL.updateSong(song);
             }
+            console.log("in that probe yo")
         });
     });
+    
 }
 
 exports.help = () =>{

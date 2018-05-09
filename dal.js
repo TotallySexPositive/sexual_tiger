@@ -436,8 +436,10 @@ let incrementNumPlays = function(song_id) {
 
 let updateSong = function(song) {
     let query = `UPDATE song SET name = :name, is_clip = :is_clip, duration = :duration WHERE song_id = :song_id;`
-    if (song.duration <= 30){
-        song.is_clip = true;
+    if (song.duration <= global.clip_length){
+        song.is_clip = 1;
+    } else {
+        song.is_clip = 0;
     }
     try {
         return {err: undefined, info: DB.prepare(query).run({name: song.name, is_clip: song.is_clip, duration: song.duration, song_id: song.song_id})};
