@@ -41,6 +41,7 @@ global.image_dirs = {
 global.img_resp_to_tag = {}
 global.img_resp_to_tag_order = []
 global.img_resp_to_tag_max_len = 100;
+global.clip_length = 30;
 
 //Array of directories required for bot to operate, make sure all parent directories appear before sub directories in list. IE: make sure audio exists, before trying to make audio/hashed
 let required_folders = [
