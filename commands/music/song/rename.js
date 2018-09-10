@@ -59,11 +59,11 @@ exports.docs = () => {
         full_command: "song rename",
         command: "rename",
         description: "Rename a song in the database.  Song names can not be integers.",
-        syntax: "song rename -i [song_id] -s '[new_song_name]'",
+        syntax: "song rename -i [song_id] -n '[new_song_name]'",
         examples: [
             {
                 description: "rename song 66, to Shrektastic in the DB.",
-                code: "song rename -i 66 -s 'Shrektastic'"
+                code: "song rename -i 66 -n 'Shrektastic'"
             }
         ]
     }
