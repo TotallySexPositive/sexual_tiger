@@ -63,7 +63,7 @@ exports.docs = () => {
         examples: [
             {
                 description: "Conjure a Pocket Monster",
-                code: `gif pokemon`
+                code: `pokemon`
             }
         ]
     }
