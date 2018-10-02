@@ -27,7 +27,7 @@ exports.run = (client, message, args) => {
     if(!argv.s || !argv.t || argv.t.indexOf(" ") > -1) {
         return message.channel.send('You must provide a tag and a search term. Tag must be one word only. EX: $grab_pics -t pout -s "anime pout"')
     }
-
+    console.log("google.list before")
     google.list({
         keyword: argv.s,
         num: 100,
@@ -40,12 +40,13 @@ exports.run = (client, message, args) => {
         }
     })
     .then(function (res) {
+        console.log("google.list then in")
         res.forEach((thing) => {
             const options = {
                 url: thing.url,
                 dest: path.resolve("images", "tmp", randomstring.generate() + ".gif")
             };
-
+            console.log("downloading before")
             download.image(options)
             .then(({ filename, image }) => {
                 //Verify the thing we downloaded was even an image.
