@@ -380,7 +380,7 @@ let postRandomImageByTag = function(message, tag_name) {
     if(t_err) {
         return message.channel.send("Crashed while finding tag.")
     } else if (tag === undefined) {
-        return message.channel.send(`There is no tag with the name. ${tag}.`)
+        return message.channel.send(`There is no tag with the name. ${tag_name}.`)
     } //Valid tag.
 
     let {err, image} = DAL.getRandomImageByTag(tag.tag_id);

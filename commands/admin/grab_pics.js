@@ -51,7 +51,7 @@ exports.run = (client, message, args) => {
                 //Verify the thing we downloaded was even an image.
                 const buffer    = readChunk.sync(filename, 0, 12);
                 let image_type  = imageType(buffer);
-
+                console.log(filename);
                 if(image_type === undefined || image_type === null || !image_type.mime.includes("image")) {
                     console.log(`Skipped file ${filename} because it wasnt an image.`);
                 } else {//Ok it was an image, lets check its size
