@@ -41,7 +41,7 @@
     "ffmpeg-binaries": "^3.2.2",
     "giphy-api": "^1.2.7",
     "google-auth-library": "^0.12.0",
-    "google-tts-api": "0.0.2",
+    "google-tts-api": "0.0.4",
     "googleapis": "^24.0.0",
     "handlebars": "^4.0.11",
     "image-data-uri": "^1.1.1",
