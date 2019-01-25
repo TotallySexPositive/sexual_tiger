@@ -44,7 +44,7 @@ var playAudio = function(client, connection, message, song, callBack) {
         .catch(console.error);
         return;
     } else {         
-        if (song.is_clip)
+        if (song.is_clip  && server.songs && !server.songs.length)
         {
             dispatcher = connection.playFile(path.resolve(global.audio_dirs.hashed, `${song.hash_id}.mp3`), {volume: server.clip_volume});
         }else
@@ -133,6 +133,8 @@ var playlistPlayBasicCallBack = function(client, connection, message, song, call
             server.current_song = server.songs[server.current_song_index];
             playAudio(client, connection, message, server.current_song, playlistPlayBasicCallBack);
         } else {
+            server.current_song_index = 0;
+            server.songs = [];
             if(!server.maintain_presence && end_m !== "remain") {//remain means we have more media incoming, dont kill connection.
                 connection.disconnect();
             } 
@@ -457,6 +459,10 @@ let deleteImageByHash = function(hash) {
            return {err: undefined, image: image}
         }
     }
+}
+
+let textToMorse = function(text) {
+    
 }
 
 module.exports.isInt = isInt;
