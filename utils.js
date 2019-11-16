@@ -191,8 +191,7 @@ var processAudioFile = function(file_path, url, message, cb) {
                     console.log(err3);
                 } else {
                     console.log(`Deleted offending file. ${file_path}`);
-                    message.channel.send("I dont know what the fuck you just tried to be me to process, but I deleted it. :stuck_out_tongue: ")
-
+                    message.channel.send("I dont know what the fuck you just tried to get me to process, but I deleted it. :stuck_out_tongue: ")
                 }
             })
             cb(new Error(`Failed to run ffmpeg-normalize. ${err.message}`), undefined);
@@ -343,7 +342,7 @@ let rebuildAudioGist = function() {
             });
     
             let payload = {};
-            payload.id = "c76103763a2f785162d30c841094e795";
+            payload.gist_id = "c76103763a2f785162d30c841094e795";
             payload.description = "All the audio files avaiable to play."
             payload.files = {
                 "Audio.md": {
@@ -351,7 +350,7 @@ let rebuildAudioGist = function() {
                 }
             };
             
-            octokit.gists.edit(payload, (error, result) => {
+            octokit.gists.update(payload, (error, result) => {
                 if(error) {
                     console.log(error);
                     return new Error("rebuildAudioGist error'd out while PUTing gist.")
