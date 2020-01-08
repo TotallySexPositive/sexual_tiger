@@ -43,36 +43,27 @@ exports.run = (client, message, args) => {
 
 
 exports.help = () =>{
-    return "Text to Speech, but less annoying...";
+    return "Get a funny (not guarenteed) commic.";
 };
 
 exports.docs = () => {
     let docs = {
-        tab: "Misc",
-        link: "general",
+        tab: "image",
+        link: "Pictures",
         parent: "",
-        full_command: "tts",
-        command: "tts",
-        description: "Converts Text to Speech using Google API.  See https://cloud.google.com/speech-to-text/docs/languages for list of available language codes.",
-        syntax: 'tts [text to convert] | -t "text to convert" [-l LANG_CODE] [-r RATE] ',
+        full_command: "xckd",
+        command: "xckd",
+        description: "Grab a XKCD image",
+        syntax: 'gifs [comic_id]',
         examples: [
             {
-                description: "Say 'Hello fellow humans' in english at normal rate.",
-                code: `tts Hello fellow humans`
+                description: "Post current xkcd",
+                code: `xkcd`
             },
             {
-                description: "Say 'Hello fellow humans' in english at half normal rate.",
-                code: `tts -t "Hello fellow humans" -r .5`
-            },
-            {
-                description: "Say 'Hello fellow humans' with a french accent at normal rate.",
-                code: `tts -t "Hello fellow humans" -l fr`
-            },
-            {
-                description: "Say 'erbrbrbrbrbrbrbrb' with/in japanese at a quarter normal rate.",
-                code: `tts -t "erbrbrbrbrbrbrbrb" -l JA -r .25`
+                description: "Post xkcd commic id: 614",
+                code: `xkcd 614`
             }
-
         ]
     }
     return docs;
