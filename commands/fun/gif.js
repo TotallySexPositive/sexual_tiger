@@ -10,7 +10,7 @@ exports.run = (client, message, args) => {
             return message.channel.send("Error while searching for gif.")
         } else {
             if(res.data && res.data.images && res.data.images.original) {
-                return message.channel.send(res.data.images.original.url);
+                return message.channel.send({files: [res.data[0].images.original.url]});
             } else {
                 return message.channel.send("Couldnt find anything with those tags.")
             }
