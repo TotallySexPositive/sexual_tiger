@@ -1,6 +1,6 @@
 exports.run = (client, message, args) => {
     let server = global.servers[message.guild.id];
-    message.channel.send("Come visit me at, http://www.sexualtiger.com , I mean, not like right now, but soon...or soonish..")
+    message.channel.send("Come visit me at, https://tiger.wentzel.dev")
 }
 
 exports.help = () =>{

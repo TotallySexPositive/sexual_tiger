@@ -2,6 +2,7 @@ const path  = require("path");
 const UTIL  = require(path.resolve("utils.js"))
 const auth  = require(path.resolve('auth.json'));
 var giphy   = require('giphy-api')(auth.giphy);
+var request = require("request")
 
 exports.run = (client, message, args) => {
     giphy.random(args.join(" "), function (err, res) {
@@ -9,8 +10,18 @@ exports.run = (client, message, args) => {
             console.log(err);
             return message.channel.send("Error while searching for gif.")
         } else {
-            if(res.data && res.data.images && res.data.images.original) {
-                return message.channel.send({files: [res.data[0].images.original.url]});
+            if(res.data && res.data.images && res.data.image_original_url) {
+                request.head({
+                    url: res.data.image_original_url,
+                    method: "HEAD"
+                }, function(err, response, body) {
+                    let bytes = response.headers["content-length"];
+                    if (bytes <= 8388119) {
+                        return message.channel.send({files: [res.data.image_original_url]});
+                    } else {
+                        return message.channel.send(res.data.image_original_url);
+                    }
+                });
             } else {
                 return message.channel.send("Couldnt find anything with those tags.")
             }

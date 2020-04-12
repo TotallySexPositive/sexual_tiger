@@ -329,7 +329,7 @@ let getPlaylists = function() {
 
 let searchForSongs = function(name, max_songs = 10) {
 
-    if(name.trim() === "") {
+    if(!name || name.trim() === "") {
         let err = new Error("search term must not be blank.");
         return {err: err, songs: undefined};
     }
