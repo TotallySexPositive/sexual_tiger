@@ -25,6 +25,7 @@ exports.run = (client, message, args) => {
 
 exports.docs = () => {
     let docs = {
+        restricted: 0,
         tab: "image",
         link: "tag",
         parent: "tag",

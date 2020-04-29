@@ -65,7 +65,7 @@ required_folders.forEach(function(dir) {
 
 client.on('ready', () => {
     console.log('I am ready!');
-    client.user.setActivity("Fuckin wit yo mind");
+    client.user.setActivity("pick up sticks.");
     
     //Init servers array
     client.guilds.keyArray().forEach(server_id => {
@@ -74,23 +74,10 @@ client.on('ready', () => {
 });
 
 client.on('message', message => {
-    // If we are reading a bot message, ignore it
-    if (message.author.bot){
-        return;
-    }
-    const NS_PER_SEC = 1e9;
-    
+    // If we are reading a bot message or the message doesn't start with our prefix, ignore it
+    if (message.author.bot || message.content.indexOf(config.prefix) !== 0){return;}
+
     const user = message.author.username;
-
-    //Never forget foxwell
-    if (message.content.includes("foxwell")){
-        const foxwell = client.emojis.find("name", "foxwell");
-        const sad = "\:crying_cat_face:";
-        message.channel.send(`${foxwell} Never forget her ${user}. ${sad} ${foxwell}`);
-    }
-
-    // If the message doesn't start with our prefix, don't go further
-    if (message.content.indexOf(config.prefix) !== 0){return;};
 
     //Split into args
     const args = message.content.slice(config.prefix.length).trim().split(/ +/g);
@@ -106,11 +93,16 @@ client.on('message', message => {
             let p = path.resolve("commands", k,`${safe}.js`)
             if (fs.existsSync(p)){
                 let commandFile = require(p);
-                //const time = process.hrtime();
-                commandFile.run(client, message, args);
-                //const diff = process.hrtime(time);
-                //console.log(`Run comand ${(diff[0] * NS_PER_SEC + diff[1])/1000000} ms`);
 
+                //Check User Access
+                let isAllowed = UTIL.isUserActionAllowed(message.author, commandFile)
+
+                if (isAllowed) {
+                    commandFile.run(client, message, args);
+                } else {
+                    message.channel.send(`${user}, you do not have permission to use this command.`);
+                }
+                
                 return true;
             } 
             else{

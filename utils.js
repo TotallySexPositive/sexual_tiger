@@ -460,8 +460,19 @@ let deleteImageByHash = function(hash) {
     }
 }
 
-let textToMorse = function(text) {
+let isUserActionAllowed = function(user, command) {
+    let docs = command.docs();
+    let restricted = docs.restricted
+    let full_command = docs.full_command
+    let user_id = user.id
+
+    let {err, access}         = DAL.findAccessByUserIdAndCommand(user.id, full_command);
     
+    if(access) { //User has an access entry for this command.
+        return access.allow
+    } else {// User has no access entry, rely on default restriction.
+        return !restricted //Return true if command is not restricted
+    }
 }
 
 module.exports.isInt = isInt;
@@ -479,3 +490,4 @@ module.exports.processAudioFileTask = processAudioFileTask;
 module.exports.deleteImageByHash = deleteImageByHash;
 module.exports.postRandomImageByTag = postRandomImageByTag;
 module.exports.verifyTags = verifyTags;
+module.exports.isUserActionAllowed = isUserActionAllowed;

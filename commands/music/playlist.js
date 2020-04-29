@@ -2,8 +2,6 @@ const path      = require("path");
 const fs        = require("fs");
 
 exports.run = (client, message, args) => {
-    
-    //if(args.length < 2) return message.channel.send("Incorrect usage, Check the help file.")
     var playlist_command    = args[0];
     var tail                = args.slice(1);
 

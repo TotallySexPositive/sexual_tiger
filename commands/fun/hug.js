@@ -11,6 +11,7 @@ exports.help = () =>{
 
 exports.docs = () => {
     let docs = {
+        restricted: 0,
         tab: "image",
         link: "Pictures",
         parent: "",

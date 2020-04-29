@@ -29,6 +29,7 @@ exports.help = () =>{
 
 exports.docs = () => {
     let docs = {
+        restricted: 1,
         tab: "admin",
         link: "general",
         parent: "",

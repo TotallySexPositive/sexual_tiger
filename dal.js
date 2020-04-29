@@ -10,6 +10,7 @@ const PLAYLIST_SONG_TABLE   = "playlist_song"
 const IMAGE_TABLE           = "image"
 const TAG_TABLE             = "tag"
 const IMAGE_TAG_TABLE       = "image_tag"
+const ACCESS_TABLE          = "access"
 
 const SONG_FIELDS           = "song.song_id, song.name, song.hash_id, song.source, song.num_plays, song.last_played, song.url, song.is_clip, song.duration, song.added_by "
 const PLAYLIST_FIELDS       = "playlist.playlist_id, playlist.name, playlist.num_songs, playlist.created_by "
@@ -17,6 +18,7 @@ const PLAYLIST_SONG_FIELDS  = "playlist_song.relation_id, playlist_song.playlist
 const IMAGE_FIELDS          = "image.image_id, image.hash_id, image.extension, image.added_by "
 const TAG_FIELDS            = "tag.tag_id, tag.name "
 const IMAGE_TAG_FIELDS      = "image_tag.image_tag_id, image_tag.tag_id, image_tag.image_id "
+const ACCESS_FIELDS         = "access.user_id, access.command, access.allow, access.added_by, access.added_at "
 
 let DB = new Database('playlists.sql');
 
@@ -655,6 +657,48 @@ let searchImageTagByImageId = function(image_id) {
     }
 }
 
+
+//Command Access Stuff
+
+let findAccessByUserIdAndCommand = function(user_id, command) {
+    let query = `SELECT ${ACCESS_FIELDS} FROM ${ACCESS_TABLE} WHERE user_id = ? AND command = ?`;
+   
+    try {
+        return {err: undefined, access: DB.prepare(query).get(user_id, command)};
+    } catch (err) {
+        console.log(`findAccessByUserAndCommand: \nError: `)
+        console.log(err);
+        return {err: err, access: undefined};
+    }
+}
+
+let insertAccessByUserIdAndCommand = function(user_id, command, allow) {
+
+    let query = `INSERT INTO ${ACCESS_TABLE} (user_id, command, allow) VALUES (${user_id}, ${command}, ${allow})}`
+
+    try {
+        return {err: undefined, info: DB.prepare(query).run(user_id, command, allow)};
+    } catch (err) {
+        console.log(`insertAccessByUserAndCommand: \nError: `)
+        console.log(err);
+        return {err: err, info: undefined};
+    }
+}
+
+let deleteAccessByUserIdAndCommand = function(user_id, command) {
+
+    let query = `DELETE FROM ${ACCESS_TABLE} WHERE user_id = ? AND command = ?`
+
+    try {
+        return {err: undefined, info: DB.prepare(query).run(user_id, command)};
+    } catch (err) {
+        console.log(`deleteAccessByUserAndCommand: \nError: `, err);
+        return {err: err, info: undefined};
+    }
+}
+
+
+
 module.exports.isInt                    = isInt;
 
 module.exports.findSongByIdentifier     = findSongByIdentifier;
@@ -697,3 +741,6 @@ module.exports.deleteFromImageTag       = deleteFromImageTag;
 module.exports.deleteImageById          = deleteImageById;
 module.exports.searchImageTagByImageId  = searchImageTagByImageId;
 
+module.exports.findAccessByUserIdAndCommand   = findAccessByUserIdAndCommand
+module.exports.insertAccessByUserIdAndCommand = insertAccessByUserIdAndCommand
+module.exports.deleteAccessByUserIdAndCommand = deleteAccessByUserIdAndCommand

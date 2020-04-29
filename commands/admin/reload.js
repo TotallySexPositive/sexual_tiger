@@ -49,3 +49,23 @@ exports.run = (client, message, args) => {
 exports.help = () =>{
     return "Refreshes a command so you can test changes.";
 };
+
+exports.docs = () => {
+    let docs = {
+        restricted: 1,
+        tab: "admin",
+        link: "general",
+        parent: "",
+        full_command: "reload",
+        command: "reload",
+        description: "Refreshes a command so you can test changes.",
+        syntax: 'reload [command]',
+        examples: [
+            {
+                description: "Refresh the gifs command.",
+                code: `reload gifs`
+            }
+        ]
+    }
+    return docs;
+};

@@ -65,6 +65,7 @@ exports.help = () =>{
 
 exports.docs = () => {
     let docs = {
+        restricted: 0,
         tab: "Misc",
         link: "general",
         parent: "",
