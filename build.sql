@@ -52,8 +52,8 @@ CREATE TABLE IF NOT EXISTS tag (
 CREATE TABLE IF NOT EXISTS access (
     user_id	TEXT NOT NULL,
     command	TEXT NOT NULL,
-    allow	INTEGER NOT NULL,
-    added_by	TEXT,
+    is_allowed	INTEGER NOT NULL,
+    set_by	TEXT,
     added_at    TEXT,
     PRIMARY KEY(user_id, command),
     FOREIGN KEY(command) REFERENCES command(command) ON DELETE CASCADE
