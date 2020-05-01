@@ -64,7 +64,7 @@ exports.help = () =>{
 
 exports.docs = () => {
     let docs = {
-        restricted: 0,
+        default_access: 1,
         tab: "image",
         link: "image",
         parent: "image",

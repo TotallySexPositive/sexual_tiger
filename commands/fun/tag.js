@@ -15,3 +15,23 @@ exports.run = (client, message, args) => {
        message.channel.send("That isnt a valid tag command.")
     }
 }
+
+exports.docs = () => {
+    let docs = {
+        default_access: 1,
+        tab: "image",
+        link: "Pictures",
+        parent: "",
+        full_command: "tag",
+        command: "tag",
+        description: "This command has no direct usage.",
+        syntax: 'tag',
+        examples: [
+            {
+                description: "N/A",
+                code: `n/a`
+            }
+        ]
+    }
+    return docs;
+};

@@ -50,12 +50,19 @@ CREATE TABLE IF NOT EXISTS tag (
 );
 
 CREATE TABLE IF NOT EXISTS access (
-    user_id	TEXT NOT NULL ,
+    user_id	TEXT NOT NULL,
     command	TEXT NOT NULL,
     allow	INTEGER NOT NULL,
     added_by	TEXT,
     added_at    TEXT,
-    PRIMARY KEY(user_id, command)
+    PRIMARY KEY(user_id, command),
+    FOREIGN KEY(command) REFERENCES command(command) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS command (
+    command	TEXT NOT NULL UNIQUE,
+    default_access INTEGER NOT NULL,
+    PRIMARY KEY(command)
 );
 
 CREATE TRIGGER IF NOT EXISTS increment_num_songs AFTER INSERT ON playlist_song

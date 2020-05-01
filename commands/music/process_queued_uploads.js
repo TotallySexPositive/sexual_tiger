@@ -34,3 +34,23 @@ exports.run = (client, message, args) => {
 exports.help = () =>{
     return "Should most likely disappear. Pay no attention to the man behind the curtain.";
 };
+
+exports.docs = () => {
+  let docs = {
+      default_access: 0,
+      tab: "admin",
+      link: "general",
+      parent: "",
+      full_command: "process_queued_uploads",
+      command: "process_queued_uploads",
+      description: "Tell the bot to process any songs that have been FTP uploaded onto the server",
+      syntax: "process_queued_uploads",
+      examples: [
+          {
+              description: "Tell the bot to process any ftp uploaded songs.",
+              code: "process_queued_uploads"
+          }
+      ]
+  }
+  return docs;
+};

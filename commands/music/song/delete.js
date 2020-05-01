@@ -70,6 +70,7 @@ exports.run = (client, message, args) => {
 
 exports.docs = () => {
     let docs = {
+        default_access: 0,
         tab: "music",
         link: "song",
         parent: "song",

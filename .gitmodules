@@ -1,5 +1,0 @@
-[submodule "python/pubg"]
-	path = python/pubg
-	url = git@github.com:rieger07/pubg_stat_scraper.git
-	branch = master
-	ignore = dirty

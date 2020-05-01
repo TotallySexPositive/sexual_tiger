@@ -9,6 +9,7 @@ const auth      = require(path.resolve("auth.json"));
 const octokit   = require('@octokit/rest')();
 const mdt       = require("markdown-table")
 const probe     = require('node-ffprobe');
+const recursive     = require("recursive-readdir");
 
 var isInt = function(value) {
     var er = /^-?[0-9]+$/;
@@ -461,18 +462,42 @@ let deleteImageByHash = function(hash) {
 }
 
 let isUserActionAllowed = function(user, command) {
-    let docs = command.docs();
-    let restricted = docs.restricted
-    let full_command = docs.full_command
-    let user_id = user.id
+    let docs            = command.docs();
 
-    let {err, access}         = DAL.findAccessByUserIdAndCommand(user.id, full_command);
-    
-    if(access) { //User has an access entry for this command.
-        return access.allow
-    } else {// User has no access entry, rely on default restriction.
-        return !restricted //Return true if command is not restricted
+    let {err, access}         = DAL.findAccessByUserIdAndCommand(user.id, docs.full_command);
+
+    if(access === undefined) { //This user is missing permissions, lets set them.
+        DAL.initUserAccess(user.id)
     }
+
+    if(access) { //User has an access entry for this command.
+        return access.is_allowed
+    } else {// User has no access entry, rely on default restriction.
+        return docs.default_access //Return true if command is not restricted
+    }
+}
+
+
+
+let updateCommandList = function() {
+    let command_folders_path = path.resolve("commands");
+    let commands = [];
+
+    recursive(command_folders_path, function (err, files) {
+        files.forEach((file) => {
+            if(file.endsWith('.js')) {
+                let temp = require(file);
+                let keys = Object.keys(temp);
+                if (keys.includes("docs")) {
+                    let docs = temp.docs();
+                    let command = {command: docs.full_command, default_access: docs.default_access}
+                    commands.push(command)
+                } 
+            }
+        });
+        //Got all the commands
+        DAL.insertCommands(commands);
+    });
 }
 
 module.exports.isInt = isInt;
@@ -491,3 +516,4 @@ module.exports.deleteImageByHash = deleteImageByHash;
 module.exports.postRandomImageByTag = postRandomImageByTag;
 module.exports.verifyTags = verifyTags;
 module.exports.isUserActionAllowed = isUserActionAllowed;
+module.exports.updateCommandList = updateCommandList;

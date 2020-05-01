@@ -40,6 +40,7 @@ exports.help = () =>{
 
 exports.docs = () => {
     let docs = {
+        default_access: 1,
         tab: "music",
         link: "song",
         parent: "song",

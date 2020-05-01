@@ -11,6 +11,7 @@ const IMAGE_TABLE           = "image"
 const TAG_TABLE             = "tag"
 const IMAGE_TAG_TABLE       = "image_tag"
 const ACCESS_TABLE          = "access"
+const COMMAND_TABLE         = "command"
 
 const SONG_FIELDS           = "song.song_id, song.name, song.hash_id, song.source, song.num_plays, song.last_played, song.url, song.is_clip, song.duration, song.added_by "
 const PLAYLIST_FIELDS       = "playlist.playlist_id, playlist.name, playlist.num_songs, playlist.created_by "
@@ -18,7 +19,8 @@ const PLAYLIST_SONG_FIELDS  = "playlist_song.relation_id, playlist_song.playlist
 const IMAGE_FIELDS          = "image.image_id, image.hash_id, image.extension, image.added_by "
 const TAG_FIELDS            = "tag.tag_id, tag.name "
 const IMAGE_TAG_FIELDS      = "image_tag.image_tag_id, image_tag.tag_id, image_tag.image_id "
-const ACCESS_FIELDS         = "access.user_id, access.command, access.allow, access.added_by, access.added_at "
+const ACCESS_FIELDS         = "access.user_id, access.command, access.is_allowed, access.set_by, access.added_at "
+const COMMAND_FIELDS        = "command.command, command.default_access "
 
 let DB = new Database('playlists.sql');
 
@@ -662,7 +664,7 @@ let searchImageTagByImageId = function(image_id) {
 
 let findAccessByUserIdAndCommand = function(user_id, command) {
     let query = `SELECT ${ACCESS_FIELDS} FROM ${ACCESS_TABLE} WHERE user_id = ? AND command = ?`;
-   
+
     try {
         return {err: undefined, access: DB.prepare(query).get(user_id, command)};
     } catch (err) {
@@ -672,32 +674,68 @@ let findAccessByUserIdAndCommand = function(user_id, command) {
     }
 }
 
-let insertAccessByUserIdAndCommand = function(user_id, command, allow) {
+let updateAccessByUserIdAndCommand = function(user_id, command, is_allowed, admin) {
 
-    let query = `INSERT INTO ${ACCESS_TABLE} (user_id, command, allow) VALUES (${user_id}, ${command}, ${allow})}`
+    let stamp = new Date().getTime()
+    let query = `INSERT OR REPLACE INTO ${ACCESS_TABLE} (user_id, command, is_allowed, set_by, added_at)  VALUES (${user_id}, "${command}", ${is_allowed}, "${admin}", ${stamp})`
 
     try {
-        return {err: undefined, info: DB.prepare(query).run(user_id, command, allow)};
+        return {err: undefined, info: DB.prepare(query).run()};
     } catch (err) {
-        console.log(`insertAccessByUserAndCommand: \nError: `)
+        console.log(`updateAccessByUserIdAndCommand: \nError: `)
         console.log(err);
         return {err: err, info: undefined};
     }
 }
 
-let deleteAccessByUserIdAndCommand = function(user_id, command) {
+let revokeAccessByUserIdAndCommand = function(user_id, command, admin) {
+    return updateAccessByUserIdAndCommand(user_id, command, 0, admin)
+}
+let grantAccessByUserIdAndCommand = function(user_id, command, admin) {
+    return updateAccessByUserIdAndCommand(user_id, command, 1, admin)
+}
 
-    let query = `DELETE FROM ${ACCESS_TABLE} WHERE user_id = ? AND command = ?`
+let insertCommands = function(commands) {
+    let terms = [];
+    commands.forEach(command => {
+        terms.push(`("${command.command}", ${command.default_access})`);
+    })
 
+    let query = `INSERT OR REPLACE INTO ${COMMAND_TABLE} (command, default_access) VALUES ${terms.join(',')}`
     try {
-        return {err: undefined, info: DB.prepare(query).run(user_id, command)};
+        return {err: undefined, info: DB.prepare(query).run()};
     } catch (err) {
-        console.log(`deleteAccessByUserAndCommand: \nError: `, err);
+        console.log(`insertCommands: \nError: `)
+        console.log(err);
         return {err: err, info: undefined};
     }
 }
 
+let findCommandByName = function(str_command) {
+    let query = `SELECT ${COMMAND_FIELDS} FROM ${COMMAND_TABLE} WHERE command = ?`;
+   
+    try {
+        return {err: undefined, command: DB.prepare(query).get(str_command)};
+    } catch (err) {
+        console.log(`findCommandByName: \nError: `)
+        console.log(err);
+        return {err: err, command: undefined};
+    }
+}
 
+let initUserAccess = function(user_id) {
+    let stamp = new Date().getTime()
+    let query = `INSERT OR IGNORE INTO ${ACCESS_TABLE} SELECT ${user_id}, ${COMMAND_FIELDS}, "System", ${stamp} FROM ${COMMAND_TABLE}`;
+   
+    try {
+         let commands = DB.prepare(query).run()
+ 
+    } catch (err) {
+        console.log(`getCommands: \nError: `)
+        console.log(err);
+        return {err: err, commands: undefined};
+    }
+}
 
 module.exports.isInt                    = isInt;
 
@@ -742,5 +780,8 @@ module.exports.deleteImageById          = deleteImageById;
 module.exports.searchImageTagByImageId  = searchImageTagByImageId;
 
 module.exports.findAccessByUserIdAndCommand   = findAccessByUserIdAndCommand
-module.exports.insertAccessByUserIdAndCommand = insertAccessByUserIdAndCommand
-module.exports.deleteAccessByUserIdAndCommand = deleteAccessByUserIdAndCommand
+module.exports.revokeAccessByUserIdAndCommand = revokeAccessByUserIdAndCommand
+module.exports.grantAccessByUserIdAndCommand = grantAccessByUserIdAndCommand;
+module.exports.insertCommands                   = insertCommands;
+module.exports.findCommandByName    = findCommandByName;
+module.exports.initUserAccess           = initUserAccess;

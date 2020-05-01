@@ -10,20 +10,18 @@ const UTIL      = require(path.resolve('utils.js'));
 const client    = new Discord.Client();
 
 global.servers  = {};
-global.commandTypes = ["admin", "fun", "misc", "music", "pubg"];
+global.commandTypes = ["admin", "fun", "misc", "music"];
 global.commandTypeDesc = {  
     "admin" : "Admin controls to assist in maintaining the bot.",
     "fun"   : "Random shit that lets you express yourself.",
     "misc"  : "Random shit that may or may not be worth using",
-    "music" : "Lets you play music and interact with music things",
-    "pubg"  : "Pull fun stats from pubg!"
+    "music" : "Lets you play music and interact with music things"
 } 
 global.commandTypeColor = {  
     "admin" : 13632027,
     "fun"   : 12390624,
     "misc"  : 1,
-    "music" : 5301186,
-    "pubg"  : 4289797
+    "music" : 5301186
 } 
 global.audio_dirs = {
     "tmp"       : path.resolve("audio", "tmp"),
@@ -63,13 +61,16 @@ required_folders.forEach(function(dir) {
     }
 });
 
+//Update the command table incase any new commands were added or a default access has been changed.
+UTIL.updateCommandList();
+
 client.on('ready', () => {
     console.log('I am ready!');
     client.user.setActivity("pick up sticks.");
     
     //Init servers array
     client.guilds.keyArray().forEach(server_id => {
-        global.servers[server_id] = {repeat: false, maintain_presence: false, dispatcher: null, default_volume: .25, volume: .25, max_volume: 1, clip_volume: .75, super_admins:["231574835694796801","183388696207294465"]};
+        global.servers[server_id] = {repeat: false, maintain_presence: false, dispatcher: null, default_volume: .25, volume: .25, max_volume: 1, clip_volume: .75, super_admins:["231574835694796801","183388696207294465", "231606224909500418"]};
     });
 });
 
@@ -91,7 +92,7 @@ client.on('message', message => {
         
         global.commandTypes.some((k)=>{
             let p = path.resolve("commands", k,`${safe}.js`)
-            if (fs.existsSync(p)){
+            if (fs.existsSync(p)) {
                 let commandFile = require(p);
 
                 //Check User Access
@@ -104,18 +105,14 @@ client.on('message', message => {
                 }
                 
                 return true;
-            } 
-            else{
+            } else {
                 if (safe !== command){
                     message.channel.send(`Naughty naughty ${user}.`);
                     message.channel.send("You trying to backdoor me on the first date?");
-
                 }
                 return false
             }
-            
         })
-        
     } catch (err) {
         message.channel.send(`ERROR: ${err.message}`)
         console.error(err);

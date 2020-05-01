@@ -15,3 +15,23 @@ exports.run = (client, message, args) => {
        message.channel.send("That isnt a valid image command.")
     }
 }
+
+exports.docs = () => {
+    let docs = {
+        default_access: 1,
+        tab: "image",
+        link: "Pictures",
+        parent: "",
+        full_command: "image",
+        command: "image",
+        description: "This command has no direct usage.",
+        syntax: 'image',
+        examples: [
+            {
+                description: "N/A",
+                code: `n/a`
+            }
+        ]
+    }
+    return docs;
+};

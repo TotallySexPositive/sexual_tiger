@@ -15,18 +15,18 @@ exports.help = () =>{
 
 exports.docs = () => {
     let docs = {
-        restricted: 1,
+        default_access: 0,
         tab: "admin",
         link: "general",
         parent: "",
-        full_command: "buildtable",
-        command: "buildtable",
+        full_command: "build_table",
+        command: "build_table",
         description: "Builds the sql table structure for first time setup.",
-        syntax: "buildtable",
+        syntax: "build_table",
         examples: [
             {
                 description: "Builds the sql table structure.",
-                code: "buildtable"
+                code: "build_table"
             }
         ]
     }

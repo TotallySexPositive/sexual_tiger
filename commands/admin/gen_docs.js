@@ -99,7 +99,7 @@ exports.help = () => {
 
 exports.docs = () => {
     let docs = {
-        restricted: 1,
+        default_access: 0,
         tab: "admin",
         link: "general",
         parent: "",
