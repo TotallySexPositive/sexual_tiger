@@ -24,7 +24,7 @@ exports.run = (client, message, args) => {
     server.song_queue.length = 0;
     songs.forEach(song =>{
         let song_request = {
-            voice_channel_id: message.member.voice.channel.id,
+            voice_channel: vc,
             song: song
         }
         server.song_queue.push(song_request);

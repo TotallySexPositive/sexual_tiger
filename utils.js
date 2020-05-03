@@ -29,6 +29,13 @@ var isAdmin = function(member) {
     return is_admin;
 }
 
+var setSong = async function(playobj) {
+    let server_id = playobj.voice_channel.guild.id
+    let server = global.servers[server_id]
+    server.current_song.song_id = playobj.song.song_id
+    server.current_song.name = playobj.song.name
+}
+
 var playAudio = async function(playobj) {
     /*
     {
@@ -36,21 +43,48 @@ var playAudio = async function(playobj) {
         song: song
     }
     */
-    console.log("In playAudio1")
-    let server_id = playobj.voice_channel.guild.id
-    let volume = global.servers[server_id].volume
-    global.servers[server_id].connectionPromise = playobj.voice_channel.join()
-    let connectionPromise = global.servers[server_id].connectionPromise
 
-    connectionPromise.then(connection=>connection.play(
+    let server_id = playobj.voice_channel.guild.id
+    let server = global.servers[server_id]
+    if (server.song_queue.length > 1)
+    {
+        return;
+    }
+    let volume = server.volume
+    server.connectionPromise = playobj.voice_channel.join()
+    let connectionPromise = server.connectionPromise
+
+    connectionPromise.then(
+        connection=>{
+            let dispatcher = connection.play(
                 playobj.song.source,
                 {
                     volume: volume
                 }
             )
-        ).catch(reason=>{
-            console.log(reason)
-        })
+            dispatcher.on('start',()=>{
+                setSong(playobj)
+            })
+            dispatcher.on('finish',()=>{
+                    console.log("end")
+                    server.song_queue.shift()
+                    if (server.song_queue.length != 0)
+                    {
+                        playAudio(server.song_queue[0])
+                    }
+                    else if(server.maintain_presence != true)
+                    {
+                        server.current_song.song_id = undefined
+                        server.current_song.name = undefined
+                        connection.disconnect()
+                    }
+                }
+            )
+        
+        }
+    ).catch(
+        reason=>console.log(reason)
+    )
 }
 
 

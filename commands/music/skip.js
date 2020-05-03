@@ -2,7 +2,12 @@ const path = require("path")
 
 exports.run = (client, message, args) => {
    var server = global.servers[message.guild.id];
-   if(server.dispatcher) server.dispatcher.end(); 
+   if(server.connectionPromise)
+   {
+       server.connectionPromise.then(connection=>{
+           connection.dispatcher.end()
+       })
+   }; 
 };
 
 exports.help = () =>{
