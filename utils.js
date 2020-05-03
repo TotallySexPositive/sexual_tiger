@@ -6,7 +6,7 @@ const DAL       = require(path.resolve("dal.js"))
 const md5       = require('md5');
 const { exec }  = require('child_process');
 const auth      = require(path.resolve("auth.json"));
-const octokit   = require('@octokit/rest')();
+const octokit   = require('@octokit/rest');
 const mdt       = require("markdown-table")
 const probe     = require('node-ffprobe');
 const recursive     = require("recursive-readdir");
@@ -131,27 +131,6 @@ var playAudioBasicCallBack = function(client, connection, message, song, callBac
     }
 }
 
-var playlistPlayBasicCallBack = function(client, connection, message, song, callBack, end_m) {
-    let server = global.servers[message.guild.id];
-
-    if(server.current_song_index < server.songs.length - 1 && end_m !== "remain") {//More songs to play and I am not being kicked off my another audio dispatcher
-        server.current_song_index = server.current_song_index + 1;
-        server.current_song = server.songs[server.current_song_index];
-        playAudio(client, connection, message, server.current_song, callBack);
-    } else { //End of the line?
-        if(server.repeat && end_m !== "remain") { //Just kidding, restart. and I am not being kicked off my another audio dispatcher
-            server.current_song_index = 0;
-            server.current_song = server.songs[server.current_song_index];
-            playAudio(client, connection, message, server.current_song, playlistPlayBasicCallBack);
-        } else {
-            server.current_song_index = 0;
-            server.songs = [];
-            if(!server.maintain_presence && end_m !== "remain") {//remain means we have more media incoming, dont kill connection.
-                connection.disconnect();
-            } 
-        }
-    }
-}
 
 var processAudioFileTask = function(t_obj, cb) {
     return processAudioFile(t_obj.file_path, t_obj.url, t_obj.message, cb)
@@ -487,8 +466,6 @@ let isUserActionAllowed = function(user, command) {
     }
 }
 
-
-
 let updateCommandList = function() {
     let command_folders_path = path.resolve("commands");
     let commands = [];
@@ -513,10 +490,7 @@ let updateCommandList = function() {
 module.exports.isInt = isInt;
 module.exports.isAdmin = isAdmin;
 module.exports.playAudio = playAudio;
-module.exports.playUrl = playUrl;
 
-module.exports.playAudioBasicCallBack = playAudioBasicCallBack;
-module.exports.playlistPlayBasicCallBack = playlistPlayBasicCallBack;
 module.exports.processAudioFile = processAudioFile;
 module.exports.rebuildAudioGist = rebuildAudioGist;
 module.exports.processImageFile = processImageFile;
