@@ -66,24 +66,15 @@ UTIL.updateCommandList();
 
 
 var arrayChangeHandler = {
-    get: function(target, property) {
-        //console.log('getting ' + property + ' for ' + target);
-        // property is index in this case
-        const val = target[property];
-        if (typeof val === 'function' && property === 'push') {
-            console.log("pushing")
-            
-            console.log("Calling playAudio")
-            UTIL.playAudio();
-            console.log("Called playAudio")
-        }
-        return target[property];
-      },
     set: function(target, property, value, receiver) {
-      //console.log('setting ' + property + ' for ' + target + ' with value ' + value);
-      target[property] = value;
-      // you have to return true to accept the changes
-      return true;
+        // console.log('setting ' + property + ' for ' + target + ' with value ' + value);
+        if (property == parseInt(property, 10) && Array.isArray(target)) // Check that property is a number, and that the target is an array
+        {
+            UTIL.playAudio(value); //pass back the value that is going to the object
+        } 
+        target[property] = value;
+        // you have to return true to accept the changes
+        return true;
     }
   };
   
@@ -98,11 +89,12 @@ client.on('ready', () => {
         global.servers[server_id] = {
             repeat: false, 
             maintain_presence: false, 
+            connectionPromise: null,
             dispatcher: null, 
             default_volume: .25, 
             volume: .25, 
             max_volume: 1, 
-            clip_volume: .75, 
+            clip_volume: .75,
             super_admins:["231574835694796801","183388696207294465", "231606224909500418"],
             song_queue_raw: originalArray,
             song_queue: new Proxy( originalArray, arrayChangeHandler ),
