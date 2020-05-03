@@ -10,7 +10,7 @@ exports.run = (client, message, args) => {
     let files_to_process        = fs.readdirSync(global.audio_dirs.hashed)
     console.log("Probing audio!")
     files_to_process.some(function(file){
-        probe(path.resolve(global.audio_dirs.hashed, file), function(err, data) {
+        probe(path.resolve(global.audio_dirs.hashed, file)).then(data => {
             let {err: s_err, song} = DAL.findSongByIdentifier(file.substring(0, 32))
             if(s_err) {
                 console.log("Failed to find song in DB that existed in hash folder.  Uh oh...");
@@ -22,7 +22,6 @@ exports.run = (client, message, args) => {
             console.log("in that probe yo")
         });
     });
-    
 }
 
 exports.help = () =>{

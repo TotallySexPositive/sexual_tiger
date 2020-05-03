@@ -5,18 +5,20 @@ exports.run = (client, message, args) => {
         message.channel.send("I'm not even in a channel.")
         return;
     }
-    
-    server.songs = [];
-    server.current_song_index = -1;
-    server.current_song = {};
-    server.repeat = false;
-    
-    //message.guild.voiceConnection.disconnect();
-    if(server.dispatcher === undefined) {
-        message.channel.send("No audio is playing.  You must be hearing things.")
-        return;
+    if (server.connectionPromise != null)
+    {
+        server.song_queue.length = 0
+        server.connectionPromise.then(connection=>{
+            if (connection.dispatcher === undefined)
+            {
+                message.channel.send("No audio is playing.  You must be hearing things.")
+            }
+            else
+            {
+                connection.dispatcher.end()
+            }
+        })
     }
-    server.dispatcher.end();
 }
 
 exports.help = () =>{

@@ -1,17 +1,27 @@
 exports.run = (client, message, args) => {
     let vc = message.member.voice.channel
-    console.log(vc)
+    //console.log(vc)
     if(vc === undefined || vc == null) {
         message.channel.send("I'm not even in a channel.")
         return;
     }
-    let dispatcher = vc.connection.dispatcher
-    if(dispatcher === undefined) {
+    var server = global.servers[message.guild.id];
+    let promise = server.connectionPromise
+    if(promise === null) {
         message.channel.send("No audio is playing.  You must be hearing things.")
         return;
     }
-    let current_volume = dispatcher.volume;
-    message.channel.send(`Current Volume: ${current_volume*100}%`)
+    promise.then(
+        connection=>{
+            if (connection.dispatcher != null)
+            {
+                current_volume=connection.dispatcher.volume;
+            }
+            message.channel.send(`Current Volume: ${current_volume*100}%`)
+        }
+    ).catch(
+        reason=>console.log(reason)
+    );
 }
 
 exports.help = () =>{

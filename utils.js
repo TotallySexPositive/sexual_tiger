@@ -43,19 +43,34 @@ var playAudio = async function(playobj) {
         song: song
     }
     */
+    
 
     let server_id = playobj.voice_channel.guild.id
     let server = global.servers[server_id]
-    if (server.song_queue.length > 1)
-    {
-        return;
-    }
+    console.log("starting iteration")
+    server.song_queue.forEach(val=>{
+        console.log(val)
+    })
     let volume = server.volume
     server.connectionPromise = playobj.voice_channel.join()
     let connectionPromise = server.connectionPromise
 
     connectionPromise.then(
         connection=>{
+            if (connection.speaking.bitfield == 1)
+            {
+                console.log(server.song_queue.length)
+                console.log(connection.speaking.bitfield)
+                return;
+            }
+            if (!server.repeat)
+            {
+                server.song_queue.shift()
+            }
+            if (playobj.song.is_clip)
+            {
+                volume = server.clip_volume
+            }
             let dispatcher = connection.play(
                 playobj.song.source,
                 {
@@ -64,16 +79,17 @@ var playAudio = async function(playobj) {
             )
             dispatcher.on('start',()=>{
                 setSong(playobj)
+                DAL.incrementNumPlays(playobj.song.song_id)
             })
             dispatcher.on('finish',()=>{
-                    console.log("end")
-                    server.song_queue.shift()
                     if (server.song_queue.length != 0)
                     {
+                        console.log("playing " + server.song_queue[0].song.name)
                         playAudio(server.song_queue[0])
                     }
                     else if(server.maintain_presence != true)
                     {
+                        console.log("fucking off")
                         server.current_song.song_id = undefined
                         server.current_song.name = undefined
                         connection.disconnect()
