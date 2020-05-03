@@ -9,7 +9,9 @@ exports.run = (client, message, args) => {
     let hashed_audio_path       = global.audio_dirs.hashed;
     let files_to_process        = fs.readdirSync(global.audio_dirs.hashed)
     console.log("Probing audio!")
-    files_to_process.some(function(file){
+    
+    probe.SYNC = true;
+    files_to_process.some(function(file) {
         probe(path.resolve(global.audio_dirs.hashed, file)).then(data => {
             let {err: s_err, song} = DAL.findSongByIdentifier(file.substring(0, 32))
             if(s_err) {
@@ -22,6 +24,8 @@ exports.run = (client, message, args) => {
             console.log("in that probe yo")
         });
     });
+    console.log("Probing audio Finished!")
+
 }
 
 exports.help = () =>{
@@ -34,14 +38,14 @@ exports.docs = () => {
         tab: "admin",
         link: "general",
         parent: "",
-        full_command: "prob_audio",
-        command: "prob_audio",
+        full_command: "probe_audio",
+        command: "probe_audio",
         description: "Probes all hashed audio files and updates their length in the database.",
-        syntax: 'prob_audio',
+        syntax: 'probe_audio',
         examples: [
             {
                 description: "Probe all audio clips to update length.",
-                code: `prob_audio`
+                code: `probe_audio`
             }
         ]
     }
