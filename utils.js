@@ -66,7 +66,6 @@ var playAudio = async function(playobj) {
                 setSong(playobj)
             })
             dispatcher.on('finish',()=>{
-                    console.log("end")
                     server.song_queue.shift()
                     if (server.song_queue.length != 0)
                     {
