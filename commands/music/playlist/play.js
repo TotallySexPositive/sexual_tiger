@@ -5,54 +5,30 @@ const DAL   = require(path.resolve("dal.js"))
 const UTIL  = require(path.resolve("utils.js"))
 
 exports.run = (client, message, args) => {
-    let vc = message.member.voiceChannel
-    let server_id = message.guild.id;
+    var server  = global.servers[message.guild.id]
+    let vc      = message.member.voice.channel
 
-    if(vc === undefined){
+    if(vc === undefined) {
         return message.channel.send("You must be in a Voice Channel, I'm not gonna play this shit for no one.");
     }
-    
-    if(!global.servers[server_id]) global.servers[server_id] = {
-        playlist: {},
-        current_song: {},
-        current_song_index: -1,
-        songs: []
-    }
-
-    let server = global.servers[server_id];
-    let playlist = {};
-    let pl_songs = [];
 
     let playlist_identifier = args.join(" ");
-    if(DAL.isInt(playlist_identifier)) {//Got an int id
-        let {err, songs} = DAL.getSongsByPlaylistId(playlist_identifier)
-        if(err) {
-            return message.channel.send("Unknown error occured while fetching playlist songs.");
-        } else if(songs === undefined || songs.length == 0) {
-            return message.channel.send("This playlist has no songs, you suck as a DJ.")
-        } else {
-            pl_songs = songs;
-        }
-    } else {//Got a playlist name
-        let {err, songs} = DAL.getSongsByPlaylistName(playlist_identifier)
-        if(err) {
-            return message.channel.send("Unknown error occured while fetching playlist songs.");
-        } else if(songs === undefined || songs.length == 0) {
-            return message.channel.send("This playlist has no songs, you suck as a DJ.")
-        } else {
-            pl_songs = songs;
-        }
+    let {err, songs} = DAL.getSongsByPlaylistIdentifier(playlist_identifier)
+
+    if(err) {
+        return message.channel.send("Unknown error occured while fetching playlist songs.");
+    } else if(songs === undefined || songs.length == 0) {
+        return message.channel.send("This playlist has no songs, you suck as a DJ.")
     }
     
-    server.songs = pl_songs;
-    server.current_song_index = 0;
-    server.current_song = pl_songs[server.current_song_index];
-    //server.current_playlist = ;
-
-    vc.join().then(connection => {
-        UTIL.playAudio(client, connection, message, server.current_song, UTIL.playlistPlayBasicCallBack);
-    })
-    .catch(console.error);
+    server.song_queue.length = 0;
+    songs.forEach(song =>{
+        let song_request = {
+            voice_channel_id: message.member.voice.channel.id,
+            song: song
+        }
+        server.song_queue.push(song_request);
+    });
 }
 
 exports.help = () =>{

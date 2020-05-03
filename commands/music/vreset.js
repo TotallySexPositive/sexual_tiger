@@ -1,6 +1,6 @@
 exports.run = (client, message, args) => {
     var server = global.servers[message.guild.id];
-    let vc = message.member.voiceChannel
+    let vc = message.member.voice.channel
     server.volume = server.default_volume
     
     if(vc && vc.connection && vc.connection.dispatcher !== undefined) {
