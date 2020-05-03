@@ -1,5 +1,5 @@
 "use strict";
-const octokit   = require('@octokit/rest')()
+const octokit   = require('@octokit/rest')
 const fs        = require('fs');
 const path      = require("path");
 const auth      = require(path.resolve('auth.json'));

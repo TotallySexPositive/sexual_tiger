@@ -29,7 +29,6 @@ global.audio_dirs = {
     "stored"    : path.resolve("audio", "stored"),
     "uploaded"  : path.resolve("audio", "uploaded")
 }
-
 global.image_dirs = {
     "tmp"       : path.resolve("images", "tmp"),
     "hashed"    : path.resolve("images", "hashed"),
@@ -64,13 +63,51 @@ required_folders.forEach(function(dir) {
 //Update the command table incase any new commands were added or a default access has been changed.
 UTIL.updateCommandList();
 
+
+
+var arrayChangeHandler = {
+    get: function(target, property) {
+        //console.log('getting ' + property + ' for ' + target);
+        // property is index in this case
+        const val = target[property];
+        if (typeof val === 'function' && property === 'push') {
+            console.log("pushing")
+            
+            console.log("Calling playAudio")
+            UTIL.playAudio();
+            console.log("Called playAudio")
+        }
+        return target[property];
+      },
+    set: function(target, property, value, receiver) {
+      //console.log('setting ' + property + ' for ' + target + ' with value ' + value);
+      target[property] = value;
+      // you have to return true to accept the changes
+      return true;
+    }
+  };
+  
 client.on('ready', () => {
     console.log('I am ready!');
     client.user.setActivity("pick up sticks.");
-    
     //Init servers array
-    client.guilds.keyArray().forEach(server_id => {
-        global.servers[server_id] = {repeat: false, maintain_presence: false, dispatcher: null, default_volume: .25, volume: .25, max_volume: 1, clip_volume: .75, super_admins:["231574835694796801","183388696207294465", "231606224909500418"]};
+    client.guilds.cache.keyArray().forEach(server_id => {
+
+        var originalArray = [];
+
+        global.servers[server_id] = {
+            repeat: false, 
+            maintain_presence: false, 
+            dispatcher: null, 
+            default_volume: .25, 
+            volume: .25, 
+            max_volume: 1, 
+            clip_volume: .75, 
+            super_admins:["231574835694796801","183388696207294465", "231606224909500418"],
+            song_queue_raw: originalArray,
+            song_queue: new Proxy( originalArray, arrayChangeHandler ),
+            shuffle: false
+        };
     });
 });
 

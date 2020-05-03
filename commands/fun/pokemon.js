@@ -5,46 +5,56 @@ var giphy           = require('giphy-api')(auth.giphy);
 var request         = require('request');
 
 exports.run = (client, message, args) => {
-    var rand1   = Math.floor((Math.random() * 494) + 1); //494
-    var rand2   = Math.floor((Math.random() * 494) + 1); //494
-    var rand3   = Math.floor((Math.random() * 494) + 1); //494
+    var rand1   = Math.floor((Math.random() * 867) + 1); //494
+    var rand2   = Math.floor((Math.random() * 867) + 1); //494
 	
-    var src  = 'http://pokefusion.japeal.com/PKMColourV5.php?ver=3.2&p1='+rand1+'&p2='+rand2+ '&c=' + rand3 + '&e=noone';
-
-
+    //var src     = `https://japeal.com/wordpress/wp-content/themes/total/PKM/EHF.php?type=all&p1=${rand1}&p2=${rand2}`
+    var src     = "https://japeal.com/pkm/"
     const puppeteer = require('puppeteer');
 
-    let scrape = async () => {
-        const browser = await puppeteer.launch({args: ['--no-sandbox', '--disable-setuid-sandbox']});
+    (async () => {
+        const browser = await puppeteer.launch({headless: false});
         const page = await browser.newPage();
+        const navigationPromise = page.waitForNavigation();
 
-        await page.goto(src);
-        const result = await page.evaluate(() => {
-            let data_url = document.querySelector('#image1').src;
+        await page.goto(src),
+        await page.click("#fbutton"),
+        await navigationPromise,
+        x = await page.evaluate( () => {
+            console.log("In the function")
+            var multiplier = 1;
+            var combined = document.getElementById("canvas_download");
+            var ctx = combined.getContext("2d");
+            var combinedX2 = document.getElementById('canvasShake');
+            combined.width = combinedX2.width;
+            combined.height = combinedX2.height;
 
-            return {
-                data_url
-            }
-        });
+            var combinedGC = document.getElementById("canvas_GlowCurrent");
+            var tempvar80 = combinedGC.width - combined.width;
+            tempvar80 = tempvar80 / 2;
+            console.log("In the function")
 
-        browser.close();
-        return result;
-    };
+            combined.width = combinedX2.width * multiplier;
+            combined.height = combinedX2.height * multiplier;
 
-    scrape().then((value) => {
-        const ImageDataURI  = require('image-data-uri');
+            combined.imageSmoothingEnabled = false;
+            combined.mozImageSmoothingEnabled = false;
+            combined.globalCompositeOperation = "source-over";
+
+            ctx.drawImage(combinedX2, 0, 0, combinedX2.width * multiplier, combinedX2.height * multiplier);
+
+            var combinedL1 = document.getElementById("canvas_SSJ2Lightning");
+            ctx.drawImage(combinedL1, 0, 0, combinedL1.width * multiplier, combinedL1.height * multiplier);
+            console.log("In the function")
+
+            var imageDL = document.getElementById("canvas_download").toDataURL("image/png").replace("image/png", "image/octet-stream");
+            console.log(imageDL)
+            return Promise.resolve(imageDL);
+          });
         
-        //ImageDataURI.outputFile(value.data_url, filePath);
-        var data = ImageDataURI.decode(value.data_url)
-        message.channel.send("", {"files": [data.dataBuffer]})
-        .then(post => {
-            //console.log("Posted?")
-        })
-        .catch(console.error);
-        //console.log(value); // Success!
-    });
-
-
+        //await browser.close();
+        console.log(x)
+    })();
 }
 
 exports.help = () =>{

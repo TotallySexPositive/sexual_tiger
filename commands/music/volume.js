@@ -1,6 +1,7 @@
 exports.run = (client, message, args) => {
-    let vc = message.member.voiceChannel
-    if(vc === undefined) {
+    let vc = message.member.voice.channel
+    console.log(vc)
+    if(vc === undefined || vc == null) {
         message.channel.send("I'm not even in a channel.")
         return;
     }
