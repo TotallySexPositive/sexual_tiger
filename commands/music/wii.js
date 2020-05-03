@@ -32,7 +32,17 @@ exports.run = (client, message, args) => {
 
     vc.join()
     .then(connection => {
-        UTIL.playAudio(client, connection, message, found_song, UTIL.playAudioBasicCallBack)
+        /*
+        let song_request = {
+            voice_channel: message.member.voice.channel,
+            song: found_song
+        }
+        */
+        server.song_queue.length = 0
+        server.song_queue.push({
+            voice_channel: message.member.voice.channel,
+            song: found_song
+        })
     })
     .catch(console.error);
 }

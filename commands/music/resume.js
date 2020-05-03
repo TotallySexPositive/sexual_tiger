@@ -1,15 +1,26 @@
 exports.run = (client, message, args) => {
     let vc = message.member.voice.channel
-    if(!vc || !vc.connection) {
+    var server = global.servers[message.guild.id];
+    let promise = server.connectionPromise
+
+    if(vc === undefined) {
         message.channel.send("I'm not even in a channel.")
         return;
     }
-    let dispatcher = vc.connection.dispatcher
-    if(!dispatcher || !dispatcher.paused) {
+    if (promise === null)
+    {
         message.channel.send("Nothing to resume.")
         return;
     }
-    dispatcher.resume();
+    promise.then(
+        connection=>{
+            connection.dispatcher.resume()
+        }
+    ).catch(
+        reason=>{
+            console.log(reason)
+        }
+    )
 }
 
 exports.help = () =>{

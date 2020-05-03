@@ -68,11 +68,15 @@ UTIL.updateCommandList();
 var arrayChangeHandler = {
     set: function(target, property, value, receiver) {
         // console.log('setting ' + property + ' for ' + target + ' with value ' + value);
+        //Set the value first
+        target[property] = value;
+        
+        //If we're setting an index to a value...
         if (property == parseInt(property, 10) && Array.isArray(target)) // Check that property is a number, and that the target is an array
         {
-            UTIL.playAudio(value); //pass back the value that is going to the object
-        } 
-        target[property] = value;
+            //Play the value
+            UTIL.playAudio(value);
+        }
         // you have to return true to accept the changes
         return true;
     }
@@ -88,6 +92,7 @@ client.on('ready', () => {
 
         global.servers[server_id] = {
             repeat: false, 
+            current_song: {},
             maintain_presence: false, 
             connectionPromise: null,
             dispatcher: null, 
