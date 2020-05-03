@@ -1,5 +1,5 @@
 exports.run = (client, message, args) => {
-    let vc = message.member.voiceChannel
+    let vc = message.member.voice.channel
     if(!vc || !vc.connection) {
         message.channel.send("I'm not even in a channel.")
         return;

@@ -6,7 +6,7 @@ const UTIL   = require(path.resolve("utils.js"))
 exports.run = (client, message, args) => {
     var server = global.servers[message.guild.id]
 
-    let vc = message.member.voiceChannel
+    let vc = message.member.voice.channel
     if(vc === undefined){
         message.channel.send("You must be in a Voice Channel, I'm not gonna play this shit for no one.");
         return;
