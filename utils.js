@@ -29,9 +29,28 @@ var isAdmin = function(member) {
     return is_admin;
 }
 
-var playAudio = async function() {
+var playAudio = async function(playobj) {
+    /*
+    {
+        voice_channel: message.member.voice.channel,
+        song: song
+    }
+    */
     console.log("In playAudio1")
+    let server_id = playobj.voice_channel.guild.id
+    let volume = global.servers[server_id].volume
+    global.servers[server_id].connectionPromise = playobj.voice_channel.join()
+    let connectionPromise = global.servers[server_id].connectionPromise
 
+    connectionPromise.then(connection=>connection.play(
+                playobj.song.source,
+                {
+                    volume: volume
+                }
+            )
+        ).catch(reason=>{
+            console.log(reason)
+        })
 }
 
 
@@ -164,7 +183,7 @@ var processImageFile = function(file_path, tag_names, user_id) {
                     console.log(err);
                 }
             });
-            image_id = info.lastInsertROWID;
+            image_id = info.lastInsertRowid;
         }
     }
 
@@ -174,7 +193,7 @@ var processImageFile = function(file_path, tag_names, user_id) {
         let tag_ids = tags.map(function(tag) {return tag['tag_id'];})
         let {err: it_err, info:it_info} = DAL.insertIntoImageTag([image_id], tag_ids);
         if(it_err) {
-            return Error(`Failed to create relationship between Image: ${it_info.lastInsertROWID} and Tag: ${tag_id}`)
+            return Error(`Failed to create relationship between Image: ${it_info.lastInsertRowid} and Tag: ${tag_id}`)
         }
     }
 }
