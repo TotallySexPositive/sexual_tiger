@@ -48,7 +48,7 @@ exports.run = (client, message, args) => {
     }
 
     let song_request = {
-        voice_channel_id: message.member.voice.channel.id,
+        voice_channel: message.member.voice.channel,
         song: found_song
     }
 
