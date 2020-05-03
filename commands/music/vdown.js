@@ -1,24 +1,16 @@
 exports.run = (client, message, args) => {
     var server = global.servers[message.guild.id];
-    let vc = message.member.voice.channel
-    let promise = server.connectionPromise
+    let vc = message.member.voiceChannel
     if(vc === undefined){
         message.channel.send("You must be in a Voice Channel to change the volume.");
         return;
     }
     server.volume = server.volume/2;
-    if(vc && promise != null) {
-        promise.then(
-                connection=>{
-                    connection.dispatcher.setVolume(server.volume)
-                    message.channel.send(`Lowered volume: ${server.volume*100}%`)
-                }
-            ).catch(
-                reason=>console.log(reason)
-            );
+    if(vc && vc.connection && vc.connection.dispatcher !== undefined) {
+        vc.connection.dispatcher.setVolume(server.volume);
     }
 
-    
+    message.channel.send(`Lowered volume: ${server.volume}`);
 }
 
 exports.help = () =>{

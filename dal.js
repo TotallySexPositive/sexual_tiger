@@ -25,7 +25,6 @@ const COMMAND_FIELDS        = "command.command, command.default_access "
 let DB = new Database('playlists.sql');
 
 DB.pragma("foreign_keys = ON;");
-DB.pragma('journal_mode = WAL');
 
 let isInt = function(value) {
     var er = /^-?[0-9]+$/;
@@ -181,25 +180,30 @@ let findPlaylistByIdentifier = function(identifier, identifier_type = null) {
     }
 }
 
-
-
-let getSongsByPlaylistIdentifier = function(identifier, identifier_type = null) {
-    let valid_identifiers = ["playlist_id", "name"];
-
-    if(identifier_type === null) { //Type not specified, lets figure it out
-        if(isInt(identifier)) {
-            return getSongsByPlaylist("playlist_id", identifier);
-        } else { //Welp, I guess its a song name
-            return getSongsByPlaylist("name", identifier);
-        }
-    } else {
-        if(!valid_identifiers.includes(identifier_type)) { //Invalid identifier type sent
-            let err = new Error(`Invalid identifier_type passed. Valid types: ${valid_identifiers.join(", ")}.`);
-            return { err: err, playlist: undefined }
-        } else { //Valid identifier type sent, just run the query
-            return getSongsByPlaylist(identifier_type);
-        }
+  /**
+   * Get all Songs on a playlist by playlist_id.
+   * 
+   * @param {Integer} playlist_id - The id of the playlist to get songs from
+   */
+var getSongsByPlaylistId = function (playlist_id) {
+    if(!isInt(playlist_id)) {
+        let err = new Error("playlist_id must be an integer.")
+        return {err: err, songs: undefined};
     }
+    return getSongsByPlaylist("playlist_id", playlist_id)
+}
+
+  /**
+   * Get all Songs on a playlist by Playlist name.
+   * 
+   * @param {String} name - The name of the playlist to get songs from
+   */
+var getSongsByPlaylistName = function (name) {
+    if(isInt(name)) {
+        let err = new Error("name must not be an integer.")
+        return {err: err, songs: undefined};
+    }
+    return getSongsByPlaylist("name", name)
 }
 
 /**
@@ -692,12 +696,19 @@ let grantAccessByUserIdAndCommand = function(user_id, command, admin) {
 }
 
 let insertCommands = function(commands) {
-    const insert = DB.prepare(`INSERT OR REPLACE INTO ${COMMAND_TABLE} (command, default_access) VALUES (@command, @default_access) `);
-    const insertMany = DB.transaction((commands) => {
-        for (const cmd of commands) insert.run(cmd);
-    });
+    let terms = [];
+    commands.forEach(command => {
+        terms.push(`("${command.command}", ${command.default_access})`);
+    })
 
-    insertMany(commands)
+    let query = `INSERT OR REPLACE INTO ${COMMAND_TABLE} (command, default_access) VALUES ${terms.join(',')}`
+    try {
+        return {err: undefined, info: DB.prepare(query).run()};
+    } catch (err) {
+        console.log(`insertCommands: \nError: `)
+        console.log(err);
+        return {err: err, info: undefined};
+    }
 }
 
 let findCommandByName = function(str_command) {
@@ -714,13 +725,13 @@ let findCommandByName = function(str_command) {
 
 let initUserAccess = function(user_id) {
     let stamp = new Date().getTime()
-    let query = `INSERT OR IGNORE INTO ${ACCESS_TABLE} (user_id, command, is_allowed, set_by, added_at) SELECT ${user_id}, command, default_access, 'System', ${stamp} FROM ${COMMAND_TABLE}`;
-
+    let query = `INSERT OR IGNORE INTO ${ACCESS_TABLE} SELECT ${user_id}, ${COMMAND_FIELDS}, "System", ${stamp} FROM ${COMMAND_TABLE}`;
+   
     try {
          let commands = DB.prepare(query).run()
  
     } catch (err) {
-        console.log(`initUserAccess: \nError: `)
+        console.log(`getCommands: \nError: `)
         console.log(err);
         return {err: err, commands: undefined};
     }
@@ -734,7 +745,8 @@ module.exports.findSongByName           = findSongByName;
 module.exports.findPlaylistById         = findPlaylistById;
 module.exports.findPlaylistByName       = findPlaylistByName;
 module.exports.findPlaylistByIdentifier = findPlaylistByIdentifier;
-module.exports.getSongsByPlaylistIdentifier     = getSongsByPlaylistIdentifier;
+module.exports.getSongsByPlaylistId     = getSongsByPlaylistId;
+module.exports.getSongsByPlaylistName   = getSongsByPlaylistName;
 module.exports.createPlaylist           = createPlaylist;
 module.exports.deletePlaylistById       = deletePlaylistById;
 module.exports.addToPlaylist            = addToPlaylist;
