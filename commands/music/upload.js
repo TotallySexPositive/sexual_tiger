@@ -10,7 +10,7 @@ exports.run = (client, message, args) => {
 	message.channel.send(`Downloading ${attachments.length} attachments.`);
 
     attachments.forEach(item => {
-        fpath = path.resolve(global.audio_dirs.uploaded,item.filename)
+        fpath = path.resolve(global.audio_dirs.uploaded,item.name)
         request(item.url)
             .pipe(fs.createWriteStream(fpath))
             .on('finish', () => {

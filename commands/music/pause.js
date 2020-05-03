@@ -1,15 +1,27 @@
 exports.run = (client, message, args) => {
-    let vc = message.member.voiceChannel
+    let vc = message.member.voice.channel
+    var server = global.servers[message.guild.id];
+    let promise = server.connectionPromise
+
     if(vc === undefined) {
         message.channel.send("I'm not even in a channel.")
         return;
     }
-    let dispatcher = vc.connection.dispatcher
-    if(dispatcher === undefined) {
+    if (promise === null)
+    {
         message.channel.send("No audio is playing.  You must be hearing things.")
         return;
     }
-    dispatcher.pause();
+    promise.then(
+        connection=>{
+            connection.dispatcher.pause()
+        }
+    ).catch(
+        reason=>{
+            console.log(reason)
+        }
+    )
+    
 }
 
 exports.help = () =>{

@@ -44,15 +44,14 @@ exports.run = (client, message, args) => {
         }
     }
     
-    server.songs = pl_songs;
-    server.current_song_index = 0;
-    server.current_song = pl_songs[server.current_song_index];
-    //server.current_playlist = ;
-
-    vc.join().then(connection => {
-        UTIL.playAudio(client, connection, message, server.current_song, UTIL.playlistPlayBasicCallBack);
-    })
-    .catch(console.error);
+    server.song_queue.length = 0;
+    songs.forEach(song =>{
+        let song_request = {
+            voice_channel: vc,
+            song: song
+        }
+        server.song_queue.push(song_request);
+    });
 }
 
 exports.help = () =>{

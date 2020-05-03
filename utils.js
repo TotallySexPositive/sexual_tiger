@@ -29,52 +29,62 @@ var isAdmin = function(member) {
     return is_admin;
 }
 
-var playAudio = function(client, connection, message, song, callBack) {
-    var server = global.servers[message.guild.id]
-    let dispatcher = null;
+var setSong = async function(playobj) {
+    let server_id = playobj.voice_channel.guild.id
+    let server = global.servers[server_id]
+    server.current_song.song_id = playobj.song.song_id
+    server.current_song.name = playobj.song.name
+}
 
-    if (server.dispatcher) {
-        server.dispatcher.end("remain")
+var playAudio = async function(playobj) {
+    /*
+    {
+        voice_channel: message.member.voice.channel,
+        song: song
     }
-    if (connection.status == 4) { //4 = dead connection
-        let vc = message.member.voiceChannel;
-        vc.join()
-        .then(connection => {
-            playAudio(client, connection, message, song, callBack);
-        })
-        .catch(console.error);
+    */
+
+    let server_id = playobj.voice_channel.guild.id
+    let server = global.servers[server_id]
+    if (server.song_queue.length > 1)
+    {
         return;
-    } else {         
-        if (song.is_clip  && server.songs && !server.songs.length)
-        {
-            dispatcher = connection.playFile(path.resolve(global.audio_dirs.hashed, `${song.hash_id}.mp3`), {volume: server.clip_volume});
-        }else
-        {
-            dispatcher = connection.playFile(path.resolve(global.audio_dirs.hashed, `${song.hash_id}.mp3`), {volume: server.volume});
-        }
-        
-        let {err, info} = DAL.incrementNumPlays(song.song_id);
-        if(err) {
-            console.log(err);
-            console.log(`Failed to increment num_plays for song_id, ${song.song_id}`);
-        } else if(info.changes <= 0) {
-            console.log(`Failed to increment num_plays for song_id, ${song.song_id}`);
-            console.log("The song_id didnt exist?");
-        }
-        server.dispatcher = dispatcher;
     }
-    
-    dispatcher.on('end', (m) => {
-        // The song has finished
-        callBack(client, connection, message, song, callBack, m);
-    });
+    let volume = server.volume
+    server.connectionPromise = playobj.voice_channel.join()
+    let connectionPromise = server.connectionPromise
 
-    dispatcher.on('error', e => {
-        // Catch any errors that may arise
-        console.log(e);
-        message.channel.send("all fuck, it broke!");
-        connection.disconnect()
-    });
+    connectionPromise.then(
+        connection=>{
+            let dispatcher = connection.play(
+                playobj.song.source,
+                {
+                    volume: volume
+                }
+            )
+            dispatcher.on('start',()=>{
+                setSong(playobj)
+            })
+            dispatcher.on('finish',()=>{
+                    console.log("end")
+                    server.song_queue.shift()
+                    if (server.song_queue.length != 0)
+                    {
+                        playAudio(server.song_queue[0])
+                    }
+                    else if(server.maintain_presence != true)
+                    {
+                        server.current_song.song_id = undefined
+                        server.current_song.name = undefined
+                        connection.disconnect()
+                    }
+                }
+            )
+        
+        }
+    ).catch(
+        reason=>console.log(reason)
+    )
 }
 
 var playUrl = function(client, connection, message, url, callBack) {
