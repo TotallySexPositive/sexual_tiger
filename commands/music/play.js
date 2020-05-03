@@ -13,20 +13,21 @@ var options = {
 };
 
 exports.run = (client, message, args) => {
-    var server  = global.servers[message.guild.id]
-    let vc      = message.member.voice.channel
+    var server = global.servers[message.guild.id]
 
-    if(vc === undefined) {
-        return message.channel.send("You must be in a Voice Channel, I'm not gonna play this shit for no one.");
+    let vc = message.member.voiceChannel
+    if(vc === undefined){
+        message.channel.send("You must be in a Voice Channel, I'm not gonna play this shit for no one.");
+        return;
     }
 
     if(args.length <= 0) {
         return message.channel.send("You forgot to type in a song name.")
     }
-
     let song_identifier = args.join(" ");
-    let found_song      = undefined;
-    let {err, song}     = DAL.findSongByIdentifier(song_identifier);
+    let found_song = undefined;
+
+    let {err, song} = DAL.findSongByIdentifier(song_identifier);
 
     if(err) {
         return message.channel.send("An error occured while searching for song.")
@@ -47,13 +48,12 @@ exports.run = (client, message, args) => {
         found_song = song;
     }
 
-    let song_request = {
-        voice_channel: message.member.voice.channel,
-        song: found_song
-    }
-
-    server.song_queue.length = 0;
-    server.song_queue.push(song_request);
+    server.current_song = found_song;
+    vc.join()
+    .then(connection => {
+        UTIL.playAudio(client, connection, message, found_song, UTIL.playAudioBasicCallBack)
+    })
+    .catch(console.error);
 }
 
 exports.help = () =>{

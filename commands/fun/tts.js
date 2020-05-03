@@ -42,7 +42,7 @@ exports.run = (client, message, args) => {
     .then(function (url) {
         var server = global.servers[message.guild.id]
 
-        let vc = message.member.voice.channel
+        let vc = message.member.voiceChannel
         if(vc === undefined){
             message.channel.send("You must be in a Voice Channel, I'm not gonna play this shit for no one.");
             return;
