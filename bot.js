@@ -29,6 +29,7 @@ global.audio_dirs = {
     "stored"    : path.resolve("audio", "stored"),
     "uploaded"  : path.resolve("audio", "uploaded")
 }
+
 global.image_dirs = {
     "tmp"       : path.resolve("images", "tmp"),
     "hashed"    : path.resolve("images", "hashed"),
@@ -63,8 +64,6 @@ required_folders.forEach(function(dir) {
 //Update the command table incase any new commands were added or a default access has been changed.
 UTIL.updateCommandList();
 
-
-
 var arrayChangeHandler = {
     set: function(target, property, value, receiver) {
         // console.log('setting ' + property + ' for ' + target + ' with value ' + value);
@@ -85,6 +84,7 @@ var arrayChangeHandler = {
 client.on('ready', () => {
     console.log('I am ready!');
     client.user.setActivity("pick up sticks.");
+    
     //Init servers array
     client.guilds.cache.keyArray().forEach(server_id => {
 

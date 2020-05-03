@@ -2,6 +2,7 @@ exports.run = (client, message, args) => {
     let vc = message.member.voice.channel
     var server = global.servers[message.guild.id];
     let promise = server.connectionPromise
+
     if(vc === undefined) {
         message.channel.send("I'm not even in a channel.")
         return;
