@@ -9,6 +9,7 @@ exports.run = (client, message, args) => {
     if (server.connectionPromise) {
         server.connectionPromise.then(connection => {
             if(message.member.voice.channel === connection.channel) {
+                server.song_queue.shift()
                 connection.dispatcher.end()
             } else {
                 return message.channel.send("You are in a different voice channel. I'm not going to listen to you.")
