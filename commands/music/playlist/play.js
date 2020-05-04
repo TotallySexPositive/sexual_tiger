@@ -21,14 +21,8 @@ exports.run = (client, message, args) => {
         return message.channel.send("This playlist has no songs, you suck as a DJ.")
     }
     
-    server.song_queue.length = 0;
-    songs.forEach(song =>{
-        let song_request = {
-            voice_channel: vc,
-            song: song
-        }
-        server.song_queue.push(song_request);
-    });
+    server.song_queue = songs;
+    UTIL.playAudio(vc)
 }
 
 exports.help = () =>{

@@ -16,14 +16,15 @@ exports.run = (client, message, args) => {
     var server  = global.servers[message.guild.id]
     let vc      = message.member.voice.channel
 
-    if(vc === undefined) {
+    if(vc === null) {
         return message.channel.send("You must be in a Voice Channel, I'm not gonna play this shit for no one.");
     }
 
     if(args.length <= 0) {
-        return message.channel.send("You forgot to type in a song name.")
+        message.channel.send(asciitable(options, server.song_queue),{code:true})
+        return message.channel.send("If you wish to add a song to the queue, add the name or id after the queue command.")
     }
-
+    
     let song_identifier = args.join(" ");
     let found_song      = undefined;
     let {err, song}     = DAL.findSongByIdentifier(song_identifier);
@@ -47,12 +48,7 @@ exports.run = (client, message, args) => {
         found_song = song;
     }
 
-    let song_request = {
-        voice_channel: message.member.voice.channel,
-        song: found_song
-    }
-
-    server.song_queue.push(song_request);
+    server.song_queue.push(found_song);
 }
 
 exports.help = () =>{

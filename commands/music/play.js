@@ -47,13 +47,9 @@ exports.run = (client, message, args) => {
         found_song = song;
     }
 
-    let song_request = {
-        voice_channel: message.member.voice.channel,
-        song: found_song
-    }
-
-    server.song_queue.length = 0;
-    server.song_queue.push(song_request);
+    server.song_queue = [];
+    server.song_queue.push(found_song);
+    UTIL.playAudio(vc)
 }
 
 exports.help = () =>{

@@ -64,45 +64,24 @@ required_folders.forEach(function(dir) {
 //Update the command table incase any new commands were added or a default access has been changed.
 UTIL.updateCommandList();
 
-var arrayChangeHandler = {
-    set: function(target, property, value, receiver) {
-        // console.log('setting ' + property + ' for ' + target + ' with value ' + value);
-        //Set the value first
-        target[property] = value;
-        
-        //If we're setting an index to a value...
-        if (property == parseInt(property, 10) && Array.isArray(target)) // Check that property is a number, and that the target is an array
-        {
-            //Play the value
-            UTIL.playAudio(value);
-        }
-        // you have to return true to accept the changes
-        return true;
-    }
-  };
-  
 client.on('ready', () => {
     console.log('I am ready!');
     client.user.setActivity("pick up sticks.");
     
     //Init servers array
     client.guilds.cache.keyArray().forEach(server_id => {
-
-        var originalArray = [];
-
         global.servers[server_id] = {
             repeat: false, 
             current_song: {},
             maintain_presence: false, 
             connectionPromise: null,
             dispatcher: null, 
-            default_volume: .25, 
-            volume: .25, 
+            default_volume: .125, 
+            volume: .125, 
             max_volume: 1, 
             clip_volume: .75,
             super_admins:["231574835694796801","183388696207294465", "231606224909500418"],
-            song_queue_raw: originalArray,
-            song_queue: new Proxy( originalArray, arrayChangeHandler ),
+            song_queue: [],
             shuffle: false
         };
     });
