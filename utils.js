@@ -33,9 +33,7 @@ var playAudio = async function(voice_channel) {
     let server_id   = voice_channel.guild.id
     let server      = global.servers[server_id]
 
-    if(server.connectionPromise == null) {
-        server.connectionPromise    = voice_channel.join()
-    }
+    server.connectionPromise    = voice_channel.join()
 
     server.current_song         = server.repeat ? server.song_queue[0] : server.song_queue.shift()
     let volume                  = server.current_song.is_clip ? server.clip_volume : server.volume
@@ -45,7 +43,6 @@ var playAudio = async function(voice_channel) {
 
         dispatcher.on('start',() => {
             DAL.incrementNumPlays(server.current_song.song_id)
-            
         })
 
         dispatcher.on('finish', () => {
@@ -54,7 +51,6 @@ var playAudio = async function(voice_channel) {
             } else if(!server.maintain_presence) {
                 server.current_song = undefined
                 connection.disconnect()
-                server.connectionPromise = null
             }
         })
     }).catch(reason => {
