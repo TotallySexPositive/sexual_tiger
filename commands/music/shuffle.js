@@ -46,8 +46,8 @@ exports.docs = () => {
         syntax: "shuffle [playlist_identifier]",
         examples: [
             {
-                description: "Shuffle the currently playing playlist",
-                code: "playlist shuffle"
+                description: "Shuffle the remaining songs in the queue.",
+                code: "shuffle"
             },
             {
                 description: "Replace the current song queue with a shuffled playlist 14.",
