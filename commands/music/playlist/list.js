@@ -17,8 +17,9 @@ exports.run = (client, message, args) => {
         skinny: true,
         intersectionCharacter: "+",
         columns: [
-            {field: "song_id",  name: "ID"},
-            {field: "name",         name: "Name"}
+            {field: "song_id",   name: "ID"},
+            {field: "name",      name: "Name"},
+            {field: "num_plays", name: "plays"}
         ],
     };
 
@@ -33,7 +34,7 @@ exports.run = (client, message, args) => {
         }
     } else {
         let playlist_identifier = args.join(" ")
-        let {err, songs} = (DAL.isInt(playlist_identifier)) ? DAL.getSongsByPlaylistId(playlist_identifier) : DAL.getSongsByPlaylistName(playlist_identifier)
+        let {err, songs} = DAL.getSongsByPlaylistIdentifier(playlist_identifier)
         if(err) {
             message.channel.send(`Sorry, ${message.author.username}, it seems something unexpected happened.`)
         } else {
