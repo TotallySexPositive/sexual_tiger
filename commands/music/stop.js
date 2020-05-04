@@ -1,21 +1,22 @@
 exports.run = (client, message, args) => {
-    var server = global.servers[message.guild.id];
-    let vc = message.member.voice.channel
-    if(vc === undefined) {
-        message.channel.send("I'm not even in a channel.")
-        return;
+    var server  = global.servers[message.guild.id];
+    let vc      = message.member.voice.channel
+
+    if (vc === null) {
+        return message.channel.send("You are not in a voice channel. I'm not going to listen to you.")
     }
-    if (server.connectionPromise != null)
-    {
+
+    if (server.connectionPromise != null) {
         server.song_queue.length = 0
-        server.connectionPromise.then(connection=>{
-            if (connection.dispatcher === undefined)
-            {
+        server.connectionPromise.then(connection => {
+            if (connection.dispatcher === undefined) {
                 message.channel.send("No audio is playing.  You must be hearing things.")
-            }
-            else
-            {
-                connection.dispatcher.end()
+            } else {
+                if(message.member.voice.channel === connection.channel) {
+                    connection.dispatcher.end()
+                } else {
+                    return message.channel.send("You are in a different voice channel. I'm not going to listen to you.")
+                }
             }
         })
     }
@@ -33,7 +34,7 @@ exports.docs = () => {
         parent: "",
         full_command: "stop",
         command: "stop",
-        description: "Stops any playing audio.  If a playlist is playing it also emptys the queue.  The bot will leave when stopped, even when presence is active.",
+        description: "Stops any playing audio and empties the queue.",
         syntax: "stop",
         examples: [
             {

@@ -1,8 +1,5 @@
-//Make playlist play index based instead of shift, repeast resets index at end of queue
 const path  = require("path")
-const fs    = require('fs');
 const DAL   = require(path.resolve("dal.js"))
-const UTIL  = require(path.resolve("utils.js"))
 
 exports.run = (client, message, args) => {
     var server  = global.servers[message.guild.id]
@@ -21,8 +18,7 @@ exports.run = (client, message, args) => {
         return message.channel.send("This playlist has no songs, you suck as a DJ.")
     }
     
-    server.song_queue = songs;
-    UTIL.playAudio(vc)
+    server.song_queue = server.song_queue.concat(songs);
 }
 
 exports.help = () =>{
@@ -35,18 +31,18 @@ exports.docs = () => {
         tab: "music",
         link: "playlists",
         parent: "playlist",
-        full_command: "playlist play",
-        command: "play",
-        description: "Play a playlist by identifier",
-        syntax: "playlist play [playlist_identifier]",
+        full_command: "playlist queue",
+        command: "queue",
+        description: "Queue a playlist by identifier",
+        syntax: "playlist queue [playlist_identifier]",
         examples: [
             {
-                description: "Play playlist, 'Viscera' by name.",
-                code: "playlist play Viscera"
+                description: "Queue playlist, 'Viscera' by name.",
+                code: "playlist queue Viscera"
             },
             {
-                description: "Play playlist, 5 by id.",
-                code: "playlist play 5"
+                description: "Queue playlist, 5 by id.",
+                code: "playlist queue 5"
             }
         ]
     }

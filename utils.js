@@ -29,78 +29,33 @@ var isAdmin = function(member) {
     return is_admin;
 }
 
-var setSong = async function(playobj) {
-    let server_id = playobj.voice_channel.guild.id
-    let server = global.servers[server_id]
-    server.current_song.song_id = playobj.song.song_id
-    server.current_song.name = playobj.song.name
-}
+var playAudio = async function(voice_channel) {
+    let server_id   = voice_channel.guild.id
+    let server      = global.servers[server_id]
 
-var playAudio = async function(playobj) {
-    /*
-    {
-        voice_channel: message.member.voice.channel,
-        song: song
-    }
-    */
-    
+    server.connectionPromise    = voice_channel.join()
 
-    let server_id = playobj.voice_channel.guild.id
-    let server = global.servers[server_id]
-    console.log("starting iteration")
-    server.song_queue.forEach(val=>{
-        console.log(val)
+    server.current_song         = server.repeat ? server.song_queue[0] : server.song_queue.shift()
+    let volume                  = server.current_song.is_clip ? server.clip_volume : server.volume
+
+    server.connectionPromise.then(connection => {
+        let dispatcher  = connection.play(server.current_song.source, {volume: volume })
+
+        dispatcher.on('start',() => {
+            DAL.incrementNumPlays(server.current_song.song_id)
+        })
+
+        dispatcher.on('finish', () => {
+            if (server.song_queue.length != 0) {
+                playAudio(voice_channel)
+            } else if(!server.maintain_presence) {
+                server.current_song = undefined
+                connection.disconnect()
+            }
+        })
+    }).catch(reason => {
+        console.log(reason)
     })
-    let volume = server.volume
-    server.connectionPromise = playobj.voice_channel.join()
-    let connectionPromise = server.connectionPromise
-
-    connectionPromise.then(
-        connection=>{
-            if (connection.speaking.bitfield == 1)
-            {
-                console.log(server.song_queue.length)
-                console.log(connection.speaking.bitfield)
-                return;
-            }
-            if (!server.repeat)
-            {
-                server.song_queue.shift()
-            }
-            if (playobj.song.is_clip)
-            {
-                volume = server.clip_volume
-            }
-            let dispatcher = connection.play(
-                playobj.song.source,
-                {
-                    volume: volume
-                }
-            )
-            dispatcher.on('start',()=>{
-                setSong(playobj)
-                DAL.incrementNumPlays(playobj.song.song_id)
-            })
-            dispatcher.on('finish',()=>{
-                    if (server.song_queue.length != 0)
-                    {
-                        console.log("playing " + server.song_queue[0].song.name)
-                        playAudio(server.song_queue[0])
-                    }
-                    else if(server.maintain_presence != true)
-                    {
-                        console.log("fucking off")
-                        server.current_song.song_id = undefined
-                        server.current_song.name = undefined
-                        connection.disconnect()
-                    }
-                }
-            )
-        
-        }
-    ).catch(
-        reason=>console.log(reason)
-    )
 }
 
 var playUrl = function(client, connection, message, url, callBack) {

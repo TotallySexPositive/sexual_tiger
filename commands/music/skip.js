@@ -1,13 +1,21 @@
-const path = require("path")
-
 exports.run = (client, message, args) => {
-   var server = global.servers[message.guild.id];
-   if(server.connectionPromise)
-   {
-       server.connectionPromise.then(connection=>{
-           connection.dispatcher.end()
-       })
-   }; 
+   var server   = global.servers[message.guild.id];
+   let vc       = message.member.voice.channel
+
+    if (vc === null) {
+        return message.channel.send("You are not in a voice channel. I'm not going to listen to you.")
+    }
+
+    if (server.connectionPromise) {
+        server.connectionPromise.then(connection => {
+            if(message.member.voice.channel === connection.channel) {
+                server.song_queue.shift()
+                connection.dispatcher.end()
+            } else {
+                return message.channel.send("You are in a different voice channel. I'm not going to listen to you.")
+            }
+        })
+    }; 
 };
 
 exports.help = () =>{
@@ -22,7 +30,7 @@ exports.docs = () => {
         parent: "",
         full_command: "skip",
         command: "skip",
-        description: "Skip to the next song in the current playlist.",
+        description: "Skip to the next song in the queue.",
         syntax: "skip",
         examples: [
             {
