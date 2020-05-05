@@ -52,3 +52,5 @@ hashed_audio/*
 uploaded_audio/*
 stored_audio/*
 audio/*
+images/*
+playlists.sql-*
