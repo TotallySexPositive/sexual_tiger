@@ -24,3 +24,5 @@ https://medium.com/@renesansz/tutorial-creating-a-simple-discord-bot-9465a2764dc
 
 ## Discord.js example used:
 https://discord.js.org/#/docs/main/stable/examples/ping
+
+yay
