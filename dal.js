@@ -673,7 +673,7 @@ let findAccessByUserIdAndCommand = function(user_id, command) {
 let updateAccessByUserIdAndCommand = function(user_id, command, is_allowed, admin) {
 
     let stamp = new Date().getTime()
-    let query = `INSERT OR REPLACE INTO ${ACCESS_TABLE} (user_id, command, is_allowed, set_by, added_at)  VALUES (${user_id}, "${command}", ${is_allowed}, "${admin}", ${stamp})`
+    let query = `INSERT OR REPLACE INTO ${ACCESS_TABLE} (user_id, command, is_allowed, set_by, added_at)  VALUES (${user_id}, '${command}', ${is_allowed}, '${admin}', ${stamp})`
 
     try {
         return {err: undefined, info: DB.prepare(query).run()};
