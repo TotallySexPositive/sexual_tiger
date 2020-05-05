@@ -47,7 +47,7 @@ exports.run = (client, message, args) => {
             found_song = songs[0];
         } else {
             message.channel.send("That song didnt exist and we found several close matches. Pick one to play.")
-            return message.channel.send(asciitable(options, songs),{code:true})
+            return message.channel.send(asciitable(options, songs),{code:true, split: true})
         }
     } else {
         found_song = song;
