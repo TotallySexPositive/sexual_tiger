@@ -50,7 +50,7 @@ exports.run = (client, message, args) => {
             let {err, info} = DAL.addToPlaylist(playlist.playlist_id, song.song_id);
             if(err) {
                 console.log(err);
-                skipped_songs.push(`X_X: ${identifier}`);
+                skipped_songs.push(`X_X: ${song.song_id}: ${song.name}`);
             } else {
                 added_songs.push(`${song.name}`);
             }
@@ -58,7 +58,7 @@ exports.run = (client, message, args) => {
     });
 
     if(added_songs.length) {
-        message.channel.send(`The following songs were added to ${playlist.name}:\n${added_songs.join('\n')}`)
+        message.channel.send(`The following songs were added to **${playlist.name}**:\n${added_songs.join('\n')}`)
     }
     if(skipped_songs.length) {
         message.channel.send(`The following songs either didnt exist or crashed the query and were not add:\n${skipped_songs.join('\n')}`)
