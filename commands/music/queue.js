@@ -7,8 +7,9 @@ var options = {
     skinny: true,
     intersectionCharacter: "+",
     columns: [
-        {field: "song_id",  name: "ID"},
-        {field: "name",     name: "Name"}
+        {field: "song_id",   name: "ID"},
+        {field: "name",      name: "Name"},
+        {field: "num_plays", name: "plays"}
     ],
 };
 
@@ -21,10 +22,14 @@ exports.run = (client, message, args) => {
     }
 
     if(args.length <= 0) {
-        message.channel.send(asciitable(options, server.song_queue),{code:true})
-        return message.channel.send("If you wish to add a song to the queue, add the name or id after the queue command.")
+        if (server.song_queue.length) {
+            message.channel.send(asciitable(options, server.song_queue),{code:true})
+            return message.channel.send("If you wish to add a song to the queue, add the name or id after the queue command.")
+        } else {
+            return message.channel.send("There are no songs in the queue.")
+        }
     }
-    
+
     let song_identifier = args.join(" ");
     let found_song      = undefined;
     let {err, song}     = DAL.findSongByIdentifier(song_identifier);
