@@ -1,16 +1,22 @@
 const path      = require("path");
 const fs        = require("fs");
-
+const { MessageEmbed } = require('discord.js');
 
 exports.run = (client, message, args) => {
     let server = global.servers[message.guild.id];
-
-
+    let current_song = server.current_song
     if(args.length == 0) {
-        if(!server.current_song || server.current_song === undefined || server.current_song.name === undefined) {
+        if(!current_song || current_song === undefined || current_song.name === undefined) {
             message.channel.send("Either nothing is playing or its not a playlist song.")
         } else {
-            message.channel.send(`Current Song: ID: ${server.current_song.song_id}  Name: ${server.current_song.name}`);
+
+            let embed = new MessageEmbed()
+            .setTitle("Currently Playing...")
+            .setColor(Math.floor(Math.random()*16777215).toString(16))
+            .addField("Song:", current_song.name, true)
+            .addField("Id:", current_song.song_id, true)
+            .addField("Plays:", current_song.num_plays, true)
+            message.channel.send(embed);
         }
     } else {
         var song_command    = args[0];
