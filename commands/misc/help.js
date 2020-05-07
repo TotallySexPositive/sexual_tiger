@@ -3,12 +3,12 @@ let path = require('path');
 c = path.resolve("configure.json")
 console.log(c)
 let cfg = require(c)
+const { MessageEmbed } = require('discord.js');
 
 
 exports.run = (client, message, args) => {
-    let Discord = require("discord.js")
     if (args.length < 1){
-        let embed = new Discord.RichEmbed()
+        let embed = new MessageEmbed()
         embed.setTitle("Command Categories")
         embed.setColor(16312092)
         embed.setTimestamp()
@@ -21,7 +21,7 @@ exports.run = (client, message, args) => {
         if (global.commandTypes.includes(args[0])){
             let excess_commands = 0;
             let t = args[0]
-            let embed = new Discord.RichEmbed()
+            let embed = new MessageEmbed()
             embed.setTitle(`${t} Commands`)
             embed.setColor(global.commandTypeColor[t])
             embed.setTimestamp()
@@ -64,7 +64,7 @@ exports.run = (client, message, args) => {
 function all_cards(client, message, args){
 
     global.commandTypes.forEach((t)=>{
-        let embed = new Discord.RichEmbed()
+        let embed = new MessageEmbed()
         embed.setTitle(`Available Commands`)
         embed.setDescription("")
         //embed.setAuthor("FuckYou")
