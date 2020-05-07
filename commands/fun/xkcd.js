@@ -3,7 +3,7 @@ const UTIL  = require(path.resolve("utils.js"))
 const auth  = require(path.resolve('auth.json'));
 const parser    = require('yargs-parser')
 const xkcd      = require('xkcd-api');
-const Discord = require('discord.js');
+const { MessageEmbed } = require('discord.js');
 
 exports.run = (client, message, args) => {
 
@@ -19,7 +19,7 @@ exports.run = (client, message, args) => {
             if (error) {
               console.error(error);
             } else {
-                const exampleEmbed = new Discord.RichEmbed()
+                const exampleEmbed = new MessageEmbed()
                 .setColor('GOLD')
                 .setTitle(response.title)
                 .setImage(response.img)
@@ -36,7 +36,7 @@ exports.run = (client, message, args) => {
             if (error) {
               console.error(error);
             } else {
-                const exampleEmbed = new Discord.RichEmbed()
+                const exampleEmbed = new MessageEmbed()
                 .setColor('GOLD')
                 .setTitle(response.title)
                 .setImage(response.img)
@@ -53,7 +53,7 @@ exports.run = (client, message, args) => {
             if (error) {
               console.error(error);
             } else {
-                const exampleEmbed = new Discord.RichEmbed()
+                const exampleEmbed = new MessageEmbed()
                 .setColor('GOLD')
                 .setTitle(response.title)
                 .setImage(response.img)
@@ -79,7 +79,7 @@ exports.docs = () => {
         full_command: "xckd",
         command: "xckd",
         description: "Grab a XKCD image",
-        syntax: 'gifs [comic_id]',
+        syntax: 'xckd [comic_id]',
         examples: [
             {
                 description: "Post current xkcd",
