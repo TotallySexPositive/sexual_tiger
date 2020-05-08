@@ -16,7 +16,7 @@ exports.run = (client, message, args) => {
         console.log(err);
         message.channel.send(`Sorry, ${message.author.username}, it seems something unexpected happened.`);
     } else {
-        message.channel.send(`The playlist ${name} has been created, You're the DJ ${message.author.username}!`);
+        message.channel.send(`The playlist ID: ${info.lastInsertRowid}  Name: ${name} has been created, You're the DJ ${message.author.username}!`);
     }
 };
 

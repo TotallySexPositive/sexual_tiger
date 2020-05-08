@@ -176,7 +176,7 @@ var processAudioFile = function(file_path, url, message, cb) {
                         console.log(err);
                     }
                 })
-                cb(undefined, `The song ${cleaned_file_name} has been added, You're the DJ ${message.author.username}!`);
+                cb(undefined, `The song ID: ${info.lastInsertRowid}  Name: ${cleaned_file_name} has been added, You're the DJ ${message.author.username}!`);
             }
         }
     });
@@ -232,7 +232,7 @@ var processImageFile = function(file_path, tag_names, user_id) {
                     console.log(err);
                 }
             });
-            image_id = info.lastInsertROWID;
+            image_id = info.lastInsertRowid;
         }
     }
 
@@ -242,7 +242,7 @@ var processImageFile = function(file_path, tag_names, user_id) {
         let tag_ids = tags.map(function(tag) {return tag['tag_id'];})
         let {err: it_err, info:it_info} = DAL.insertIntoImageTag([image_id], tag_ids);
         if(it_err) {
-            return Error(`Failed to create relationship between Image: ${it_info.lastInsertROWID} and Tag: ${tag_id}`)
+            return Error(`Failed to create relationship between Image: ${it_info.lastInsertRowid} and Tag: ${tag_id}`)
         }
     }
 }
