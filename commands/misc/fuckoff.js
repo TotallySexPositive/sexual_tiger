@@ -1,13 +1,21 @@
 const path = require("path")
 
 exports.run = (client, message, args) => {
-   if(message.guild.voiceConnection) {
-        message.channel.send(":cry:")
-        message.guild.voiceConnection.disconnect();
-   }
-   else {
-       message.channel.send("No, you fuck off")
-   }
+    var server  = global.servers[message.guild.id];
+
+    if (server.connectionPromise != null) {
+        server.song_queue.length = 0
+        server.connectionPromise.then(connection => {
+            if (connection.dispatcher === undefined) {
+                message.channel.send("No, You Fuck Off!")
+            } else {
+                message.channel.send(":cry:")
+                connection.disconnect()
+            }
+        })
+    } else {
+        message.channel.send("No, You Fuck Off!")
+    }
 };
 
 exports.help = () =>{
