@@ -69,14 +69,18 @@ exports.docs = () => {
         tab: "music",
         link: "general",
         parent: "",
-        full_command: "youtube",
-        command: "youtube",
-        description: "Download a video from youtube and add the audio to the bot",
-        syntax: "youtube [youtube_url]",
+        full_command: "download",
+        command: "download",
+        description: "Download a video from a website and add the audio to the bot.  All supported sites can be found here, https://ytdl-org.github.io/youtube-dl/supportedsites.html",
+        syntax: "download [url]",
         examples: [
             {
                 description: "Add a song from youtube to the bot",
-                code: "youtube https://www.youtube.com/watch?v=U9t-slLl30E"
+                code: "download https://www.youtube.com/watch?v=U9t-slLl30E"
+            },
+            {
+                description: "Add a song from soundcloud to the bot",
+                code: "download https://soundcloud.com/exploita/mr-krabs-robot-dance"
             }
         ]
     }
