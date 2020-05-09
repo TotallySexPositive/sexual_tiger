@@ -39,7 +39,8 @@ var playAudio = async function(voice_channel) {
     let volume                  = server.current_song.is_clip ? server.clip_volume : server.volume
 
     server.connectionPromise.then(connection => {
-        let dispatcher  = connection.play(path.resolve(global.audio_dirs.hashed, `${server.current_song.hash_id}.mp3`), {volume: volume })
+        let dispatcher  = connection.play(path.resolve(global.audio_dirs.hashed, `${server.current_song.hash_id}.mp3`), {volume: 1 })
+        dispatcher.setVolume(volume)
 
         dispatcher.on('start',() => {
             DAL.incrementNumPlays(server.current_song.song_id)
