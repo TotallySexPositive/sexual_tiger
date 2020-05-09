@@ -39,7 +39,8 @@ var playAudio = async function(voice_channel) {
     let volume                  = server.current_song.is_clip ? server.clip_volume : server.volume
 
     server.connectionPromise.then(connection => {
-        let dispatcher  = connection.play(path.resolve(global.audio_dirs.hashed, `${server.current_song.hash_id}.mp3`), {volume: volume })
+        let dispatcher  = connection.play(path.resolve(global.audio_dirs.hashed, `${server.current_song.hash_id}.mp3`), {volume: 1 })
+        dispatcher.setVolume(volume)
 
         dispatcher.on('start',() => {
             DAL.incrementNumPlays(server.current_song.song_id)
@@ -176,7 +177,7 @@ var processAudioFile = function(file_path, url, message, cb) {
                         console.log(err);
                     }
                 })
-                cb(undefined, `The song ${cleaned_file_name} has been added, You're the DJ ${message.author.username}!`);
+                cb(undefined, `The song ID: ${info.lastInsertRowid}  Name: ${cleaned_file_name} has been added, You're the DJ ${message.author.username}!`);
             }
         }
     });
@@ -232,7 +233,7 @@ var processImageFile = function(file_path, tag_names, user_id) {
                     console.log(err);
                 }
             });
-            image_id = info.lastInsertROWID;
+            image_id = info.lastInsertRowid;
         }
     }
 
@@ -242,7 +243,7 @@ var processImageFile = function(file_path, tag_names, user_id) {
         let tag_ids = tags.map(function(tag) {return tag['tag_id'];})
         let {err: it_err, info:it_info} = DAL.insertIntoImageTag([image_id], tag_ids);
         if(it_err) {
-            return Error(`Failed to create relationship between Image: ${it_info.lastInsertROWID} and Tag: ${tag_id}`)
+            return Error(`Failed to create relationship between Image: ${it_info.lastInsertRowid} and Tag: ${tag_id}`)
         }
     }
 }

@@ -60,7 +60,7 @@ exports.run = (client, message, args) => {
 };
 
 exports.help = () =>{
-    return "Downloads a youtube video's audio and stores it in the DB";
+    return "Downloads a video's audio and stores it in the DB";
 };
 
 exports.docs = () => {
