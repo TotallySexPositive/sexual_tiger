@@ -6,7 +6,7 @@ const DAL       = require(path.resolve("dal.js"))
 const md5       = require('md5');
 const { exec }  = require('child_process');
 const auth      = require(path.resolve("auth.json"));
-const octokit   = require('@octokit/rest');
+const { Octokit } = require("@octokit/rest");
 const mdt       = require("markdown-table")
 const probe     = require('node-ffprobe');
 const recursive     = require("recursive-readdir");
@@ -284,10 +284,9 @@ let rebuildAudioGist = function() {
         return new Error("Failed to grab all songs to build the list");
     } else {
         try {
-            octokit.authenticate({
-                type: 'token',
-                token: auth.github_token
-            });
+            const octokit = new Octokit({
+                auth: auth.github_token
+              });
         
             let table = [];
             table.push(["ID", "Song"])
