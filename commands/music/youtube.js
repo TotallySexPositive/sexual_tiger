@@ -8,6 +8,7 @@ const UTIL      = require(path.resolve("utils.js"));
 const sanitize  = require("sanitize-filename");
 
 exports.run = (client, message, args) => {
+    let end = global.metrics.summaries.labels('youtube').startTimer()
     let server = global.servers[message.guild.id];
  
     if(args.length !== 1) {
@@ -51,6 +52,7 @@ exports.run = (client, message, args) => {
             }
         });
     }
+    end()
 };
 
 exports.help = () =>{

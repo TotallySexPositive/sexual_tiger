@@ -2,7 +2,7 @@ const path = require("path")
 const DAL = require(path.resolve("dal.js"))
 
 exports.run = (client, message, args) => {
-    
+    let end = global.metrics.summaries.labels('playlist_delete').startTimer()
     var identifier  = args.join(" ");
     let playlist_id = undefined;
 
@@ -28,6 +28,7 @@ exports.run = (client, message, args) => {
     } else {
         message.channel.send(`The playlist ${identifier} has been deleted, your DJ career is over, ${message.author.username}!`);
     }
+    end()
 };
 
 exports.docs = () => {

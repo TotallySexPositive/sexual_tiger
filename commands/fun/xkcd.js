@@ -6,7 +6,7 @@ const xkcd      = require('xkcd-api');
 const { MessageEmbed } = require('discord.js');
 
 exports.run = (client, message, args) => {
-
+    let end = global.metrics.summaries.labels('xkcd').startTimer()
     let arg_string  = message.content.slice(5); //Chop off $xkcd
     let comic_id    = arg_string.trim()
 
@@ -63,6 +63,7 @@ exports.run = (client, message, args) => {
             }
         });
     }
+    end()
 }
 
 

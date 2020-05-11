@@ -1,4 +1,5 @@
 exports.run = (client, message, args) => {
+    let end = global.metrics.summaries.labels('pause').startTimer()
     let vc      = message.member.voice.channel
     var server  = global.servers[message.guild.id];
     let promise = server.connectionPromise
@@ -19,6 +20,7 @@ exports.run = (client, message, args) => {
     }).catch(reason => {
         console.log(reason)
     })
+    end()
 }
 
 exports.help = () =>{

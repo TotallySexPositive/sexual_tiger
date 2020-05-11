@@ -4,6 +4,7 @@ const UTIL   = require(path.resolve("utils.js"))
 
 
 exports.run = (client, message, args) => {
+    let end = global.metrics.summaries.labels('wii').startTimer()
     var server = global.servers[message.guild.id]
 
     let vc = message.member.voice.channel
@@ -45,6 +46,7 @@ exports.run = (client, message, args) => {
         })
     })
     .catch(console.error);
+    end()
 }
 
 exports.help = () =>{

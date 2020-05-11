@@ -2,7 +2,7 @@ const path = require("path")
 const DAL = require(path.resolve("dal.js"))
 
 exports.run = (client, message, args) => {
-    
+    let end = global.metrics.summaries.labels('playlist_create').startTimer()
     let name        = args.join(" ");
     if(DAL.isInt(name)) {
         return message.channel.send("Playlist names can not be Integers.  Just because.");
@@ -18,6 +18,7 @@ exports.run = (client, message, args) => {
     } else {
         message.channel.send(`The playlist ID: ${info.lastInsertRowid}  Name: ${name} has been created, You're the DJ ${message.author.username}!`);
     }
+    end()
 };
 
 exports.docs = () => {

@@ -6,6 +6,7 @@ const UTIL  = require(path.resolve("utils.js"))
 
 
 exports.run = (client, message, args) => {
+    let end = global.metrics.summaries.labels('admin_probe_audio').startTimer()
     let hashed_audio_path       = global.audio_dirs.hashed;
     let files_to_process        = fs.readdirSync(global.audio_dirs.hashed)
     console.log("Probing audio!")
@@ -25,7 +26,7 @@ exports.run = (client, message, args) => {
         });
     });
     console.log("Probing audio Finished!")
-
+    end()
 }
 
 exports.help = () =>{

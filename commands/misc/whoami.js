@@ -4,6 +4,7 @@ const DAL   = require(path.resolve("dal.js"))
 const UTIL  = require(path.resolve("utils.js"))
 
 exports.run = (client, message, args) => {
+    let end = global.metrics.summaries.labels('whoami').startTimer()
     let author = message.author;
     let member = message.member;
 
@@ -19,14 +20,8 @@ exports.run = (client, message, args) => {
     isAdmin: ${is_admin}
     `.replace(/\n +/g, `\n`);
 
-
-    console.log(member.roles)
-    let roles = member.roles;
-
-    roles.forEach(r => {
-        console.log(`ID: ${r.id}\nName:${r.name}\nisAdmin: ${r.hasPermission('ADMINISTRATOR')}`)
-    })
    message.channel.send(description);
+   end()
 }
 
 exports.help = () =>{

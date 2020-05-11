@@ -2,6 +2,7 @@ const path      = require("path");
 const DAL       = require(path.resolve("dal.js"))
 
 exports.run = (client, message, args) => {
+    let end = global.metrics.summaries.labels('admin_grant').startTimer()
     let server = global.servers[message.guild.id];
     let secure_commands = ["revoke", "grant"]
 
@@ -42,6 +43,7 @@ exports.run = (client, message, args) => {
             return message.channel.send(`That user has been granted access to the command, ${command.command}`)
         }
     }
+    end()
 }
 
 exports.help = () => {

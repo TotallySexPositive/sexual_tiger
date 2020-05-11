@@ -4,6 +4,7 @@ const DAL       = require(path.resolve("dal.js"))
 const UTIL      = require(path.resolve("utils.js"))
 
 exports.run = (client, message, args) => {
+    let end = global.metrics.summaries.labels('image_tag').startTimer()
     if(args.length <= 1) {
         message.channel.send("Must send message id and tag names. EX: $image tag [MESSAGE_ID] cry\nTo get message_id, Go to Discord Settings -> Appearance -> Toggle Developer Mode on.\nThen right click image/post and click 'Copy Id'");
     } else {
@@ -43,6 +44,7 @@ exports.run = (client, message, args) => {
         })
         .catch(console.error);
     }
+    end()
 }
 
 exports.help = () =>{

@@ -21,6 +21,7 @@ var opts = {
 }
 
 exports.run = (client, message, args) => {
+    let end = global.metrics.summaries.labels('admin_grab_pics').startTimer()
     let arg_string = message.content.slice(10); //Chop off $grab_pics
     var argv = parser(arg_string.replace(/= +/g, "="), opts)
 
@@ -90,6 +91,7 @@ exports.run = (client, message, args) => {
     }).catch(function(err) {
         console.log('err', err);
     });
+    end()
 }
 
 exports.help = () =>{

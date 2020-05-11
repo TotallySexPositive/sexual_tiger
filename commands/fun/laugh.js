@@ -2,7 +2,9 @@ const path  = require("path");
 const UTIL  = require(path.resolve("utils.js"))
 
 exports.run = (client, message, args) => {
+    let end = global.metrics.summaries.labels('laugh').startTimer()
     UTIL.postRandomImageByTag(message, "laugh");	
+    end()
 }
 
 exports.help = () =>{

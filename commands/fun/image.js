@@ -2,7 +2,7 @@ const path      = require("path");
 const fs        = require("fs");
 
 exports.run = (client, message, args) => {
-    
+    let end = global.metrics.summaries.labels('image').startTimer()
     //if(args.length < 2) return message.channel.send("Incorrect usage, Check the help file.")
     var playlist_command    = args[0];
     var tail                = args.slice(1);
@@ -14,6 +14,7 @@ exports.run = (client, message, args) => {
     } else {
        message.channel.send("That isnt a valid image command.")
     }
+    end()
 }
 
 exports.docs = () => {

@@ -6,7 +6,7 @@ const auth      = require(path.resolve('auth.json'));
 const parser    = require('yargs-parser')
 
 exports.run = (client, message, args) => {
-   
+    let end = global.metrics.summaries.labels('admin_issue').startTimer()
     let valid_users = {
         "231574835694796801": auth.github_token,
         "231606224909500418": auth.github_token,
@@ -61,6 +61,7 @@ exports.run = (client, message, args) => {
             message.channel.send(`Issue #${result.data.number} Title: ${result.data.title}  has been created`);
         }
     })
+    end()
 };
 
 exports.help = () =>{

@@ -3,6 +3,7 @@ const DAL = require(path.resolve("dal.js"))
 const parser    = require('yargs-parser')
 
 exports.run = (client, message, args) => {
+    let end = global.metrics.summaries.labels('playlist_remove').startTimer()
     var opts = {
         alias: {
             playlist: ['p'],
@@ -65,6 +66,7 @@ exports.run = (client, message, args) => {
     if(skipped_songs.length) {
         message.channel.send(`The following songs either didnt exist or crashed the query and were not removed:\n${skipped_songs.join('\n')}`)
     }
+    end()
 };
 
 exports.help = () =>{

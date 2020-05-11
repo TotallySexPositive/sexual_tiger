@@ -10,6 +10,7 @@ const extractDomain  = require('extract-domain');
 const validator = require('validator');
 
 exports.run = (client, message, args) => {
+    let end = global.metrics.summaries.labels('download').startTimer()
     let server = global.servers[message.guild.id];
  
     if(args.length !== 1) {
@@ -57,6 +58,7 @@ exports.run = (client, message, args) => {
             }
         })
     }
+    end()
 };
 
 exports.help = () =>{
