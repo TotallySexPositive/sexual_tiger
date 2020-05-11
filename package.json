@@ -48,6 +48,8 @@
     "md5": "^2.2.1",
     "node-dir": "^0.1.17",
     "node-ffprobe": "^3.0.0",
+    "opusscript": "0.0.7",
+    "prom-client": "^12.0.0",
     "puppeteer": "^3.0.2",
     "randomstring": "^1.1.5",
     "read-chunk": "^3.2.0",
