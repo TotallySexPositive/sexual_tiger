@@ -5,6 +5,7 @@ var giphy   = require('giphy-api')(auth.giphy);
 var request = require("request")
 
 exports.run = (client, message, args) => {
+    let end = global.metrics.summaries.labels('gif').startTimer()
     giphy.random(args.join(" "), function (err, res) {
         if(err) {
             console.log(err);
@@ -27,6 +28,7 @@ exports.run = (client, message, args) => {
             }
         }
     });	
+    end()
 }
 
 exports.help = () =>{

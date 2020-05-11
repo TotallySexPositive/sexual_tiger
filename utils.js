@@ -10,6 +10,7 @@ const octokit   = require('@octokit/rest');
 const mdt       = require("markdown-table")
 const probe     = require('node-ffprobe');
 const recursive     = require("recursive-readdir");
+const Permissions = require("discord.js").Permissions
 
 var isInt = function(value) {
     var er = /^-?[0-9]+$/;
@@ -17,16 +18,7 @@ var isInt = function(value) {
 }
 
 var isAdmin = function(member) {
-    let roles = member.roles
-    let is_admin = false;
-
-    roles.some(role => {
-        if(role.hasPermission('ADMINISTRATOR')) {
-            is_admin = true;
-            return;
-        }
-    });
-    return is_admin;
+    return member.hasPermission(Permissions.FLAGS.ADMINISTRATOR)
 }
 
 var playAudio = async function(voice_channel) {

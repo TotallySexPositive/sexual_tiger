@@ -1,6 +1,7 @@
 exports.run = (client, message, args) => {
-   var server   = global.servers[message.guild.id];
-   let vc       = message.member.voice.channel
+    let end = global.metrics.summaries.labels('skip').startTimer()
+    var server   = global.servers[message.guild.id];
+    let vc       = message.member.voice.channel
 
     if (vc === null) {
         return message.channel.send("You are not in a voice channel. I'm not going to listen to you.")
@@ -18,6 +19,7 @@ exports.run = (client, message, args) => {
             }
         })
     }; 
+    end()
 };
 
 exports.help = () =>{

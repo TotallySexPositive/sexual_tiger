@@ -6,7 +6,7 @@ const handlebars    = require('handlebars');
 const cfg           = require(path.resolve("configure.json"))
 
 exports.run = (client, message, args) => {
-
+    let end = global.metrics.summaries.labels('admin_gen_docs').startTimer()
     let full_docs = {
         
     }
@@ -89,8 +89,9 @@ exports.run = (client, message, args) => {
                     return message.channel.send("Failed to write updated Docs to website/index.html")
                 }
             }); 
-          });
-      });
+        });
+    });
+    end()
 }
 
 exports.help = () => {

@@ -5,6 +5,7 @@ var giphy           = require('giphy-api')(auth.giphy);
 var request         = require('request');
 
 exports.run = (client, message, args) => {
+    let end = global.metrics.summaries.labels('pokemon').startTimer()
     var rand1   = Math.floor((Math.random() * 867) + 1); //494
     var rand2   = Math.floor((Math.random() * 867) + 1); //494
 	
@@ -55,6 +56,7 @@ exports.run = (client, message, args) => {
         //await browser.close();
         console.log(x)
     })();
+    end()
 }
 
 exports.help = () =>{

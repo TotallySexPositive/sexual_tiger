@@ -2,7 +2,7 @@ const path = require("path")
 const DAL = require(path.resolve("dal.js"))
 
 exports.run = (client, message, args) => {
-    
+    let end = global.metrics.summaries.labels('tag_create').startTimer()
     let name        = args.join(" ");
     if(DAL.isInt(name)) {
         return message.channel.send("Tag names can not be Integers.  Just because.");
@@ -21,6 +21,7 @@ exports.run = (client, message, args) => {
     } else {
         message.channel.send(`The tag ${name} has been created!`);
     }
+    end()
 };
 
 exports.docs = () => {

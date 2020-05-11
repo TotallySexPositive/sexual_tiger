@@ -5,6 +5,7 @@ const DAL   = require(path.resolve("dal.js"))
 const UTIL  = require(path.resolve("utils.js"))
 
 exports.run = (client, message, args) => {
+    let end = global.metrics.summaries.labels('playlist_play').startTimer()
     var server  = global.servers[message.guild.id]
     let vc      = message.member.voice.channel
 
@@ -23,6 +24,7 @@ exports.run = (client, message, args) => {
     
     server.song_queue = songs;
     UTIL.playAudio(vc)
+    end()
 }
 
 exports.help = () =>{

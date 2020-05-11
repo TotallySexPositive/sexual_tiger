@@ -4,9 +4,11 @@ let Database    = require('better-sqlite3')
 let DB          = new Database('playlists.sql');
 
 exports.run = (client, message, args) => {
+    let end = global.metrics.summaries.labels('admin_build_table').startTimer()
     const build_it = fs.readFileSync('build.sql', 'utf8');
     DB.exec(build_it);
-    DB.close()    
+    DB.close()  
+    end()  
 };
 
 exports.help = () =>{

@@ -2,12 +2,14 @@ const path  = require("path")
 const UTIL  = require(path.resolve("utils.js"))
 
 exports.run = (client, message, args) => {
+    let end = global.metrics.summaries.labels('admin_build_gist').startTimer()
     let err = UTIL.rebuildAudioGist();
     if(err) {
         message.channel.send(err.message);
     } else {
         message.channel.send("Updated!");
     }
+    end()
 }
 
 exports.help = () =>{

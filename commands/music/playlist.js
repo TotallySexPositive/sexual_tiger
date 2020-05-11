@@ -2,6 +2,7 @@ const path      = require("path");
 const fs        = require("fs");
 
 exports.run = (client, message, args) => {
+    let end = global.metrics.summaries.labels('playlist').startTimer()
     var playlist_command    = args[0];
     var tail                = args.slice(1);
 
@@ -12,6 +13,7 @@ exports.run = (client, message, args) => {
     } else {
        message.channel.send("That isnt a valid playlist command.")
     }
+    end()
 }
 
 exports.docs = () => {

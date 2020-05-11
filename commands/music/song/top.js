@@ -15,6 +15,7 @@ var options = {
 };
 
 exports.run = (client, message, args) => {
+    let end = global.metrics.summaries.labels('top').startTimer()
     let server = global.servers[message.guild.id];
     var r_args  = message.content.slice(9).trim(); //Chop off $song top
 
@@ -32,6 +33,7 @@ exports.run = (client, message, args) => {
     } else {
         return message.channel.send(asciitable(options, songs),{code:true})
     }
+    end()
 };
 
 exports.help = () =>{

@@ -5,7 +5,7 @@ var giphy   = require('giphy-api')(auth.giphy);
 var request = require("request")
 
 exports.run = (client, message, args) => {
-
+    let end = global.metrics.summaries.labels('gifs').startTimer()
     if(args.length){
         giphy.search({
             q: args.join(" "),
@@ -37,7 +37,7 @@ exports.run = (client, message, args) => {
     } else {
         return message.channel.send("You have to search for something.")
     }
-    
+    end()
 }
 
 exports.help = () =>{

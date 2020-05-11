@@ -5,6 +5,7 @@ const fs        = require("fs")
 const UTIL      = require(path.resolve("utils.js"));
 
 exports.run = (client, message, args) => {
+    let end = global.metrics.summaries.labels('upload').startTimer()
     let attachments = message.attachments.array()
     if (attachments.length < 0) return message.channel.send("Need to actually attach something");
 	message.channel.send(`Downloading ${attachments.length} attachments.`);
@@ -24,6 +25,7 @@ exports.run = (client, message, args) => {
             })
             .on('error', (err) => {console.error(err)})
     })
+    end()
 }
 
 exports.help = () =>{

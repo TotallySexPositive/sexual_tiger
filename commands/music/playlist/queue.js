@@ -2,6 +2,7 @@ const path  = require("path")
 const DAL   = require(path.resolve("dal.js"))
 
 exports.run = (client, message, args) => {
+    let end = global.metrics.summaries.labels('playlist_queue').startTimer()
     var server  = global.servers[message.guild.id]
     let vc      = message.member.voice.channel
 
@@ -19,6 +20,7 @@ exports.run = (client, message, args) => {
     }
     
     server.song_queue = server.song_queue.concat(songs);
+    end()
 }
 
 exports.help = () =>{

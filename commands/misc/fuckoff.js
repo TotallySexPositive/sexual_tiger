@@ -1,6 +1,7 @@
 const path = require("path")
 
 exports.run = (client, message, args) => {
+    let end = global.metrics.summaries.labels('fuckoff').startTimer()
     var server  = global.servers[message.guild.id];
 
     if (server.connectionPromise != null) {
@@ -16,6 +17,7 @@ exports.run = (client, message, args) => {
     } else {
         message.channel.send("No, You Fuck Off!")
     }
+    end()
 };
 
 exports.help = () =>{

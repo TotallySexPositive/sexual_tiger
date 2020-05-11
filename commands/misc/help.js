@@ -7,6 +7,7 @@ const { MessageEmbed } = require('discord.js');
 
 
 exports.run = (client, message, args) => {
+    let end = global.metrics.summaries.labels('help').startTimer()
     if (args.length < 1){
         let embed = new MessageEmbed()
         embed.setTitle("Command Categories")
@@ -59,6 +60,7 @@ exports.run = (client, message, args) => {
             
         }
     };
+    end()
 }
 
 function all_cards(client, message, args){

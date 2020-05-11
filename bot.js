@@ -6,8 +6,15 @@ const Sanitize  = require('sanitize-filename');
 const auth      = require(path.resolve('auth.json'));
 const config    = require(path.resolve('configure.json'));
 const UTIL      = require(path.resolve('utils.js'));
-
 const client    = new Discord.Client();
+
+const promclient = require("prom-client")
+const default_metrics = require("prom-client").collectDefaultMetrics
+const register = require("prom-client").register
+const Summary = require("prom-client").Summary
+const Gauge = require("prom-client").Gauge
+const express = require("express")
+
 
 global.servers  = {};
 global.commandTypes = ["admin", "fun", "misc", "music"];
@@ -34,6 +41,22 @@ global.image_dirs = {
     "tmp"       : path.resolve("images", "tmp"),
     "hashed"    : path.resolve("images", "hashed"),
     "trash"     : path.resolve("images", "trash"),
+}
+
+global.metrics = {
+    registry: default_metrics({
+        prefix: "sexual_",
+        timeout: 10000
+    }),
+    summaries: new Summary({
+        name: "sexual_command_usage",
+        help: "Summary of the usage of the commands in the bot",
+        labelNames: ["command"]
+    }),
+    uptime: new Gauge({
+        name: "sexual_uptime",
+        help: "The uptime of the bot"
+    })
 }
 
 global.img_resp_to_tag = {}
@@ -143,3 +166,18 @@ client.on('guildMemberAdd', member => {
 });
 
 client.login(auth.token);
+
+const server = express()
+server.get('/metrics', (req, res)=>{
+    res.set('Content-Type', register.contentType)
+    res.end(register.metrics())
+})
+const port = process.env.PORT || 3001
+console.log(
+    `Server listening to ${port}, metrics exposed on /metrics endpoint`
+)
+server.listen(port)
+
+setInterval(()=>{
+    global.metrics.uptime.set(client.uptime)
+}, 10000)

@@ -1,6 +1,9 @@
 exports.run = (client, message, args) => {
+    let end = global.metrics.summaries.labels('uptime').startTimer()
     var time = timeConversion(client.uptime);
     message.channel.send(`I've been up for ${time}!`).catch(console.error);
+    global.metrics.uptime.set(client.uptime)
+    end()
 }
 
 function timeConversion(millisec){
