@@ -1,84 +1,60 @@
-const path          = require("path");
-const UTIL          = require(path.resolve("utils.js"))
-const auth          = require(path.resolve('auth.json'));
-var giphy           = require('giphy-api')(auth.giphy);
-var request         = require('request');
+const puppeteer = require("puppeteer");
 
-exports.run = (client, message, args) => {
-    let end = global.metrics.summaries.labels('pokemon').startTimer()
-    var rand1   = Math.floor((Math.random() * 867) + 1); //494
-    var rand2   = Math.floor((Math.random() * 867) + 1); //494
-	
-    //var src     = `https://japeal.com/wordpress/wp-content/themes/total/PKM/EHF.php?type=all&p1=${rand1}&p2=${rand2}`
-    var src     = "https://japeal.com/pkm/"
-    const puppeteer = require('puppeteer');
+module.exports = {
+	name          : "pokemon",
+	aliases       : [],
+	description   : "Create a Pocket Monster",
+	default_access: 1,
+	args          : false,
+	usage         : "",
+	parent        : "",
+	category      : ["Image", "Pictures"],
+	execute(message, args) {
+		let end   = global.metrics.summaries.labels("pokemon").startTimer();
+		let src   = "https://japeal.com/pkm/";
 
-    (async () => {
-        const browser = await puppeteer.launch({headless: false});
-        const page = await browser.newPage();
-        const navigationPromise = page.waitForNavigation();
+		(async () => {
+			const browser           = await puppeteer.launch({headless: false});
+			const page              = await browser.newPage();
+			const navigationPromise = page.waitForNavigation();
 
-        await page.goto(src),
-        await page.click("#fbutton"),
-        await navigationPromise,
-        x = await page.evaluate( () => {
-            console.log("In the function")
-            var multiplier = 1;
-            var combined = document.getElementById("canvas_download");
-            var ctx = combined.getContext("2d");
-            var combinedX2 = document.getElementById('canvasShake');
-            combined.width = combinedX2.width;
-            combined.height = combinedX2.height;
+			await page.goto(src),
+				await page.click("#fbutton"),
+				await navigationPromise,
+				x = await page.evaluate(() => {
+					console.log("In the function");
+					let multiplier  = 1;
+					let combined    = document.getElementById("canvas_download");
+					let ctx         = combined.getContext("2d");
+					let combinedX2  = document.getElementById("canvasShake");
+					combined.width  = combinedX2.width;
+					combined.height = combinedX2.height;
 
-            var combinedGC = document.getElementById("canvas_GlowCurrent");
-            var tempvar80 = combinedGC.width - combined.width;
-            tempvar80 = tempvar80 / 2;
-            console.log("In the function")
+					console.log("In the function");
 
-            combined.width = combinedX2.width * multiplier;
-            combined.height = combinedX2.height * multiplier;
+					combined.width  = combinedX2.width * multiplier;
+					combined.height = combinedX2.height * multiplier;
 
-            combined.imageSmoothingEnabled = false;
-            combined.mozImageSmoothingEnabled = false;
-            combined.globalCompositeOperation = "source-over";
+					combined.imageSmoothingEnabled    = false;
+					combined.mozImageSmoothingEnabled = false;
+					combined.globalCompositeOperation = "source-over";
 
-            ctx.drawImage(combinedX2, 0, 0, combinedX2.width * multiplier, combinedX2.height * multiplier);
+					ctx.drawImage(combinedX2, 0, 0, combinedX2.width * multiplier, combinedX2.height * multiplier);
 
-            var combinedL1 = document.getElementById("canvas_SSJ2Lightning");
-            ctx.drawImage(combinedL1, 0, 0, combinedL1.width * multiplier, combinedL1.height * multiplier);
-            console.log("In the function")
+					let combinedL1 = document.getElementById("canvas_SSJ2Lightning");
+					ctx.drawImage(combinedL1, 0, 0, combinedL1.width * multiplier, combinedL1.height * multiplier);
+					console.log("In the function");
 
-            var imageDL = document.getElementById("canvas_download").toDataURL("image/png").replace("image/png", "image/octet-stream");
-            console.log(imageDL)
-            return Promise.resolve(imageDL);
-          });
-        
-        //await browser.close();
-        console.log(x)
-    })();
-    end()
-}
+					let imageDL = document.getElementById("canvas_download")
+										  .toDataURL("image/png")
+										  .replace("image/png", "image/octet-stream");
+					console.log(imageDL);
+					return Promise.resolve(imageDL);
+				});
 
-exports.help = () =>{
-    return "Grab a Random Pokemon from Pokemon Fusion";
-};
-
-exports.docs = () => {
-    let docs = {
-        default_access: 1,
-        tab: "image",
-        link: "Pictures",
-        parent: "",
-        full_command: "pokemon",
-        command: "pokemon",
-        description: "Create a Pocket Monster",
-        syntax: 'pokemon',
-        examples: [
-            {
-                description: "Conjure a Pocket Monster",
-                code: `pokemon`
-            }
-        ]
-    }
-    return docs;
+			//await browser.close();
+			console.log(x);
+		})();
+		end();
+	}
 };

@@ -1,32 +1,18 @@
-const path  = require("path");
-const UTIL  = require(path.resolve("utils.js"))
+const path = require("path");
+const UTIL = require(path.resolve("utils.js"));
 
-exports.run = (client, message, args) => {
-    let end = global.metrics.summaries.labels('rock').startTimer()
-    UTIL.postRandomImageByTag(message, "rock");	
-    end()
-}
-
-exports.help = () =>{
-    return "Rock Paper Si!";
-};
-
-exports.docs = () => {
-    let docs = {
-        default_access: 1,
-        tab: "image",
-        link: "Pictures",
-        parent: "",
-        full_command: "rock",
-        command: "rock",
-        description: "Post an image of anime rock.",
-        syntax: 'rock',
-        examples: [
-            {
-                description: "Post image of rock",
-                code: `rock`
-            }
-        ]
+module.exports = {
+    name          : "rock",
+    aliases       : [],
+    description   : "Post an image of anime rock.",
+    default_access: 1,
+    args          : false,
+    usage         : "",
+    parent        : "",
+    category      : ["Image", "Pictures"],
+    execute(message, args) {
+        let end = global.metrics.summaries.labels("rock").startTimer();
+        UTIL.postRandomImageByTag(message, "rock");
+        end();
     }
-    return docs;
 };

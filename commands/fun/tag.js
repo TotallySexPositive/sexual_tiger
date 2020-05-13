@@ -1,38 +1,27 @@
-const path      = require("path");
-const fs        = require("fs");
+const path = require("path");
+const fs   = require("fs");
 
-exports.run = (client, message, args) => {
-    let end = global.metrics.summaries.labels('tag').startTimer()
-    //if(args.length < 2) return message.channel.send("Incorrect usage, Check the help file.")
-    var playlist_command    = args[0];
-    var tail                = args.slice(1);
+module.exports = {
+	name          : "tag",
+	aliases       : [],
+	description   : "This command is an intermediate command and has no direct usage.",
+	default_access: 1,
+	args          : false,
+	usage         : "",
+	parent        : "",
+	category      : ["Image", "Pictures"],
+	execute(message, args) {
+		let end         = global.metrics.summaries.labels("tag").startTimer();
+		let tag_command = args[0];
+		let tail        = args.slice(1);
+		let p           = path.resolve("commands", "fun", "tag", `${tag_command}.js`);
 
-    let p = path.resolve("commands", "fun", "tag",`${playlist_command}.js`)
-    if (fs.existsSync(p)) {
-        let commandFile = require(p);
-        commandFile.run(client, message, tail);
-    } else {
-       message.channel.send("That isnt a valid tag command.")
-    }
-    end()
-}
-
-exports.docs = () => {
-    let docs = {
-        default_access: 1,
-        tab: "image",
-        link: "Pictures",
-        parent: "",
-        full_command: "tag",
-        command: "tag",
-        description: "This command has no direct usage.",
-        syntax: 'tag',
-        examples: [
-            {
-                description: "N/A",
-                code: `n/a`
-            }
-        ]
-    }
-    return docs;
+		if (fs.existsSync(p)) {
+			let commandFile = require(p);
+			commandFile.run(client, message, tail);
+		} else {
+			message.channel.send("That isnt a valid tag command.");
+		}
+		end();
+	}
 };

@@ -1,32 +1,18 @@
-const path  = require("path");
-const UTIL  = require(path.resolve("utils.js"))
+const path = require("path");
+const UTIL = require(path.resolve("utils.js"));
 
-exports.run = (client, message, args) => {
-    let end = global.metrics.summaries.labels('wave').startTimer()
-    UTIL.postRandomImageByTag(message, "wave");	
-    end()
-}
-
-exports.help = () =>{
-    return "Wave!!";
-};
-
-exports.docs = () => {
-    let docs = {
-        default_access: 1,
-        tab: "image",
-        link: "Pictures",
-        parent: "",
-        full_command: "wave",
-        command: "wave",
-        description: "Post an image of anime wave.",
-        syntax: 'wave',
-        examples: [
-            {
-                description: "Post image of wave",
-                code: `wave`
-            }
-        ]
+module.exports = {
+    name          : "wave",
+    aliases       : [],
+    description   : "Post an image of anime wave.",
+    default_access: 1,
+    args          : false,
+    usage         : "",
+    parent        : "",
+    category      : ["Image", "Pictures"],
+    execute(message, args) {
+        let end = global.metrics.summaries.labels("wave").startTimer();
+        UTIL.postRandomImageByTag(message, "wave");
+        end();
     }
-    return docs;
 };
