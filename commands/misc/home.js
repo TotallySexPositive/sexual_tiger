@@ -1,9 +1,13 @@
-exports.run = (client, message, args) => {
-    let end = global.metrics.summaries.labels('home').startTimer()
-    let server = global.servers[message.guild.id];
-    message.channel.send("Come visit me at, https://tiger.wentzel.dev")
-    end()
-}
+module.exports = {
+	name: 'home',
+	description: 'Display link to my home!',
+	execute(message, args) {
+		let end = global.metrics.summaries.labels('home').startTimer()
+        let server = global.servers[message.guild.id];
+        message.channel.send("Come visit me at, https://tiger.wentzel.dev")
+        end()
+	},
+};
 
 exports.help = () =>{
     return "Display link to my home";

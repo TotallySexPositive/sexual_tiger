@@ -110,48 +110,41 @@ client.on('ready', () => {
     });
 });
 
+client.commands = new Discord.Collection();
+const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
+
+for (const file of commandFiles) {
+	const command = require(`./commands/${file}`);
+	client.commands.set(command.name, command);
+}
+
 client.on('message', message => {
-    // If we are reading a bot message or the message doesn't start with our prefix, ignore it
-    if (message.author.bot || message.content.indexOf(config.prefix) !== 0){return;}
+    if (!message.content.startsWith(prefix) || message.author.bot) return;
 
-    const user = message.author.username;
+	const args = message.content.slice(prefix.length).split(/ +/);
+	const command_name = args.shift().toLowerCase();
 
-    //Split into args
-    const args = message.content.slice(config.prefix.length).trim().split(/ +/g);
-    //Get just the command
-    const command = args.shift().toLowerCase();
-    //Need to sanitize the user input
-    var safe = Sanitize(command);
+    if (!client.commands.has(command_name)) return;
+    
+    const command = client.commands.get(command_name);
 
-    try {
-        d = path.resolve("commands")
-        
-        global.commandTypes.some((k)=>{
-            let p = path.resolve("commands", k,`${safe}.js`)
-            if (fs.existsSync(p)) {
-                let commandFile = require(p);
+    if (command.args && !args.length) {
+    	return message.channel.send(`You didn't provide any arguments, ${message.author}!`);
+    }
 
-                //Check User Access
-                let isAllowed = UTIL.isUserActionAllowed(message.author, commandFile)
+	try {
+        let isAllowed = UTIL.isUserActionAllowed(message.author, commandFile)
 
-                if (isAllowed) {
-                    commandFile.run(client, message, args);
-                } else {
-                    message.channel.send(`${user}, you do not have permission to use this command.`);
-                }
-                
-                return true;
-            } else {
-                if (safe !== command){
-                    message.channel.send(`Naughty naughty ${user}.`);
-                    message.channel.send("You trying to backdoor me on the first date?");
-                }
-                return false
-            }
-        })
-    } catch (err) {
-        message.channel.send(`ERROR: ${err.message}`)
-        console.error(err);
+        if (isAllowed) {
+            commandFile.run(client, message, args);
+        } else {
+            message.channel.send(`${user}, you do not have permission to use this command.`);
+        }
+
+		client.commands.get(command).execute(message, args);
+	} catch (error) {
+		console.error(error);
+		message.reply('there was an error trying to execute that command!');
     }
 });
 
