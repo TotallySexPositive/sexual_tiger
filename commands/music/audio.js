@@ -1,30 +1,15 @@
-exports.run = (client, message, args) => {
-    let end = global.metrics.summaries.labels('audio').startTimer()
-    let server = global.servers[message.guild.id];
-    message.channel.send("You lazy sack of feces, here...\n<https://gist.github.com/narayanjr/c76103763a2f785162d30c841094e795>")
-    end()
-}
-
-exports.help = () =>{
-    return "Sends the link to all the audio....";
-};
-
-exports.docs = () => {
-    let docs = {
-        default_access: 1,
-        tab: "music",
-        link: "general",
-        parent: "",
-        full_command: "audio",
-        command: "audio",
-        description: "Display the link to the Gist that contains info on all the songs in the DB.",
-        syntax: "audio",
-        examples: [
-            {
-                description: "Display link to list of songs.",
-                code: "audio"
-            }
-        ]
-    }
-    return docs;
+module.exports = {
+	name          : "audio",
+	aliases       : [],
+	description   : "Display the link to the Gist that contains info on all the songs in the DB.",
+	default_access: 0,
+	args          : false,
+	usage         : "",
+	parent        : "",
+	category      : ["Music", "General"],
+	execute(message, args) {
+		let end    = global.metrics.summaries.labels("audio").startTimer();
+		message.channel.send("You lazy sack of feces, here...\n<https://gist.github.com/narayanjr/c76103763a2f785162d30c841094e795>");
+		end();
+	}
 };

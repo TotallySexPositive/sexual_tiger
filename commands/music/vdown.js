@@ -1,46 +1,32 @@
-exports.run = (client, message, args) => {
-    let end = global.metrics.summaries.labels('vdown').startTimer()
-    var server  = global.servers[message.guild.id];
-    let vc      = message.member.voice.channel
-    let promise = server.connectionPromise
+module.exports = {
+	name          : "vdown",
+	aliases       : [],
+	description   : "Turn down the volume the bot is playing at.",
+	default_access: 1,
+	args          : false,
+	usage         : "",
+	parent        : "",
+	category      : ["Music", "General"],
+	execute(message, args) {
+		let end     = global.metrics.summaries.labels("vdown").startTimer();
+		let server  = global.servers[message.guild.id];
+		let vc      = message.member.voice.channel;
+		let promise = server.connectionPromise;
 
-    if(vc === undefined) {
-        return message.channel.send("You must be in a Voice Channel to change the volume.");
-    }
+		if (vc === undefined) {
+			return message.channel.send("You must be in a Voice Channel to change the volume.");
+		}
 
-    server.volume = server.volume / 2;
+		server.volume = server.volume / 2;
 
-    if(vc && promise != null) {
-        promise.then(connection => {
-            connection.dispatcher.setVolume(server.volume)
-            message.channel.send(`Lowered volume: ${server.volume * 100}%`)
-        }).catch(reason => {
-            console.log(reason)
-        });
-    }
-    end()
-}
-
-exports.help = () => {
-    return "Turn the volume down.";
-};
-
-exports.docs = () => {
-    let docs = {
-        default_access: 1,
-        tab: "music",
-        link: "general",
-        parent: "",
-        full_command: "vdown",
-        command: "vdown",
-        description: "Turn down the volume the bot is playing at.",
-        syntax: "vdown",
-        examples: [
-            {
-                description: "Turn down the volume",
-                code: "vdown"
-            }
-        ]
-    }
-    return docs;
+		if (vc && promise != null) {
+			promise.then(connection => {
+				connection.dispatcher.setVolume(server.volume);
+				message.channel.send(`Lowered volume: ${server.volume * 100}%`);
+			}).catch(reason => {
+				console.log(reason);
+			});
+		}
+		end();
+	}
 };
