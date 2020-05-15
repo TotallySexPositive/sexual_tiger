@@ -9,9 +9,9 @@ module.exports = {
 	usage         : "",
 	parent        : "",
 	category      : ["Image", "Pictures"],
-	execute(message, args) {
-		let end   = global.metrics.summaries.labels("pokemon").startTimer();
-		let src   = "https://japeal.com/pkm/";
+	execute(client, message, args) {
+		let end = global.metrics.summaries.labels("pokemon").startTimer();
+		let src = "https://japeal.com/pkm/";
 
 		(async () => {
 			const browser           = await puppeteer.launch({headless: false});

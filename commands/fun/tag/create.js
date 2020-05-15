@@ -10,7 +10,7 @@ module.exports = {
 	usage         : "[tag_name]",
 	parent        : "tag",
 	category      : ["Image", "Tag"],
-	execute(message, args) {
+	execute(client, message, args) {
 		let end  = global.metrics.summaries.labels("tag_create").startTimer();
 		let name = args.join(" ");
 		if (DAL.isInt(name)) {

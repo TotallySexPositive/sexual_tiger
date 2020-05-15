@@ -10,7 +10,7 @@ module.exports = {
 	usage         : "[playlist_name]",
 	parent        : "",
 	category      : ["Music", "Playlists"],
-	execute(message, args) {
+	execute(client, message, args) {
 		let end  = global.metrics.summaries.labels("playlist_create").startTimer();
 		let name = args.join(" ");
 

@@ -7,7 +7,7 @@ module.exports = {
 	usage         : "",
 	parent        : "",
 	category      : ["Misc", "General"],
-	execute(message, args) {
+	execute(client, message, args) {
 		let end  = global.metrics.summaries.labels("uptime").startTimer();
 		let time = timeConversion(client.uptime);
 		message.channel.send(`I've been up for ${time}!`).catch(console.error);

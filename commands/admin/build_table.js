@@ -14,7 +14,7 @@ module.exports = {
 		"Admin",
 		"General"
 	],
-	execute(message, args) {
+	execute(client, message, args) {
 		const end      = global.metrics.summaries.labels("admin_build_table").startTimer();
 		const build_it = fs.readFileSync("build.sql", "utf8");
 

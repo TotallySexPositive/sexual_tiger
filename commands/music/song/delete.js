@@ -12,7 +12,7 @@ module.exports = {
 	usage         : "[song_id]",
 	parent        : "song",
 	category      : ["Music", "Song"],
-	execute(message, args) {
+	execute(client, message, args) {
 		let end                 = global.metrics.summaries.labels("delete").startTimer();
 		let server              = global.servers[message.guild.id];
 		let identifier          = args.join(" ");

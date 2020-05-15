@@ -13,7 +13,7 @@ module.exports = {
 	usage         : "",
 	parent        : "",
 	category      : ["Admin", "General"],
-	execute(message, args) {
+	execute(client, message, args) {
 		let end               = global.metrics.summaries.labels("admin_probe_audio").startTimer();
 		let hashed_audio_path = global.audio_dirs.hashed;
 		let files_to_process  = fs.readdirSync(hashed_audio_path);

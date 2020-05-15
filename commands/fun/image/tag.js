@@ -3,7 +3,7 @@ const DAL  = require(path.resolve("dal.js"));
 const UTIL = require(path.resolve("utils.js"));
 
 module.exports = {
-	name          : "",
+	name          : "tag",
 	aliases       : [],
 	description   : "Add a tag to an image in the database",
 	default_access: 1,
@@ -11,7 +11,7 @@ module.exports = {
 	usage         : "[message_id] [...tag_name tag_name tag_name]",
 	parent        : "image",
 	category      : ["Image", "Image"],
-	execute(message, args) {
+	execute(client, message, args) {
 		let end = global.metrics.summaries.labels("image_tag").startTimer();
 
 		if (args.length <= 1) {

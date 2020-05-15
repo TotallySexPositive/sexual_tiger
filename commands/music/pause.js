@@ -7,7 +7,7 @@ module.exports = {
 	usage         : "",
 	parent        : "",
 	category      : ["Music", "General"],
-	execute(message, args) {
+	execute(client, message, args) {
 		let end     = global.metrics.summaries.labels("pause").startTimer();
 		let vc      = message.member.voice.channel;
 		let server  = global.servers[message.guild.id];

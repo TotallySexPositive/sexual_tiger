@@ -10,7 +10,7 @@ module.exports = {
 	usage         : "",
 	parent        : "",
 	category      : ["Image", "Pictures"],
-	execute(message, args) {
+	execute(client, message, args) {
 		let end = global.metrics.summaries.labels("burn").startTimer();
 		UTIL.postRandomImageByTag(message, "burn");
 		end();

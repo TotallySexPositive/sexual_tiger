@@ -11,7 +11,7 @@ module.exports = {
 	usage         : "",
 	parent        : "",
 	category      : ["Music", "General"],
-	execute(message, args) {
+	execute(client, message, args) {
 		let end    = global.metrics.summaries.labels("wii").startTimer();
 		let server = global.servers[message.guild.id];
 

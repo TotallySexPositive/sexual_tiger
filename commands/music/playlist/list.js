@@ -11,7 +11,7 @@ module.exports = {
 	usage         : "",
 	parent        : "playlist",
 	category      : ["Music", "Playlists"],
-	execute(message, args) {
+	execute(client, message, args) {
 		let end               = global.metrics.summaries.labels("playlist_list").startTimer();
 		let playlists_options = {
 			skinny               : true,

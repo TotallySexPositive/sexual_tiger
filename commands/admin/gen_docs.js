@@ -14,7 +14,7 @@ module.exports = {
 	usage         : "",
 	parent        : "",
 	category      : ["Admin", "General"],
-	execute(message, args) {
+	execute(client, message, args) {
 		let end       = global.metrics.summaries.labels("admin_gen_docs").startTimer();
 		let full_docs = {};
 

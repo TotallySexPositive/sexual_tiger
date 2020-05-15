@@ -10,10 +10,10 @@ module.exports = {
 	usage         : "",
 	parent        : "",
 	category      : ["Admin", "General"],
-	execute(message, args) {
+	execute(client, message, args) {
 		let end = global.metrics.summaries.labels("admin_build_gist").startTimer();
 		let err = UTIL.rebuildAudioGist();
-
+		console.log(name)
 		if (err) {
 			message.channel.send(err.message);
 		} else {

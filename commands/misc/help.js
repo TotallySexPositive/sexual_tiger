@@ -12,7 +12,7 @@ module.exports = {
 	usage         : "[command name]",
 	parent        : "",
 	category      : ["Misc", "General"],
-	execute(message, args) {
+	execute(client, message, args) {
 		let end = global.metrics.summaries.labels("help").startTimer();
 
 		if (args.length < 1) {

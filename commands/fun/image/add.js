@@ -16,7 +16,7 @@ module.exports = {
 	usage         : "[url] [...tag_name tag_name tag_name]",
 	parent        : "image",
 	category      : ["Image", "Image"],
-	execute(message, args) {
+	execute(client, message, args) {
 		let end = global.metrics.summaries.labels("image_add").startTimer();
 		if (args.length <= 1) {
 			return message.channel.send("You must also tag the image.  EX: $image add http://coolimages.com/coolimage.jpg cry pout death");

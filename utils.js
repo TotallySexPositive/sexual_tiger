@@ -1,5 +1,3 @@
-"use strict";
-
 const path      = require("path")
 const fs        = require('fs');
 const DAL       = require(path.resolve("dal.js"))
@@ -12,16 +10,16 @@ const probe     = require('node-ffprobe');
 const recursive     = require("recursive-readdir");
 const Permissions = require("discord.js").Permissions
 
-var isInt = function(value) {
-    var er = /^-?[0-9]+$/;
+let isInt = function(value) {
+    let er = /^-?[0-9]+$/;
     return er.test(value);
 }
 
-var isAdmin = function(member) {
+let isAdmin = function(member) {
     return member.hasPermission(Permissions.FLAGS.ADMINISTRATOR)
 }
 
-var playAudio = async function(voice_channel) {
+let playAudio = async function(voice_channel) {
     let server_id   = voice_channel.guild.id
     let server      = global.servers[server_id]
 
@@ -39,7 +37,7 @@ var playAudio = async function(voice_channel) {
         })
 
         dispatcher.on('finish', () => {
-            if (server.song_queue.length != 0) {
+            if (server.song_queue.length !== 0) {
                 playAudio(voice_channel)
             } else if(!server.maintain_presence) {
                 server.current_song = undefined
@@ -51,14 +49,14 @@ var playAudio = async function(voice_channel) {
     })
 }
 
-var playUrl = function(client, connection, message, url, callBack) {
-    var server = global.servers[message.guild.id]
+let playUrl = function(client, connection, message, url, callBack) {
+    let server = global.servers[message.guild.id]
     let dispatcher = null;
 
     if (server.dispatcher) {
         server.dispatcher.end("remain")
     }
-    if (connection.status == 4) { //4 = dead connection
+    if (connection.status === 4) { //4 = dead connection
         let vc = message.member.voiceChannel;
         vc.join()
         .then(connection => {
@@ -84,7 +82,7 @@ var playUrl = function(client, connection, message, url, callBack) {
     });
 }
 
-var playAudioBasicCallBack = function(client, connection, message, song, callBack, end_m) {
+let playAudioBasicCallBack = function(client, connection, message, song, callBack, end_m) {
     let server = global.servers[message.guild.id];
     if (server.repeat && end_m !== "remain"){
         playAudio(client, connection, message, song, callBack); // play it again!
@@ -96,11 +94,11 @@ var playAudioBasicCallBack = function(client, connection, message, song, callBac
 }
 
 
-var processAudioFileTask = function(t_obj, cb) {
+let processAudioFileTask = function(t_obj, cb) {
     return processAudioFile(t_obj.file_path, t_obj.url, t_obj.message, cb)
 }
 
-var processAudioFile = function(file_path, url, message, cb) {
+let processAudioFile = function(file_path, url, message, cb) {
     let hashed_audio_path       = global.audio_dirs.hashed;
     let stored_audio_path       = global.audio_dirs.stored;
     console.log(`FP: ${file_path})`);
@@ -135,7 +133,7 @@ var processAudioFile = function(file_path, url, message, cb) {
         
     exec(`nice ffmpeg-normalize "${file_path}" -c:a libmp3lame -ofmt mp3 -ext mp3 -o ${hashed_file_path} -f -t -20`, (err, stdout, stderr) => {
         if (err) {// node couldn't execute the command
-            if(err.message.indexOf("Invalid data found") == -1) { //Only output error if we dont know why it happened.
+            if(err.message.indexOf("Invalid data found") === -1) { //Only output error if we dont know why it happened.
                 console.log("Couldnt run command");
                 console.log(err);
             } 
@@ -175,7 +173,7 @@ var processAudioFile = function(file_path, url, message, cb) {
     });
 }
 
-var processImageFile = function(file_path, tag_names, user_id) {
+let processImageFile = function(file_path, tag_names, user_id) {
     let hashed_image_path       = global.image_dirs.hashed;
     let file_name               = path.basename(file_path);
     let ext                     = path.extname(file_path).replace(/\?.*$/, "");
@@ -246,7 +244,7 @@ let verifyTags = function(tag_names) {
         console.log(err)
         return {err: new Error("Crashed while verifying tags."), tags: undefined};
     } else if(tag_names.length !== tags.length) { //At least one of the tags didnt exist.
-        var found_tags = tags.map(function(tag) {
+        let found_tags = tags.map(function(tag) {
             return tag['name'];
         });
 
@@ -414,9 +412,9 @@ let deleteImageByHash = function(hash) {
 }
 
 let isUserActionAllowed = function(user, command) {
-    let docs            = command.docs();
+    let full_command            = `${command.parent} ${command.name}`.trim();
 
-    let {err, access}         = DAL.findAccessByUserIdAndCommand(user.id, docs.full_command);
+    let {err, access}         = DAL.findAccessByUserIdAndCommand(user.id, full_command);
 
     if(access === undefined) { //This user is missing permissions, lets set them.
         DAL.initUserAccess(user.id)
@@ -425,7 +423,7 @@ let isUserActionAllowed = function(user, command) {
     if(access) { //User has an access entry for this command.
         return access.is_allowed
     } else {// User has no access entry, rely on default restriction.
-        return docs.default_access //Return true if command is not restricted
+        return command.default_access //Return true if command is not restricted
     }
 }
 

@@ -9,7 +9,7 @@ module.exports = {
 	usage         : "",
 	parent        : "",
 	category      : ["Misc", "General"],
-	execute(message, args) {
+	execute(client, message, args) {
 		let end    = global.metrics.summaries.labels("fuckoff").startTimer();
 		let server = global.servers[message.guild.id];
 

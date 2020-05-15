@@ -1,6 +1,6 @@
-const path  = require("path");
-const fs    = require("fs");
-const DAL   = require(path.resolve("dal.js"));
+const path = require("path");
+const fs   = require("fs");
+const DAL  = require(path.resolve("dal.js"));
 
 module.exports = {
 	name          : "clean_db",
@@ -12,7 +12,7 @@ module.exports = {
 	usage         : "",
 	parent        : "",
 	category      : ["Admin", "General"],
-	execute(message, args) {
+	execute(client, message, args) {
 		const end                 = global.metrics.summaries.labels("admin_clean_db").startTimer();
 		const {err: s_err, songs} = DAL.getAllSongs();
 

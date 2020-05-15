@@ -11,7 +11,7 @@ module.exports = {
 	usage         : "[message_id] [...tag_name tag_name tag_name]",
 	parent        : "image",
 	category      : ["Image", "Image"],
-	execute(message, args) {
+	execute(client, message, args) {
 		let end = global.metrics.summaries.labels("image_retag").startTimer();
 
 		if (args.length <= 1) {

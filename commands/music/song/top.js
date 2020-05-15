@@ -22,7 +22,7 @@ module.exports = {
 	usage         : "[?num_songs]",
 	parent        : "song",
 	category      : ["Music", "Song"],
-	execute(message, args) {
+	execute(client, message, args) {
 		let end    = global.metrics.summaries.labels("top").startTimer();
 		let r_args = message.content.slice(9).trim(); //Chop off $song top
 

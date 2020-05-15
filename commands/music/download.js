@@ -16,9 +16,9 @@ module.exports = {
 	usage         : "",
 	parent        : "",
 	category      : ["Music", "General"],
-	execute(message, args) {
-		let end    = global.metrics.summaries.labels("download").startTimer();
-		let ended  = false;
+	execute(client, message, args) {
+		let end   = global.metrics.summaries.labels("download").startTimer();
+		let ended = false;
 
 		if (args.length !== 1) {
 			return message.channel.send("It seems you sent too much or too little info.");

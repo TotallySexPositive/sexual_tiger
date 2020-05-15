@@ -5,14 +5,14 @@ const UTIL = require(path.resolve("utils.js"));
 
 module.exports = {
 	name          : "play",
-	aliases       : [],
+	aliases       : ["plp"],
 	description   : "Play a playlist by identifier",
 	default_access: 1,
 	args          : false,
 	usage         : "",
 	parent        : "playlist",
 	category      : ["Music", "Playlists"],
-	execute(message, args) {
+	execute(client, message, args) {
 		let end    = global.metrics.summaries.labels("playlist_play").startTimer();
 		let server = global.servers[message.guild.id];
 		let vc     = message.member.voice.channel;

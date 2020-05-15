@@ -10,7 +10,7 @@ module.exports = {
 	usage         : "[playlist_identifier]",
 	parent        : "playlist",
 	category      : [],
-	execute(message, args) {
+	execute(client, message, args) {
 		let end    = global.metrics.summaries.labels("playlist_queue").startTimer();
 		let server = global.servers[message.guild.id];
 		let vc     = message.member.voice.channel;

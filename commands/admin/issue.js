@@ -12,7 +12,7 @@ module.exports = {
 	usage         : "-t \"[titel]\" -b \"[body]\" -l \"[label]\"",
 	parent        : "",
 	category      : ["Admin", "General"],
-	execute(message, args) {
+	execute(client, message, args) {
 		let end         = global.metrics.summaries.labels("admin_issue").startTimer();
 		let valid_users = {
 			"231574835694796801": auth.github_token,

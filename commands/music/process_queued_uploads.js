@@ -12,7 +12,7 @@ module.exports = {
 	usage         : "",
 	parent        : "",
 	category      : ["Admin", "General"],
-	execute(message, args) {
+	execute(client, message, args) {
 		let end                   = global.metrics.summaries.labels("process_queued_uploads").startTimer();
 		let uploaded_audio_folder = global.audio_dirs.uploaded;
 

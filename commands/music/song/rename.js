@@ -12,7 +12,7 @@ module.exports = {
 	usage         : "-i [song_id] -n '[new_song_name]",
 	parent        : "song",
 	category      : ["Music", "Song"],
-	execute(message, args) {
+	execute(client, message, args) {
 		let end  = global.metrics.summaries.labels("rename").startTimer();
 		let opts = {
 			alias        : {

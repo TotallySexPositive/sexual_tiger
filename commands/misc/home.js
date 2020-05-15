@@ -7,7 +7,7 @@ module.exports = {
 	usage         : "",
 	parent        : "",
 	category      : ["Misc", "General"],
-	execute(message, args) {
+	execute(client, message, args) {
 		let end    = global.metrics.summaries.labels("home").startTimer();
 		let server = global.servers[message.guild.id];
 		message.channel.send("Come visit me at, https://tiger.wentzel.dev");

@@ -14,14 +14,14 @@ let options = {
 
 module.exports = {
 	name          : "play",
-	aliases       : [],
+	aliases       : ["p"],
 	description   : "Play a song by name or ID.  If a number is specified an ID lookup is assumed.  Otherwise a search is performed for the entered value.  If an exact match or only 1 close match is found the clip is played.  Otherwise a list of options is displayed.",
 	default_access: 1,
 	args          : true,
 	usage         : "[song_identifier]",
 	parent        : "",
 	category      : ["Music", "General"],
-	execute(message, args) {
+	execute(client, message, args) {
 		let end    = global.metrics.summaries.labels("play").startTimer();
 		let server = global.servers[message.guild.id];
 		let vc     = message.member.voice.channel;

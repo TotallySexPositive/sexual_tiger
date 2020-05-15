@@ -12,7 +12,7 @@ module.exports = {
 	usage         : "[text to convert] | -t \"text to convert\" [-l LANG_CODE] [-r RATE] ",
 	parent        : "",
 	category      : ["Misc", "General"],
-	execute(message, args) {
+	execute(client, message, args) {
 		let end  = global.metrics.summaries.labels("tts").startTimer();
 		let opts = {
 			alias        : {

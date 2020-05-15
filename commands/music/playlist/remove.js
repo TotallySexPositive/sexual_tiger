@@ -11,7 +11,7 @@ module.exports = {
 	usage         : "[song_identifier]",
 	parent        : "playlist",
 	category      : ["Music", "Playlist"],
-	execute(message, args) {
+	execute(client, message, args) {
 		let end  = global.metrics.summaries.labels("playlist_remove").startTimer();
 		let opts = {
 			alias        : {

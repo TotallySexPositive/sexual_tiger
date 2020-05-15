@@ -4,13 +4,13 @@ const UTIL = require(path.resolve("utils.js"));
 module.exports = {
 	name          : "whoami",
 	aliases       : [],
-	description   : "",
+	description   : "Tells you a little about yourself",
 	default_access: 1,
 	args          : false,
 	usage         : "",
 	parent        : "",
 	category      : ["Misc", "General"],
-	execute(message, args) {
+	execute(client, message, args) {
 		let end    = global.metrics.summaries.labels("whoami").startTimer();
 		let author = message.author;
 		let member = message.member;

@@ -12,7 +12,7 @@ module.exports = {
 	usage         : "[?comic_id]",
 	parent        : "",
 	category      : ["Image", "Pictures"],
-	execute(message, args) {
+	execute(client, message, args) {
 		let end        = global.metrics.summaries.labels("xkcd").startTimer();
 		let arg_string = message.content.slice(5); //Chop off $xkcd
 		let comic_id   = arg_string.trim();

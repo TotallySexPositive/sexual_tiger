@@ -12,7 +12,7 @@ module.exports = {
 	usage         : "[search terms]",
 	parent        : "",
 	category      : ["Image", "Pictures"],
-	execute(message, args) {
+	execute(client, message, args) {
 		let end = global.metrics.summaries.labels("gifs").startTimer();
 		if (args.length) {
 			giphy.search({

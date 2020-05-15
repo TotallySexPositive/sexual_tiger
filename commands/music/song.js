@@ -11,7 +11,7 @@ module.exports = {
 	usage         : "",
 	parent        : "",
 	category      : ["Music", "General"],
-	execute(message, args) {
+	execute(client, message, args) {
 		let end          = global.metrics.summaries.labels("song").startTimer();
 		let server       = global.servers[message.guild.id];
 		let current_song = server.current_song;

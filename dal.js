@@ -28,7 +28,7 @@ DB.pragma("foreign_keys = ON;");
 DB.pragma('journal_mode = WAL');
 
 let isInt = function(value) {
-    var er = /^-?[0-9]+$/;
+    let er = /^-?[0-9]+$/;
     return er.test(value);
 }
 
@@ -37,7 +37,7 @@ let isInt = function(value) {
  * 
  * @param {Integer} song_id - The id of the song to find
  */
-var findSongById = function (song_id) {
+let findSongById = function (song_id) {
     if(!isInt(song_id)) {
         let err = new Error("song_id must be an integer.")
         return {err: err, song: undefined};
@@ -53,7 +53,7 @@ var findSongById = function (song_id) {
     }
 }
 
-var findSongByHashId = function (hash_id) {
+let findSongByHashId = function (hash_id) {
     let query = `SELECT ${SONG_FIELDS} FROM ${SONG_TABLE} WHERE hash_id = ?`;
 
     try {
@@ -65,7 +65,7 @@ var findSongByHashId = function (hash_id) {
     }
 }
 
-var findSongByName = function (name) {
+let findSongByName = function (name) {
     if(isInt(name)) {
         let err = new Error("name must NOT be an integer.")
         return {err: err, song: undefined};
@@ -127,7 +127,7 @@ let findSongByIdentifier = function(identifier, identifier_type = null) {
    * 
    * @param {Integer} playlist_id - The id of the playlist to find
    */
-var findPlaylistById = function (playlist_id) {
+let findPlaylistById = function (playlist_id) {
     if(!isInt(playlist_id)){
         let err = new Error("playlist_id must be an integer.")
         return null;
@@ -148,7 +148,7 @@ var findPlaylistById = function (playlist_id) {
    * 
    * @param {String} name - The name of the Playlist to find
    */
-var findPlaylistByName = function (name) {
+let findPlaylistByName = function (name) {
     let query = `SELECT ${PLAYLIST_FIELDS} FROM ${PLAYLIST_TABLE} WHERE name = ?`;
     try {
         return {err: undefined, playlist: DB.prepare(query).get(name)};
@@ -472,7 +472,7 @@ let insertIntoImages = function(hash, ext, user_id) {
     }
 }
 
-var findImageById = function (image_id) {
+let findImageById = function (image_id) {
     if(!isInt(image_id)) {
         let err = new Error("image_id must be an integer.")
         return {err: err, image: undefined};
@@ -488,7 +488,7 @@ var findImageById = function (image_id) {
     }
 }
 
-var findImageByHashId = function (hash_id) {
+let findImageByHashId = function (hash_id) {
     let query = `SELECT ${IMAGE_FIELDS} FROM ${IMAGE_TABLE} WHERE hash_id = ?`;
 
     try {

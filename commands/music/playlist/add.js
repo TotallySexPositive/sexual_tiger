@@ -11,7 +11,7 @@ module.exports = {
 	usage         : "-p [playlist_id] -s [song_id]",
 	parent        : "playlist",
 	category      : ["Music", "Playlist"],
-	execute(message, args) {
+	execute(client, message, args) {
 		let end  = global.metrics.summaries.labels("playlist_add").startTimer();
 		let opts = {
 			alias        : {

@@ -10,7 +10,7 @@ module.exports = {
 	usage         : "[@User] [Command]",
 	parent        : "",
 	category      : ["Admin", "Auth"],
-	execute(message, args) {
+	execute(client, message, args) {
 		let end             = global.metrics.summaries.labels("admin_grant").startTimer();
 		let server          = global.servers[message.guild.id];
 		let secure_commands = ["revoke", "grant"];

@@ -10,7 +10,7 @@ module.exports = {
 	usage         : "[playlist_id|playlist_name]",
 	parent        : "playlist",
 	category      : ["Music", "Playlists"],
-	execute(message, args) {
+	execute(client, message, args) {
 		let end         = global.metrics.summaries.labels("playlist_delete").startTimer();
 		let identifier  = args.join(" ");
 		let playlist_id = undefined;

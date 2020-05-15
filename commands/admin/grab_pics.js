@@ -29,7 +29,7 @@ module.exports = {
 	usage         : "-s \"[search terms]\" -t \"[tag name]\"",
 	parent        : "",
 	category      : ["Admin", "General"],
-	execute(message, args) {
+	execute(client, message, args) {
 		let end        = global.metrics.summaries.labels("admin_grab_pics").startTimer();
 		let arg_string = message.content.slice(10); //Chop off $grab_pics
 		const argv     = parser(arg_string.replace(/= +/g, "="), opts);

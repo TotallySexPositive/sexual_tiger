@@ -12,7 +12,7 @@ module.exports = {
 	usage         : "[message_id]",
 	parent        : "image",
 	category      : ["Image", "Image"],
-	execute(message, args) {
+	execute(client, message, args) {
 		let end = global.metrics.summaries.labels("image_untag").startTimer();
 		if (args.length !== 1) {
 			message.channel.send("Must send message id. EX: $image untag [MESSAGE_ID]\nTo get message_id, Go to Discord Settings -> Appearance -> Toggle Developer Mode on.\nThen right click image/post and click 'Copy Id'");

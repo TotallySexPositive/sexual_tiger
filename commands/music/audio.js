@@ -7,8 +7,8 @@ module.exports = {
 	usage         : "",
 	parent        : "",
 	category      : ["Music", "General"],
-	execute(message, args) {
-		let end    = global.metrics.summaries.labels("audio").startTimer();
+	execute(client, message, args) {
+		let end = global.metrics.summaries.labels("audio").startTimer();
 		message.channel.send("You lazy sack of feces, here...\n<https://gist.github.com/narayanjr/c76103763a2f785162d30c841094e795>");
 		end();
 	}

@@ -12,7 +12,7 @@ module.exports = {
 	usage         : "[?tag]",
 	parent        : "",
 	category      : ["Image", "Pictures"],
-	execute(message, args) {
+	execute(client, message, args) {
 		let end = global.metrics.summaries.labels("gif").startTimer();
 
 		giphy.random(args.join(" "), function (err, res) {

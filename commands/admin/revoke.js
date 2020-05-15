@@ -10,7 +10,7 @@ module.exports = {
 	usage         : "[@User] [Command]",
 	parent        : "",
 	category      : ["Admin", "Auth"],
-	execute(message, args) {
+	execute(client, message, args) {
 		//THERE ARE TOO MANY EXITS YOU MONSTER
 		let end             = global.metrics.summaries.labels("admin_revoke").startTimer();
 		let server          = global.servers[message.guild.id];
