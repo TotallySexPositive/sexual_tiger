@@ -10,6 +10,12 @@ module.exports = {
 	usage         : "",
 	parent        : "",
 	category      : ["Admin", "General"],
+	examples: [
+		{
+			description: "Rebuild the audio gist.",
+			code: "build_gist"
+		}
+	],
 	execute(client, message, args) {
 		let end = global.metrics.summaries.labels("admin_build_gist").startTimer();
 		let err = UTIL.rebuildAudioGist();

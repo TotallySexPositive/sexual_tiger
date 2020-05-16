@@ -45,6 +45,7 @@
     "image-type": "^4.1.0",
     "images-scraper": "^5.0.5",
     "jsonfile": "^6.0.1",
+    "klaw-sync": "^6.0.0",
     "markdown-table": "^2.0.0",
     "md5": "^2.2.1",
     "node-dir": "^0.1.17",
