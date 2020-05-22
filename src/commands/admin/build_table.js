@@ -1,8 +1,8 @@
-const path      = require("path")
 const fs        = require("fs")
 let Database    = require('better-sqlite3')
 let DB          = new Database('playlists.sql');
 
+// eslint-disable-next-line no-unused-vars
 exports.run = (client, message, args) => {
     let end = global.metrics.summaries.labels('admin_build_table').startTimer()
     const build_it = fs.readFileSync('build.sql', 'utf8');
