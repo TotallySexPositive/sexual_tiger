@@ -15,7 +15,7 @@ exports.run = (client, message, args) => {
         return title.charAt(0).toUpperCase() + title.slice(1);;
       })
 
-    let command_folders_path = path.resolve("commands");
+    let command_folders_path = path.resolve("built", "commands");
     recursive(command_folders_path, function (err, files) {
         files.forEach((file) => {
             if(file.endsWith('.js')) {
@@ -24,7 +24,7 @@ exports.run = (client, message, args) => {
                 if (keys.includes("docs")) {
                     
                     let docs = temp.docs();
-                    let command_info = { description: temp.description, examples: temp.examples}
+                    let command_info = { description: docs.description, examples: docs.examples}
                     let command = {[docs.command]: command_info}
 
                     let rt = {
@@ -76,12 +76,12 @@ exports.run = (client, message, args) => {
         })
 
         let test = {"tabs": myData}
-        let index_template_path = path.resolve("website", "index_template.html")
+        let index_template_path = path.resolve("src", "website", "index_template.html")
         fs.readFile(index_template_path, 'utf-8', function(error, source){
             var template = handlebars.compile(source);
             var html = template(test);
 
-            let index_path = path.resolve("website", "index.html")
+            let index_path = path.resolve("src", "website", "index.html")
             
             fs.writeFile("/var/www/html/index.html", html, function(err) {
                 if(err) {

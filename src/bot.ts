@@ -87,7 +87,7 @@ client.on('message', message => {
     const user = message.author.username;
 
     //Split into args
-    const args = message.content.slice(config.prefix.length).trim().split(/ +/g);
+    const args: Array<string> = message.content.slice(config.prefix.length).trim().split(/ +/g);
     //Get just the command
     const command = args.shift().toLowerCase();
     //Need to sanitize the user input
@@ -138,7 +138,7 @@ client.on('guildMemberAdd', member => {
 client.login(auth.token);
 
 const server = express()
-server.get('/metrics', (req, res) => {
+server.get('/metrics', (_req, res) => {
     res.set('Content-Type', register.contentType)
     res.end(register.metrics())
 })
