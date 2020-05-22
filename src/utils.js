@@ -2,7 +2,7 @@
 
 const path      = require("path")
 const fs        = require('fs');
-const DAL       = require(path.resolve("dal.js"))
+import * as DAL from "./dal";
 const md5       = require('md5');
 const { exec }  = require('child_process');
 const auth      = require(path.resolve("auth.json"));
@@ -430,7 +430,7 @@ let isUserActionAllowed = function(user, command) {
 }
 
 let updateCommandList = function() {
-    let command_folders_path = path.resolve("commands");
+    let command_folders_path = path.resolve("built", "commands");
     let commands = [];
 
     recursive(command_folders_path, function (err, files) {
@@ -464,3 +464,17 @@ module.exports.postRandomImageByTag = postRandomImageByTag;
 module.exports.verifyTags = verifyTags;
 module.exports.isUserActionAllowed = isUserActionAllowed;
 module.exports.updateCommandList = updateCommandList;
+
+export {isInt};
+export {isAdmin};
+export {playAudio};
+export {processAudioFile};
+export {rebuildAudioGist};
+export {processImageFile};
+export {getFileSizeInMegaBytes};
+export {processAudioFileTask};
+export {deleteImageByHash};
+export {postRandomImageByTag};
+export {verifyTags};
+export {isUserActionAllowed};
+export {updateCommandList};

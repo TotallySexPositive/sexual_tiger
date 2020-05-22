@@ -1,5 +1,5 @@
 const path  = require("path");
-const UTIL  = require(path.resolve("utils.js"))
+import * as UTIL from "../../utils";
 const auth  = require(path.resolve('auth.json'));
 const parser    = require('yargs-parser')
 const xkcd      = require('xkcd-api');

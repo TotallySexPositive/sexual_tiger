@@ -1,8 +1,8 @@
 const {spawn}   = require('child_process');
 const path      = require("path");
 const request   = require("request");
-const fs        = require("fs")
-const UTIL      = require(path.resolve("utils.js"));
+const fs        = require("fs");
+import * as UTIL from "../../utils";
 
 exports.run = (client, message, args) => {
     let end = global.metrics.summaries.labels('upload').startTimer()
@@ -11,7 +11,7 @@ exports.run = (client, message, args) => {
 	message.channel.send(`Downloading ${attachments.length} attachments.`);
 
     attachments.forEach(item => {
-        fpath = path.resolve(global.audio_dirs.uploaded,item.name)
+        let fpath = path.resolve(global.audio_dirs.uploaded,item.name)
         request(item.url)
             .pipe(fs.createWriteStream(fpath))
             .on('finish', () => {

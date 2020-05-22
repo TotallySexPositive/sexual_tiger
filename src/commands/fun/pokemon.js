@@ -1,5 +1,4 @@
 const path          = require("path");
-const UTIL          = require(path.resolve("utils.js"))
 const auth          = require(path.resolve('auth.json'));
 var giphy           = require('giphy-api')(auth.giphy);
 var request         = require('request');

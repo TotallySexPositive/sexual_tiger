@@ -1,5 +1,5 @@
 const path      = require("path");
-const DAL       = require(path.resolve("dal.js"))
+import * as DAL from "../../dal";
 
 exports.run = (client, message, args) => {
     //THERE ARE TOO MANY EXITS YOU MONSTER

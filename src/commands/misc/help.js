@@ -3,7 +3,7 @@ let path = require('path');
 c = path.resolve("configure.json")
 console.log(c)
 let cfg = require(c)
-const { MessageEmbed } = require('discord.js');
+import { MessageEmbed } from 'discord.js';
 
 
 exports.run = (client, message, args) => {

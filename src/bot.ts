@@ -1,65 +1,48 @@
-const jsonfile  = require('jsonfile');
-const path      = require("path");
-const fs        = require("fs")
-const Discord   = require('discord.js');
-const Sanitize  = require('sanitize-filename');
-const auth      = require(path.resolve('auth.json'));
-const config    = require(path.resolve('configure.json'));
-const UTIL      = require(path.resolve('utils.js'));
-const client    = new Discord.Client();
+import { Server } from "./types/Server";
 
-const promclient = require("prom-client")
-const default_metrics = require("prom-client").collectDefaultMetrics
+const jsonfile = require('jsonfile');
+const path = require("path");
+const fs = require("fs")
+const Discord = require('discord.js');
+const Sanitize = require('sanitize-filename');
+const auth = require(path.resolve('auth.json'));
+const config = require(path.resolve('configure.json'));
+import * as UTIL from "./utils.js";
+const client = new Discord.Client();
 const register = require("prom-client").register
-const Summary = require("prom-client").Summary
-const Gauge = require("prom-client").Gauge
+
 const express = require("express")
+import { CustomNodeJsGlobal } from "./types/CustomNodeJsGlobal"
+import { Metrics } from "./types/Metrics";
 
-
-global.servers  = {};
+declare const global: CustomNodeJsGlobal;
+global.servers = new Map();
 global.commandTypes = ["admin", "fun", "misc", "music"];
-global.commandTypeDesc = {  
-    "admin" : "Admin controls to assist in maintaining the bot.",
-    "fun"   : "Random shit that lets you express yourself.",
-    "misc"  : "Random shit that may or may not be worth using",
-    "music" : "Lets you play music and interact with music things"
-} 
-global.commandTypeColor = {  
-    "admin" : 13632027,
-    "fun"   : 12390624,
-    "misc"  : 1,
-    "music" : 5301186
-} 
-global.audio_dirs = {
-    "tmp"       : path.resolve("audio", "tmp"),
-    "hashed"    : path.resolve("audio", "hashed"),
-    "stored"    : path.resolve("audio", "stored"),
-    "uploaded"  : path.resolve("audio", "uploaded")
-}
+global.commandTypeDesc = new Map();
+global.commandTypeDesc["admin"] = "Admin controls to assist in maintaining the bot.";
+global.commandTypeDesc["fun"] = "Random shit that lets you express yourself.";
+global.commandTypeDesc["misc"] = "Random shit that may or may not be worth using";
+global.commandTypeDesc["music"] = "Lets you play music and interact with music things";
 
-global.image_dirs = {
-    "tmp"       : path.resolve("images", "tmp"),
-    "hashed"    : path.resolve("images", "hashed"),
-    "trash"     : path.resolve("images", "trash"),
-}
+global.commandTypeColor = new Map();
+global.commandTypeColor["admin"] = 13632027
+global.commandTypeColor["fun"] = 12390624
+global.commandTypeColor["misc"] = 1
+global.commandTypeColor["music"] = 5301186
 
-global.metrics = {
-    registry: default_metrics({
-        prefix: "sexual_",
-        timeout: 10000
-    }),
-    summaries: new Summary({
-        name: "sexual_command_usage",
-        help: "Summary of the usage of the commands in the bot",
-        labelNames: ["command"]
-    }),
-    uptime: new Gauge({
-        name: "sexual_uptime",
-        help: "The uptime of the bot"
-    })
-}
+global.audio_dirs = new Map();
+global.audio_dirs["tmp"] = path.resolve("audio", "tmp");
+global.audio_dirs["hashed"] = path.resolve("audio", "hashed");
+global.audio_dirs["stored"] = path.resolve("audio", "stored");
+global.audio_dirs["uploaded"] = path.resolve("audio", "uploaded");
 
-global.img_resp_to_tag = {}
+global.image_dirs = new Map();
+global.image_dirs["tmp"] = path.resolve("images", "tmp");
+global.image_dirs["hashed"] = path.resolve("images", "hashed");
+global.image_dirs["trash"] = path.resolve("images", "trash");
+
+
+global.metrics = new Metrics()
 global.img_resp_to_tag_order = []
 global.img_resp_to_tag_max_len = 100;
 global.clip_length = 30;
@@ -77,7 +60,7 @@ let required_folders = [
     path.resolve("images", "trash"),
 ];
 //Loop the array of required folders and create any missing ones.
-required_folders.forEach(function(dir) {
+required_folders.forEach(function (dir) {
     if (!fs.existsSync(dir)) {
         console.log(`Created missing directory: ${dir}`);
         fs.mkdirSync(dir);
@@ -90,29 +73,16 @@ UTIL.updateCommandList();
 client.on('ready', () => {
     console.log('I am ready!');
     client.user.setActivity("pick up sticks.");
-    
+
     //Init servers array
     client.guilds.cache.keyArray().forEach(server_id => {
-        global.servers[server_id] = {
-            repeat: false, 
-            current_song: {},
-            maintain_presence: false, 
-            connectionPromise: null,
-            dispatcher: null, 
-            default_volume: .125, 
-            volume: .125, 
-            max_volume: 1, 
-            clip_volume: .75,
-            super_admins:["231574835694796801","183388696207294465", "231606224909500418"],
-            song_queue: [],
-            shuffle: false
-        };
+        global.servers[server_id] = new Server();
     });
 });
 
 client.on('message', message => {
     // If we are reading a bot message or the message doesn't start with our prefix, ignore it
-    if (message.author.bot || message.content.indexOf(config.prefix) !== 0){return;}
+    if (message.author.bot || message.content.indexOf(config.prefix) !== 0) { return; }
 
     const user = message.author.username;
 
@@ -124,10 +94,10 @@ client.on('message', message => {
     var safe = Sanitize(command);
 
     try {
-        d = path.resolve("commands")
-        
-        global.commandTypes.some((k)=>{
-            let p = path.resolve("commands", k,`${safe}.js`)
+        let d = path.resolve("built","commands")
+
+        global.commandTypes.some((k) => {
+            let p = path.resolve(d, k, `${safe}.js`)
             if (fs.existsSync(p)) {
                 let commandFile = require(p);
 
@@ -139,10 +109,10 @@ client.on('message', message => {
                 } else {
                     message.channel.send(`${user}, you do not have permission to use this command.`);
                 }
-                
+
                 return true;
             } else {
-                if (safe !== command){
+                if (safe !== command) {
                     message.channel.send(`Naughty naughty ${user}.`);
                     message.channel.send("You trying to backdoor me on the first date?");
                 }
@@ -168,7 +138,7 @@ client.on('guildMemberAdd', member => {
 client.login(auth.token);
 
 const server = express()
-server.get('/metrics', (req, res)=>{
+server.get('/metrics', (req, res) => {
     res.set('Content-Type', register.contentType)
     res.end(register.metrics())
 })
@@ -178,6 +148,6 @@ console.log(
 )
 server.listen(port)
 
-setInterval(()=>{
+setInterval(() => {
     global.metrics.uptime.set(client.uptime)
 }, 10000)

@@ -1,5 +1,5 @@
 const path  = require("path")
-const UTIL  = require(path.resolve("utils.js"))
+import * as UTIL from "../../utils.js";
 
 exports.run = (client, message, args) => {
     let end = global.metrics.summaries.labels('admin_build_gist').startTimer()

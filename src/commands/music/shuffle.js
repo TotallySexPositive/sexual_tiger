@@ -1,8 +1,8 @@
 const path      = require("path")
 const fs        = require('fs');
 const shuffle   = require('array-shuffle');
-const DAL       = require(path.resolve("dal.js"))
-const UTIL      = require(path.resolve("utils.js"))
+import * as DAL from "../../dal";
+import * as UTIL from "../../utils";
 
 exports.run = (client, message, args) => {
     let end = global.metrics.summaries.labels('shuffle').startTimer()

@@ -2,8 +2,8 @@
 
 const fs        = require('fs');
 const path      = require("path");
-const DAL       = require(path.resolve("dal.js"));
-const UTIL      = require(path.resolve("utils.js"));
+import * as DAL from "../../dal";
+import * as UTIL from "../../utils";
 const sanitize  = require("sanitize-filename");
 const youtubedl = require('youtube-dl');
 const extractDomain  = require('extract-domain');

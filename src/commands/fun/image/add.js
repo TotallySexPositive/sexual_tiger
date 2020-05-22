@@ -1,7 +1,6 @@
 const path      = require("path");
 const fs        = require("fs");
-const DAL       = require(path.resolve("dal.js"))
-const UTIL      = require(path.resolve("utils.js"))
+import * as UTIL from "../../../utils";
 const validator = require('validator');
 const readChunk = require('read-chunk');
 const imageType = require('image-type');

@@ -1,6 +1,5 @@
 const path  = require("path")
-const DAL   = require(path.resolve("dal.js"))
-const UTIL   = require(path.resolve("utils.js"))
+import * as DAL from "../../dal";
 const asciitable = require("asciitable")
 
 var options = {

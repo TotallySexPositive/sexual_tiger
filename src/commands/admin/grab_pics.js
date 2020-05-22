@@ -1,7 +1,7 @@
 const path          = require("path")
 const fs            = require('fs');
-const DAL           = require(path.resolve("dal.js"))
-const UTIL          = require(path.resolve("utils.js"))
+import * as DAL from "../../dal";
+import * as UTIL from "../../utils";
 var Scraper         = require ('images-scraper')
   , scraper = new Scraper("https://google.com");
 const download      = require('image-downloader')

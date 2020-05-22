@@ -1,7 +1,7 @@
 /*const path  = require("path");
 const fs    = require("fs");
-const DAL   = require(path.resolve("dal.js"))
-const UTIL  = require(path.resolve("utils.js"))
+import * as DAL from "./dal";
+import * as UTIL from "./utils.js";
 
 exports.run = (client, message, args) => {
     if(args.length != 1) {

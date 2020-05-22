@@ -1,5 +1,5 @@
 const path  = require("path");
-const UTIL  = require(path.resolve("utils.js"))
+import * as UTIL from "../../utils";
 const auth  = require(path.resolve('auth.json'));
 const giphy = require('giphy-api')(auth.giphy);
 const TTS   = require('google-tts-api');

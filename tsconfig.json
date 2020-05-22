@@ -1,11 +1,37 @@
 {
     "compilerOptions": {
         "outDir": "./built",
+        "baseUrl": ".",
+        "paths": {
+            "*": [
+                "*",
+                "built/*"
+            ]
+        },
         "allowJs": true,
-        "target": "ES5"
+        "target": "ES2016",
+        "module": "commonjs",
+        "moduleResolution": "node",
+        "lib": [
+            "es6",
+            "dom"
+        ],
+        "sourceMap": true,
+        "types": [
+            "node",
+            "reflect-metadata"
+        ],
+        "typeRoots": [
+            "node_modules/@types"
+        ],
+        "experimentalDecorators": true,
+        "emitDecoratorMetadata": true,
+        "resolveJsonModule": true
     },
     "include": [
-        "./commands/**/*",
-        "./bot.js"
+        "./src/**/*"
+    ],
+    "exclude": [
+        "node_modules"
     ]
 }

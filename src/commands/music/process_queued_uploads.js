@@ -2,8 +2,7 @@ const path      = require("path");
 const fs        = require("fs");
 const md5       = require('md5');
 const { exec }  = require('child_process');
-const DAL       = require(path.resolve("dal.js"))
-const UTIL       = require(path.resolve("utils.js"))
+import * as UTIL from "../../utils";
 var Queue       = require('better-queue');
 
 exports.run = (client, message, args) => {

@@ -1,6 +1,6 @@
 const path      = require("path")
-const DAL       = require(path.resolve("dal.js"))
-const UTIL      = require(path.resolve("utils.js"))
+import * as DAL from "../../../dal";
+import * as UTIL from "../../../utils";
 const parser    = require('yargs-parser')
 
 exports.run = (client, message, args) => {
