@@ -1,5 +1,5 @@
 "use strict";
-const octokit   = require('@octokit/rest')
+const { Octokit } = require("@octokit/rest");
 const fs        = require('fs');
 const path      = require("path");
 const auth      = require(path.resolve('auth.json'));
@@ -35,10 +35,9 @@ exports.run = (client, message, args) => {
     if(!argv.t) return message.channel.send("All issues must have a title. -t or --title=")
 
     // token (https://github.com/settings/tokens)
-    octokit.authenticate({
-        type: 'token',
-        token: token
-    });
+    const octokit = new Octokit({
+        auth: token
+      });
 
     let payload = {};
     payload.owner = "narayanjr";
