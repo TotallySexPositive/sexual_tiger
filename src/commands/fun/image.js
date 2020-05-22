@@ -7,7 +7,7 @@ exports.run = (client, message, args) => {
     var playlist_command    = args[0];
     var tail                = args.slice(1);
 
-    let p = path.resolve("commands", "fun", "image",`${playlist_command}.js`)
+    let p = path.resolve("built", "commands", "fun", "image",`${playlist_command}.js`)
     if (fs.existsSync(p)) {
         let commandFile = require(p);
         commandFile.run(client, message, tail);

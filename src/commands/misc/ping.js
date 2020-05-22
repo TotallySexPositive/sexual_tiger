@@ -1,7 +1,7 @@
 exports.run = (client, message, args) => {
     let end = global.metrics.summaries.labels('ping').startTimer()
     message.channel.send("pong!").catch(console.error);
-    message.channel.send(`My sexual ping is ${client.ping}`)
+    message.channel.send(`My sexual ping is ${client.ws.ping}ms`)
     end()
 }
 exports.help = () =>{

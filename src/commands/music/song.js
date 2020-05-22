@@ -23,7 +23,7 @@ exports.run = (client, message, args) => {
         var song_command    = args[0];
         var tail            = args.slice(1);
     
-        let p = path.resolve("commands", "music", "song",`${song_command}.js`)
+        let p = path.resolve("built", "commands", "music", "song",`${song_command}.js`)
         if (fs.existsSync(p)) {
             let commandFile = require(p);
             commandFile.run(client, message, tail);

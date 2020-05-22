@@ -1,6 +1,6 @@
 let fs = require('fs');
 let path = require('path');
-c = path.resolve("configure.json")
+let c = path.resolve("configure.json")
 console.log(c)
 let cfg = require(c)
 import { MessageEmbed } from 'discord.js';
@@ -26,22 +26,18 @@ exports.run = (client, message, args) => {
             embed.setTitle(`${t} Commands`)
             embed.setColor(global.commandTypeColor[t])
             embed.setTimestamp()
-            p = path.resolve("commands", t);
+            let p = path.resolve("built", "commands", t);
             fs.readdir(p, (err,items)=>{
                 items.forEach((item)=>{
-                    if(!item.endsWith('.js')){
-                        return
-                    }else{
-                        script = path.resolve("commands", t, item);
-                        temp = require(script);
-                        k = Object.keys(temp);
+                    if(item.endsWith('.js')){
+                        let script = path.resolve(p, item);
+                        let temp = require(script);
+                        let k = Object.keys(temp);
                         
                         let cmd = `${cfg.prefix}${item.replace(".js","")}`
+                        let hlp = "empty";
                         if (k.includes("help")){
-                            hlp = `${temp.help()}`;
-                            
-                        } else{
-                            hlp = "empty";
+                            hlp = `${temp.help()}`;   
                         }
                         
                         try {
@@ -72,24 +68,24 @@ function all_cards(client, message, args){
         //embed.setAuthor("FuckYou")
         embed.setColor("0x3ad1c9")
         embed.setTimestamp()
-        p = path.resolve("commands", t);
+        let p = path.resolve("built", "commands", t);
         fs.readdir(p, (err,items)=>{
             items.forEach((item)=>{
                 if(!item.endsWith('.js')){
                     return
                 }else{
-                  script = path.resolve("commands", t, item);
-                temp = require(script);
-                k = Object.keys(temp);
-                
-                let cmd = `${cfg.prefix}${item.replace(".js","")}`
-                if (k.includes("help")){
-                    hlp = `${temp.help()}`;
+                    let script = path.resolve(p, t, item);
+                    let temp = require(script);
+                    let k = Object.keys(temp);
                     
-                } else{
-                    hlp = "empty";
-                }
-                embed.addField(cmd, hlp)  
+                    let cmd = `${cfg.prefix}${item.replace(".js","")}`
+                    if (k.includes("help")){
+                        hlp = `${temp.help()}`;
+                        
+                    } else{
+                        hlp = "empty";
+                    }
+                    embed.addField(cmd, hlp)  
                 }
             });
 
