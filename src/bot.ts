@@ -1,6 +1,5 @@
 import { Server } from "./types/Server";
 
-const jsonfile = require('jsonfile');
 const path = require("path");
 const fs = require("fs")
 const Discord = require('discord.js');
@@ -12,6 +11,7 @@ const client = new Discord.Client();
 const register = require("prom-client").register
 
 const express = require("express")
+// eslint-disable-next-line no-unused-vars
 import { CustomNodeJsGlobal } from "./types/CustomNodeJsGlobal"
 import { Metrics } from "./types/Metrics";
 
@@ -48,7 +48,7 @@ global.img_resp_to_tag_max_len = 100;
 global.clip_length = 30;
 
 //Array of directories required for bot to operate, make sure all parent directories appear before sub directories in list. IE: make sure audio exists, before trying to make audio/hashed
-let required_folders = [
+const required_folders = [
     path.resolve("audio"),
     path.resolve("audio", "tmp"),
     path.resolve("audio", "hashed"),
@@ -91,18 +91,18 @@ client.on('message', message => {
     //Get just the command
     const command = args.shift().toLowerCase();
     //Need to sanitize the user input
-    var safe = Sanitize(command);
+    const safe = Sanitize(command);
 
     try {
-        let d = path.resolve("built","commands")
+        const d = path.resolve("built","commands")
 
         global.commandTypes.some((k) => {
-            let p = path.resolve(d, k, `${safe}.js`)
+            const p = path.resolve(d, k, `${safe}.js`)
             if (fs.existsSync(p)) {
-                let commandFile = require(p);
+                const commandFile = require(p);
 
                 //Check User Access
-                let isAllowed = UTIL.isUserActionAllowed(message.author, commandFile)
+                const isAllowed = UTIL.isUserActionAllowed(message.author, commandFile)
 
                 if (isAllowed) {
                     commandFile.run(client, message, args);
