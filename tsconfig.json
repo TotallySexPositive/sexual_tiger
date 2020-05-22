@@ -1,0 +1,11 @@
+{
+    "compilerOptions": {
+        "outDir": "./built",
+        "allowJs": true,
+        "target": "ES5"
+    },
+    "include": [
+        "./commands/**/*",
+        "./bot.js"
+    ]
+}
