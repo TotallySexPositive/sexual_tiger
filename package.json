@@ -28,6 +28,8 @@
   "dependencies": {
     "@discordjs/opus": "^0.3.2",
     "@octokit/rest": "^17.6.0",
+    "@types/better-sqlite3": "^5.4.0",
+    "@types/node": "^14.0.5",
     "array-shuffle": "^1.0.1",
     "asciitable": "0.0.7",
     "assign-deep": "^1.0.1",
@@ -55,9 +57,11 @@
     "randomstring": "^1.1.5",
     "read-chunk": "^3.2.0",
     "recursive-readdir": "^2.2.2",
+    "reflect-metadata": "^0.1.13",
     "request": "^2.88.2",
     "sanitize-filename": "^1.6.3",
     "sodium": "^3.0.2",
+    "typescript": "^3.9.3",
     "utf-8-validate": "^5.0.2",
     "validator": "^13.0.0",
     "xkcd-api": "^1.2.0",
@@ -65,5 +69,21 @@
     "youtube-dl": "^3.0.2",
     "ytdl-core": "^2.1.1",
     "zlib-sync": "^0.1.6"
+  },
+  "devDependencies": {
+    "@types/chai": "^4.2.11",
+    "@types/mocha": "^7.0.2",
+    "@typescript-eslint/eslint-plugin": "^3.0.0",
+    "@typescript-eslint/parser": "^3.0.0",
+    "chai": "^4.2.0",
+    "eslint": "^7.0.0",
+    "mocha": "^7.1.2",
+    "ts-mockito": "^2.5.0",
+    "ts-node": "^8.10.1"
+  },
+  "scripts": {
+    "start": "node built/bot.js",
+    "watch": "tsc -p tsconfig.json -w",
+    "test": "mocha -r ts-node/register \"test/**/*.spec.ts\""
   }
 }
