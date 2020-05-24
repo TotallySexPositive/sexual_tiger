@@ -1,8 +1,9 @@
 import { CustomNodeJsGlobal } from "../../types/CustomNodeJsGlobal"
 import { Doc } from "../../types/Doc"
-import { Example } from "src/types/Example";
+import { Example } from "../../types/Example";
+import { Message, Client } from "discord.js";
 declare const global: CustomNodeJsGlobal;
-exports.run = (client, message, _args) => {
+exports.run = (client: Client, message: Message, _args) => {
     const end = global.metrics.summaries.labels('home').startTimer()
     message.channel.send("Come visit me at, https://tiger.wentzel.dev")
     end()

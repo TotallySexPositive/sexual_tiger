@@ -1,11 +1,11 @@
 import * as UTIL from "../../utils";
 import { CustomNodeJsGlobal } from "../../types/CustomNodeJsGlobal"
 import { Doc } from "../../types/Doc"
-import { Example } from "src/types/Example";
-import { Message } from "discord.js";
+import { Example } from "../../types/Example";
+import { Message, Client } from "discord.js";
 declare const global: CustomNodeJsGlobal;
 
-exports.run = (client, message: Message, _args) => {
+exports.run = (client: Client, message: Message, _args) => {
     const end = global.metrics.summaries.labels('whoami').startTimer()
     const author = message.author;
     const member = message.member;
