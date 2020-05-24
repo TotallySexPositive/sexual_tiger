@@ -1,4 +1,4 @@
-import { Server } from "./types/Server";
+import {Server} from "./types/Server";
 
 const path = require("path");
 const fs = require("fs")
@@ -7,13 +7,14 @@ const Sanitize = require('sanitize-filename');
 const auth = require(path.resolve('auth.json'));
 const config = require(path.resolve('configure.json'));
 import * as UTIL from "./utils.js";
+
 const client = new Discord.Client();
 const register = require("prom-client").register
 
 const express = require("express")
 // eslint-disable-next-line no-unused-vars
-import { CustomNodeJsGlobal } from "./types/CustomNodeJsGlobal"
-import { Metrics } from "./types/Metrics";
+import {CustomNodeJsGlobal} from "./types/CustomNodeJsGlobal"
+import {Metrics} from "./types/Metrics";
 
 declare const global: CustomNodeJsGlobal;
 global.servers = new Map();
@@ -82,7 +83,9 @@ client.on('ready', () => {
 
 client.on('message', message => {
     // If we are reading a bot message or the message doesn't start with our prefix, ignore it
-    if (message.author.bot || message.content.indexOf(config.prefix) !== 0) { return; }
+    if (message.author.bot || message.content.indexOf(config.prefix) !== 0) {
+        return;
+    }
 
     const user = message.author.username;
 
@@ -94,7 +97,7 @@ client.on('message', message => {
     const safe = Sanitize(command);
 
     try {
-        const d = path.resolve("built","commands")
+        const d = path.resolve("built", "commands")
 
         global.commandTypes.some((k) => {
             const p = path.resolve(d, k, `${safe}.js`)
