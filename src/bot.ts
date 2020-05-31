@@ -14,7 +14,7 @@ const register = require("prom-client").register
 const express = require("express")
 // eslint-disable-next-line no-unused-vars
 import {CustomNodeJsGlobal} from "./types/CustomNodeJsGlobal"
-import {Metrics} from "./types/Metrics";
+import {Metrics}            from "./types/Metrics";
 
 declare const global: CustomNodeJsGlobal;
 global.servers = new Map();
