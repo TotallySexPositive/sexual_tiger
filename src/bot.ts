@@ -12,7 +12,8 @@ import * as Sentry from '@sentry/node';
 
 Sentry.init({ 
     dsn: auth["sentry"],
-    tracesSampleRate: 1.0
+    tracesSampleRate: 1.0,
+    environment: "dev"
  });
 // eslint-disable-next-line no-unused-vars
 import { CustomNodeJsGlobal } from "./types/CustomNodeJsGlobal"
@@ -103,11 +104,12 @@ client.on('message', message => {
 
                 //Check User Access
                 const isAllowed = UTIL.isUserActionAllowed(message.author, commandFile)
-                const transaction = Sentry.startTransaction({
-                    op: "command",
-                    name: command,
-                });
+                
                 if (isAllowed) {
+                    const transaction = Sentry.startTransaction({
+                        op: "command",
+                        name: command,
+                    });
                     try {
                         commandFile.run(client, message, args);
                     } catch (e) {
@@ -118,6 +120,7 @@ client.on('message', message => {
                     
                 } else {
                     message.channel.send(`${user}, you do not have permission to use this command.`);
+                    
                 }
 
                 return true;
