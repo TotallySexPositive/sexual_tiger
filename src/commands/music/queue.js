@@ -13,7 +13,7 @@ var options = {
 };
 
 exports.run = (client, message, args) => {
-    let end = global.metrics.summaries.labels('queue').startTimer()
+    
     var server  = global.servers[message.guild.id]
     let vc      = message.member.voice.channel
 
@@ -54,7 +54,7 @@ exports.run = (client, message, args) => {
     }
 
     server.song_queue.push(found_song);
-    end()
+
 }
 
 exports.help = () =>{

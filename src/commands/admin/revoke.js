@@ -3,7 +3,7 @@ import * as DAL from "../../dal";
 
 exports.run = (client, message, args) => {
     //THERE ARE TOO MANY EXITS YOU MONSTER
-    let end = global.metrics.summaries.labels('admin_revoke').startTimer()
+    
     let server = global.servers[message.guild.id];
     let secure_commands = ["revoke", "grant"]
 

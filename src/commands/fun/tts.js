@@ -6,7 +6,7 @@ const TTS   = require('google-tts-api');
 const parser    = require('yargs-parser')
 
 exports.run = (client, message, args) => {
-    let end = global.metrics.summaries.labels('tts').startTimer()
+    
     var opts = {
         alias: {
             text: ['t'],
@@ -57,7 +57,7 @@ exports.run = (client, message, args) => {
     .catch(function (err) {
         console.error(err.stack);
     });
-    end()
+
 }
 
 exports.help = () =>{

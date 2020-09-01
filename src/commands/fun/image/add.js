@@ -10,7 +10,7 @@ var randomstring = require("randomstring");
 const sanitize  = require("sanitize-filename");
 
 exports.run = (client, message, args) => {
-    let end = global.metrics.summaries.labels('image_add').startTimer()
+    
    if(args.length <= 1) {
        return message.channel.send("You must also tag the image.  EX: $image add http://coolimages.com/coolimage.jpg cry pout death");
    } else {
@@ -71,7 +71,7 @@ exports.run = (client, message, args) => {
             })
         }
     }
-    end()
+
 }
 
 exports.help = () =>{

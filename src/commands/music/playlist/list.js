@@ -3,7 +3,7 @@ import * as DAL from "../../../dal";
 const asciitable = require("asciitable")
 
 exports.run = (client, message, args) => {
-    let end = global.metrics.summaries.labels('playlist_list').startTimer()
+    
     var playlists_options = {
         skinny: true,
         intersectionCharacter: "+",
@@ -43,7 +43,7 @@ exports.run = (client, message, args) => {
             message.channel.send(table, {code: true, split: true});
         }
     }
-    end()
+
 };
 
 exports.docs = () => {

@@ -12,13 +12,11 @@ const register = require("prom-client").register
 import * as Sentry from '@sentry/node';
 
 Sentry.init({ 
-    dsn: "https://5a0d9261b00f45e0bf5f0460542548ca@o441835.ingest.sentry.io/5412627",
+    dsn: auth["sentry"],
     tracesSampleRate: 1.0
  });
-const express = require("express")
 // eslint-disable-next-line no-unused-vars
 import { CustomNodeJsGlobal } from "./types/CustomNodeJsGlobal"
-import { Metrics } from "./types/Metrics";
 
 declare const global: CustomNodeJsGlobal;
 global.servers = new Map();
@@ -46,8 +44,6 @@ global.image_dirs["tmp"] = path.resolve("images", "tmp");
 global.image_dirs["hashed"] = path.resolve("images", "hashed");
 global.image_dirs["trash"] = path.resolve("images", "trash");
 
-
-global.metrics = new Metrics()
 global.img_resp_to_tag_order = []
 global.img_resp_to_tag_max_len = 100;
 global.clip_length = 30;
@@ -152,18 +148,3 @@ client.on('guildMemberAdd', member => {
 });
 
 client.login(auth.token);
-
-const server = express()
-server.get('/metrics', (_req, res) => {
-    res.set('Content-Type', register.contentType)
-    res.end(register.metrics())
-})
-const port = process.env.PORT || 3001
-console.log(
-    `Server listening to ${port}, metrics exposed on /metrics endpoint`
-)
-server.listen(port)
-
-setInterval(() => {
-    global.metrics.uptime.set(client.uptime)
-}, 10000)

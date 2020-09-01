@@ -5,11 +5,8 @@ import { Message, Client } from "discord.js";
 declare const global: CustomNodeJsGlobal;
 
 exports.run = (client: Client, message: Message, _args) => {
-    const end = global.metrics.summaries.labels('uptime').startTimer()
     const time = timeConversion(client.uptime);
     message.channel.send(`I've been up for ${time}!`).catch(console.error);
-    global.metrics.uptime.set(client.uptime)
-    end()
 }
 
 function timeConversion(millisec: number) {

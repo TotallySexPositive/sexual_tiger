@@ -4,7 +4,7 @@ import * as UTIL from "../../../utils";
 const parser    = require('yargs-parser')
 
 exports.run = (client, message, args) => {
-    let end = global.metrics.summaries.labels('rename').startTimer()
+    
     var opts = {
         alias: {
             id: ['i'],
@@ -46,7 +46,7 @@ exports.run = (client, message, args) => {
         }
 
     }
-    end()
+
 };
 
 exports.help = () =>{

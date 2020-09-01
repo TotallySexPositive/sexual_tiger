@@ -6,7 +6,7 @@ import * as UTIL from "../../utils";
 var Queue       = require('better-queue');
 
 exports.run = (client, message, args) => {
-  let end = global.metrics.summaries.labels('process_queued_uploads').startTimer()
+  
     let uploaded_audio_folder   = global.audio_dirs.uploaded;
     let hashed_audio_path       = global.audio_dirs.hashed;
     let stored_audio_path       = global.audio_dirs.stored;
@@ -28,7 +28,7 @@ exports.run = (client, message, args) => {
             message.channel.send(err)
           });
     });
-    end()
+
 };
 
 exports.help = () =>{

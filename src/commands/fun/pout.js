@@ -2,13 +2,13 @@ const path  = require("path");
 import * as UTIL from "../../utils";
 
 exports.run = (client, message, args) => {
-    let end = global.metrics.summaries.labels('pout').startTimer()
+    
     const NS_PER_SEC = 1e9;
     const time = process.hrtime();
     UTIL.postRandomImageByTag(message, "pout");	
     const diff = process.hrtime(time);
     console.log(`UtilPostImage ${(diff[0] * NS_PER_SEC + diff[1])/1000000} ms`);
-    end()
+
 }
 
 exports.help = () =>{

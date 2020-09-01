@@ -10,7 +10,6 @@ import { Example } from '../../types/Example';
 declare const global: CustomNodeJsGlobal;
 
 exports.run = (client: Client, message: Message, args) => {
-    const end = global.metrics.summaries.labels('help').startTimer()
     if (args.length < 1) {
         const embed = new MessageEmbed()
         embed.setTitle("Command Categories")
@@ -62,7 +61,6 @@ exports.run = (client: Client, message: Message, args) => {
 
         }
     }
-    end()
 }
 
 exports.help = () => {
