@@ -8,7 +8,6 @@ const auth = require(path.resolve('auth.json'));
 const config = require(path.resolve('configure.json'));
 import * as UTIL from "./utils.js";
 const client = new Discord.Client();
-const register = require("prom-client").register
 import * as Sentry from '@sentry/node';
 
 Sentry.init({ 
