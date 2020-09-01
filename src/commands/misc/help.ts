@@ -4,9 +4,9 @@ const c = path.resolve("configure.json")
 console.log(c)
 const cfg = require(c)
 import { MessageEmbed, Client, Message } from 'discord.js';
-import { CustomNodeJsGlobal } from "../../types/CustomNodeJsGlobal"
-import { Doc } from 'src/types/Doc';
-import { Example } from 'src/types/Example';
+import { CustomNodeJsGlobal } from '../../types/CustomNodeJsGlobal'
+import { Doc } from '../../types/Doc';
+import { Example } from '../../types/Example';
 declare const global: CustomNodeJsGlobal;
 
 exports.run = (client: Client, message: Message, args) => {

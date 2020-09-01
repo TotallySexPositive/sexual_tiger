@@ -15,4 +15,5 @@ export interface CustomNodeJsGlobal extends NodeJS.Global {
     img_resp_to_tag_order: Array<Snowflake>;
     img_resp_to_tag_max_len: number;
     clip_length: number;
+    sentry: any;
 }

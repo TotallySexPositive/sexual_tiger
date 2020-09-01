@@ -9,7 +9,12 @@ const config = require(path.resolve('configure.json'));
 import * as UTIL from "./utils.js";
 const client = new Discord.Client();
 const register = require("prom-client").register
+import * as Sentry from '@sentry/node';
 
+Sentry.init({ 
+    dsn: "https://5a0d9261b00f45e0bf5f0460542548ca@o441835.ingest.sentry.io/5412627",
+    tracesSampleRate: 1.0
+ });
 const express = require("express")
 // eslint-disable-next-line no-unused-vars
 import { CustomNodeJsGlobal } from "./types/CustomNodeJsGlobal"
@@ -103,9 +108,19 @@ client.on('message', message => {
 
                 //Check User Access
                 const isAllowed = UTIL.isUserActionAllowed(message.author, commandFile)
-
+                const transaction = Sentry.startTransaction({
+                    op: "command",
+                    name: command,
+                });
                 if (isAllowed) {
-                    commandFile.run(client, message, args);
+                    try {
+                        commandFile.run(client, message, args);
+                    } catch (e) {
+                        Sentry.captureException(e);
+                    } finally {
+                        transaction.finish();
+                    }
+                    
                 } else {
                     message.channel.send(`${user}, you do not have permission to use this command.`);
                 }
@@ -122,6 +137,7 @@ client.on('message', message => {
     } catch (err) {
         message.channel.send(`ERROR: ${err.message}`)
         console.error(err);
+        Sentry.captureException(err);
     }
 });
 

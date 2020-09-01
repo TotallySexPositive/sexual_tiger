@@ -28,6 +28,8 @@
   "dependencies": {
     "@discordjs/opus": "^0.3.2",
     "@octokit/rest": "^17.6.0",
+    "@sentry/node": "^5.22.3",
+    "@sentry/tracing": "^5.22.3",
     "@types/better-sqlite3": "^5.4.0",
     "@types/node": "^14.0.5",
     "array-shuffle": "^1.0.1",
