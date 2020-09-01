@@ -10,9 +10,9 @@ const extractDomain  = require('extract-domain');
 const validator = require('validator');
 
 exports.run = (client, message, args) => {
-    let end = global.metrics.summaries.labels('download').startTimer()
+    
     let server = global.servers[message.guild.id];
-    let ended = false
+    
  
     if(args.length !== 1) {
         return message.channel.send("It seems you sent too much or too little info.");
@@ -50,20 +50,14 @@ exports.run = (client, message, args) => {
                     message.channel.send(`Done downloading the audio from ${domain}.`)
                     UTIL.processAudioFile(save_to, url, message, (err, success) => {
                         if(err) {
-                            end(); ended=true;
                             message.channel.send(err.message);
                         } else {
-                            end(); ended=true;
                             message.channel.send(success);
                         }
                     });
                 })
             }
         })
-    }
-    if (ended == false)
-    {
-        end()
     }
     
 };

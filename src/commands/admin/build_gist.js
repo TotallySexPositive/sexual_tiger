@@ -2,14 +2,12 @@ import * as UTIL from "../../utils.js";
 
 // eslint-disable-next-line no-unused-vars
 exports.run = (client, message, args) => {
-    let end = global.metrics.summaries.labels('admin_build_gist').startTimer()
     let err = UTIL.rebuildAudioGist();
     if(err) {
         message.channel.send(err.message);
     } else {
         message.channel.send("Updated!");
     }
-    end()
 }
 
 exports.help = () =>{

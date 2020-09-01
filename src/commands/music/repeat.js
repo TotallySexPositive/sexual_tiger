@@ -1,5 +1,5 @@
 exports.run = (client, message, args) => {
-    let end = global.metrics.summaries.labels('repeat').startTimer()
+    
     let server = global.servers[message.guild.id];
     server.repeat = !server.repeat;
     let m = ""
@@ -10,7 +10,7 @@ exports.run = (client, message, args) => {
     }
 
     message.channel.send(m)
-    end()
+
 };
 
 exports.help = () =>{

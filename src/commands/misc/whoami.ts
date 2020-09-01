@@ -6,7 +6,6 @@ import { Message, Client } from "discord.js";
 declare const global: CustomNodeJsGlobal;
 
 exports.run = (client: Client, message: Message, _args) => {
-    const end = global.metrics.summaries.labels('whoami').startTimer()
     const author = message.author;
     const member = message.member;
 
@@ -23,7 +22,6 @@ exports.run = (client: Client, message: Message, _args) => {
     `.replace(/\n +/g, `\n`);
 
     message.channel.send(description);
-    end()
 }
 
 exports.help = () => {

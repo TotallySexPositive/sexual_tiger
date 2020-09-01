@@ -4,9 +4,7 @@ import { Example } from "../../types/Example";
 import { Message, Client } from "discord.js";
 declare const global: CustomNodeJsGlobal;
 exports.run = (client: Client, message: Message, _args) => {
-    const end = global.metrics.summaries.labels('home').startTimer()
     message.channel.send("Come visit me at, https://tiger.wentzel.dev")
-    end()
 }
 
 exports.help = () => {

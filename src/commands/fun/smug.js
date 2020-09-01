@@ -2,9 +2,9 @@ const path  = require("path");
 import * as UTIL from "../../utils";
 
 exports.run = (client, message, args) => {
-    let end = global.metrics.summaries.labels('smug').startTimer()
+    
     UTIL.postRandomImageByTag(message, "smug");	
-    end()
+
 }
 
 exports.help = () =>{

@@ -5,7 +5,6 @@ import * as DAL from "../../dal";
 
 
 exports.run = (client, message, args) => {
-    let end = global.metrics.summaries.labels('admin_clean_db').startTimer()
     let {err: s_err, songs} = DAL.getAllSongs()
     if(s_err) {
         console.log("Failed to get songs");
@@ -21,7 +20,6 @@ exports.run = (client, message, args) => {
             }
         });
     }
-    end()
 }
 
 exports.help = () =>{

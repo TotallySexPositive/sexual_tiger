@@ -28,6 +28,8 @@
   "dependencies": {
     "@discordjs/opus": "^0.3.2",
     "@octokit/rest": "^17.6.0",
+    "@sentry/node": "^5.22.3",
+    "@sentry/tracing": "^5.22.3",
     "@types/better-sqlite3": "^5.4.0",
     "@types/node": "^14.0.5",
     "array-shuffle": "^1.0.1",
@@ -38,7 +40,6 @@
     "bufferutil": "^4.0.1",
     "discord.js": "^12.2.0",
     "erlpack": "github:discordapp/erlpack",
-    "express": "^4.17.1",
     "extract-domain": "^2.2.1",
     "giphy-api": "^2.0.1",
     "google-tts-api": "0.0.4",

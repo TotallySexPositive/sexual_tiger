@@ -6,7 +6,6 @@ import { Client, Message } from "discord.js";
 declare const global: CustomNodeJsGlobal;
 
 exports.run = (client: Client, message: Message, _args) => {
-    const end = global.metrics.summaries.labels('fuckoff').startTimer()
     const server: Server  = global.servers[message.guild.id];
 
     if (server.connectionPromise != null) {
@@ -22,7 +21,6 @@ exports.run = (client: Client, message: Message, _args) => {
     } else {
         message.channel.send("No, You Fuck Off!")
     }
-    end()
 };
 
 exports.help = () =>{

@@ -8,12 +8,15 @@ const auth = require(path.resolve('auth.json'));
 const config = require(path.resolve('configure.json'));
 import * as UTIL from "./utils.js";
 const client = new Discord.Client();
-const register = require("prom-client").register
+import * as Sentry from '@sentry/node';
 
-const express = require("express")
+Sentry.init({ 
+    dsn: auth["sentry"],
+    tracesSampleRate: 1.0,
+    environment: "dev"
+ });
 // eslint-disable-next-line no-unused-vars
 import { CustomNodeJsGlobal } from "./types/CustomNodeJsGlobal"
-import { Metrics } from "./types/Metrics";
 
 declare const global: CustomNodeJsGlobal;
 global.servers = new Map();
@@ -41,8 +44,6 @@ global.image_dirs["tmp"] = path.resolve("images", "tmp");
 global.image_dirs["hashed"] = path.resolve("images", "hashed");
 global.image_dirs["trash"] = path.resolve("images", "trash");
 
-
-global.metrics = new Metrics()
 global.img_resp_to_tag_order = []
 global.img_resp_to_tag_max_len = 100;
 global.clip_length = 30;
@@ -103,11 +104,23 @@ client.on('message', message => {
 
                 //Check User Access
                 const isAllowed = UTIL.isUserActionAllowed(message.author, commandFile)
-
+                
                 if (isAllowed) {
-                    commandFile.run(client, message, args);
+                    const transaction = Sentry.startTransaction({
+                        op: "command",
+                        name: command,
+                    });
+                    try {
+                        commandFile.run(client, message, args);
+                    } catch (e) {
+                        Sentry.captureException(e);
+                    } finally {
+                        transaction.finish();
+                    }
+                    
                 } else {
                     message.channel.send(`${user}, you do not have permission to use this command.`);
+                    
                 }
 
                 return true;
@@ -122,6 +135,7 @@ client.on('message', message => {
     } catch (err) {
         message.channel.send(`ERROR: ${err.message}`)
         console.error(err);
+        Sentry.captureException(err);
     }
 });
 
@@ -136,18 +150,3 @@ client.on('guildMemberAdd', member => {
 });
 
 client.login(auth.token);
-
-const server = express()
-server.get('/metrics', (_req, res) => {
-    res.set('Content-Type', register.contentType)
-    res.end(register.metrics())
-})
-const port = process.env.PORT || 3001
-console.log(
-    `Server listening to ${port}, metrics exposed on /metrics endpoint`
-)
-server.listen(port)
-
-setInterval(() => {
-    global.metrics.uptime.set(client.uptime)
-}, 10000)

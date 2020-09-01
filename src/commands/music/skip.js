@@ -1,5 +1,5 @@
 exports.run = (client, message, args) => {
-    let end = global.metrics.summaries.labels('skip').startTimer()
+    
     var server   = global.servers[message.guild.id];
     let vc       = message.member.voice.channel
 
@@ -19,7 +19,7 @@ exports.run = (client, message, args) => {
             }
         })
     }; 
-    end()
+
 };
 
 exports.help = () =>{
