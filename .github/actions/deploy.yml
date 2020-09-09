@@ -1,0 +1,14 @@
+name: Deploy
+
+on:
+    push:
+        branches: [ steve-dev ]
+
+jobs:
+    echo:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout source code
+              uses: actions/checkout
+            - name: Echo Hello World
+              run: echo "Hello World"
