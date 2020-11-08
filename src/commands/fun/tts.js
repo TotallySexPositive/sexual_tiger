@@ -1,13 +1,10 @@
-const path  = require("path");
 import * as UTIL from "../../utils";
-const auth  = require(path.resolve('auth.json'));
-const giphy = require('giphy-api')(auth.giphy);
 const TTS   = require('google-tts-api');
 const parser    = require('yargs-parser')
 
 exports.run = (client, message, args) => {
     let end = global.metrics.summaries.labels('tts').startTimer()
-    var opts = {
+    let opts = {
         alias: {
             text: ['t'],
             language: ['l'],
@@ -19,7 +16,7 @@ exports.run = (client, message, args) => {
     }
 
     let arg_string = message.content.slice(4); //Chop off $tts
-    var argv = parser(arg_string.replace(/= +/g, "="), opts)
+    let argv = parser(arg_string.replace(/= +/g, "="), opts)
 
     let lang = 'en'
     let rate = 1
@@ -40,7 +37,7 @@ exports.run = (client, message, args) => {
     }
     TTS(text, lang, rate)   // speed normal = 1 (default), slow = 0.24
     .then(function (url) {
-        var server = global.servers[message.guild.id]
+        let server = global.servers[message.guild.id]
 
         let vc = message.member.voice.channel
         if(vc === undefined){
