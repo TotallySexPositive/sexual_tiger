@@ -6,7 +6,7 @@ exports.run = (client, message, args) => {
         return message.channel.send("I'm not even in a channel.")
     }
 
-    var server = global.servers[message.guild.id];
+    let server = global.servers[message.guild.id];
     let promise = server.connectionPromise
 
     if(promise === null) {
@@ -40,15 +40,17 @@ exports.run = (client, message, args) => {
         
     } else { //0 or 2+ args display volume, send warning
         promise.then(connection => {
+            let current_volume = -1;
             if (connection.dispatcher != null) {
                 current_volume = connection.dispatcher.volume;
+                return message.channel.send(`Current Volume: ${current_volume * 100}%.  To set the volume, send a single number`);
+            } else {
+                return message.channel.send(`Couldn't find a connection to check the volume one.`);
             }
-    
-            return message.channel.send(`Current Volume: ${current_volume * 100}%.  To set the volume, send a single number`);
         }).catch(reason => {
             console.log(reason)
+            return message.channel.send(`Dude, I dont even know how I got here, let alone what the volume is.`);
         });
-        return message.channel.send(`Dude, I dont even know how I got here, let alone what the volume is.`); 
     }
     end()
 }
