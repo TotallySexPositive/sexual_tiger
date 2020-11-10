@@ -1,10 +1,8 @@
-const path  = require("path")
 import * as DAL from "../../dal";
-
 
 exports.run = (client, message, args) => {
     let end = global.metrics.summaries.labels('wii').startTimer()
-    var server = global.servers[message.guild.id]
+    let server = global.servers[message.guild.id]
 
     let vc = message.member.voice.channel
     if(vc === undefined){
@@ -17,7 +15,7 @@ exports.run = (client, message, args) => {
     //2117 no pause
     let anxiety = [2058, 2059, 2117]
     let song_identifier = anxiety[anxiety.length * Math.random() | 0]
-    console.log(song_identifier)
+
     let {err, song} = DAL.findSongByIdentifier(song_identifier);
 
     if(err) {
@@ -25,26 +23,18 @@ exports.run = (client, message, args) => {
     } else if (song === undefined) { 
         return message.channel.send("Wii broke because it couldnt find an internally defined id.  Oops?")
     } else {
-        found_song = song;
+        server.current_song = song;
+
+        vc.join()
+          .then(connection => {
+              server.song_queue.length = 0
+              server.song_queue.push({
+                  voice_channel: message.member.voice.channel,
+                  song: song
+              })
+          })
+          .catch(console.error);
     }
-
-    server.current_song = found_song;
-
-    vc.join()
-    .then(connection => {
-        /*
-        let song_request = {
-            voice_channel: message.member.voice.channel,
-            song: found_song
-        }
-        */
-        server.song_queue.length = 0
-        server.song_queue.push({
-            voice_channel: message.member.voice.channel,
-            song: found_song
-        })
-    })
-    .catch(console.error);
     end()
 }
 
