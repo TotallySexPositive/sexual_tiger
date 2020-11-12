@@ -1,7 +1,7 @@
 exports.run = (client, message, args) => {
     let end = global.metrics.summaries.labels('audio').startTimer()
     let server = global.servers[message.guild.id];
-    message.channel.send("You lazy sack of feces, here...\n<https://gist.github.com/narayanjr/c76103763a2f785162d30c841094e795>")
+    message.channel.send("You lazy sack of feces, here...\n<https://tiger.wentzel.dev/audio.html>")
     end()
 }
 
@@ -17,7 +17,7 @@ exports.docs = () => {
         parent: "",
         full_command: "audio",
         command: "audio",
-        description: "Display the link to the Gist that contains info on all the songs in the DB.",
+        description: "Display the link to the audio list on the site.",
         syntax: "audio",
         examples: [
             {
