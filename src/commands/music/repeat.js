@@ -3,10 +3,11 @@ exports.run = (client, message, args) => {
     let server = global.servers[message.guild.id];
     server.repeat = !server.repeat;
     let m = ""
+
     if (server.repeat){
-    	m = "Sounds will repeat";	
+        m = "Sounds will repeat";
     } else{
-    	m = "Sounds will not repeat";
+        m = "Sounds will not repeat";
     }
 
     message.channel.send(m)

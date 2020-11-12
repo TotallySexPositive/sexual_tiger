@@ -75,10 +75,13 @@ client.on('ready', () => {
     console.log('I am ready!');
     client.user.setActivity("pick up sticks.");
 
-    //Init servers array
-    client.guilds.cache.keyArray().forEach(server_id => {
-        global.servers[server_id] = new Server();
-    });
+    //Init servers array and update member list
+    client.guilds.cache.each(guild => {
+        global.servers[guild.id] = new Server();
+        guild.members.fetch().then(members => {
+            UTIL.updateMembersList(members);
+        }).catch(console.error)
+    })
 });
 
 client.on('message', message => {

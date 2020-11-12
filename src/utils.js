@@ -27,11 +27,19 @@ var playAudio = async function(voice_channel) {
 
     server.connectionPromise    = voice_channel.join()
 
-    server.current_song         = server.repeat ? server.song_queue[0] : server.song_queue.shift()
-    let volume                  = server.current_song.is_clip ? server.clip_volume : server.volume
+    //If there is a song playing, replay it. If not grab the first one off the list.
+
+    if (!server.repeat || !server.current_song){
+        server.current_song = server.song_queue.shift()
+    } else {
+        //A song is already playing, just leave current song alone, it will repeat.
+    }
+
+    let volume                  = server.current_song && server.current_song.is_clip ? server.clip_volume : server.volume
 
     server.connectionPromise.then(connection => {
         let dispatcher  = connection.play(path.resolve(global.audio_dirs.hashed, `${server.current_song.hash_id}.mp3`), {volume: 1 })
+
         dispatcher.setVolume(volume)
 
         dispatcher.on('start',() => {
@@ -39,7 +47,7 @@ var playAudio = async function(voice_channel) {
         })
 
         dispatcher.on('finish', () => {
-            if (server.song_queue.length != 0) {
+            if (server.song_queue.length !== 0 || server.repeat) {
                 playAudio(voice_channel)
             } else if(!server.maintain_presence) {
                 server.current_song = undefined
@@ -450,12 +458,45 @@ let updateCommandList = function() {
     });
 }
 
+let generateAudioList = function() {
+    let {err, songs} = DAL.getSongListData()
+
+    if(err) {
+        console.log(err);
+        return {err: new Error("Crashed while finding image."), image: undefined}
+    } else {
+        const fs = require('fs')
+        //let data_path = path.resolve("src", "website", "data", "data.json");
+        try {
+            fs.writeFile("/var/www/html/data.json", JSON.stringify(songs), function(err) {
+                if(err) {
+                    console.log(err);
+                    return message.channel.send("Failed to write updated songs json to website/data.json")
+                }
+            });
+
+        } catch (err) {
+            console.error(err)
+        }
+    }
+}
+
+let updateMembersList = function(members) {
+    let members_list = Array()
+    members.forEach((val, key) => {
+        members_list.push({member_id: val.id, username: val.user.username})
+    });
+
+    DAL.updateMembersList(members_list)
+}
+
 module.exports.isInt = isInt;
 module.exports.isAdmin = isAdmin;
 module.exports.playAudio = playAudio;
 
 module.exports.processAudioFile = processAudioFile;
 module.exports.rebuildAudioGist = rebuildAudioGist;
+module.exports.generateAudioList = generateAudioList;
 module.exports.processImageFile = processImageFile;
 module.exports.getFileSizeInMegaBytes = getFileSizeInMegaBytes;
 module.exports.processAudioFileTask = processAudioFileTask;
@@ -465,11 +506,14 @@ module.exports.verifyTags = verifyTags;
 module.exports.isUserActionAllowed = isUserActionAllowed;
 module.exports.updateCommandList = updateCommandList;
 
+module.exports.updateMembersList = updateMembersList;
+
 export {isInt};
 export {isAdmin};
 export {playAudio};
 export {processAudioFile};
 export {rebuildAudioGist};
+export {generateAudioList};
 export {processImageFile};
 export {getFileSizeInMegaBytes};
 export {processAudioFileTask};
@@ -478,3 +522,4 @@ export {postRandomImageByTag};
 export {verifyTags};
 export {isUserActionAllowed};
 export {updateCommandList};
+export {updateMembersList};

@@ -12,6 +12,13 @@ CREATE TABLE IF NOT EXISTS song (
     PRIMARY KEY(song_id)
 );
 
+CREATE TABLE IF NOT EXISTS member (
+    member_id	INTEGER,
+    username	TEXT NOT NULL UNIQUE,
+    added_at	TEXT,
+    PRIMARY KEY(member_id)
+);
+
 CREATE TABLE IF NOT EXISTS playlist (
     playlist_id	INTEGER,
     name	TEXT NOT NULL UNIQUE,

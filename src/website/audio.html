@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Bot Audio</title>
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.22/css/jquery.dataTables.css">
+
+    <script type="text/javascript" charset="utf8" src="https://code.jquery.com/jquery-3.5.1.js"></script>
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.22/js/jquery.dataTables.js"></script>
+
+</head>
+<body>
+    <table id="songTable" class="display" style="width:100%">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th># Plays</th>
+            <th>Clip?</th>
+            <th>Duration</th>
+            <th>Added By</th>
+        </tr>
+        </thead>
+        <tfoot>
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th># Plays</th>
+            <th>Clip?</th>
+            <th>Duration</th>
+            <th>Added By</th>
+        </tr>
+        </tfoot>
+    </table>
+</body>
+<script type="text/javascript">
+	$(document).ready(function() {
+		$('#songTable').DataTable( {
+			"ajax": './data.json'
+		} );
+	} );
+</script>
+</html>
+
