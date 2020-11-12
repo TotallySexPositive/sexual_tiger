@@ -1,4 +1,5 @@
-import * as DAL from "../../dal";
+import * as DAL  from "../../dal";
+import * as UTIL from "../../utils";
 
 exports.run = (client, message, args) => {
     let end = global.metrics.summaries.labels('wii').startTimer()
@@ -23,17 +24,9 @@ exports.run = (client, message, args) => {
     } else if (song === undefined) { 
         return message.channel.send("Wii broke because it couldnt find an internally defined id.  Oops?")
     } else {
-        server.current_song = song;
-
-        vc.join()
-          .then(connection => {
-              server.song_queue.length = 0
-              server.song_queue.push({
-                  voice_channel: message.member.voice.channel,
-                  song: song
-              })
-          })
-          .catch(console.error);
+        server.song_queue = [];
+        server.song_queue.push(song);
+        UTIL.playAudio(vc)
     }
     end()
 }
