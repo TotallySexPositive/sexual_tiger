@@ -36,7 +36,18 @@
 <script type="text/javascript">
 	$(document).ready(function() {
 		$('#songTable').DataTable( {
-			"ajax": './data.json'
+			"ajax": {
+				"url": "data.json",
+				"dataSrc": ""
+			},
+			columns: [
+				{ data: 'song_id' },
+				{ data: 'name' },
+				{ data: 'num_plays' },
+				{ data: 'is_clip' },
+				{ data: 'duration' },
+				{ data: 'username' }
+			]
 		} );
 	} );
 </script>
