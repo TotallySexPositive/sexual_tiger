@@ -166,10 +166,10 @@ var processAudioFile = function(file_path, url, message, cb) {
             } else {
                 probe_audio_file(file_hash);
 
-                let gist_err = rebuildAudioGist();
-                if(gist_err) {
-                    console.log(gist_err);
-                    message.channel.send("Tell Adam the gist list bit the bullet.");
+                let err = generateAudioList();
+                if(err) {
+                    message.channel.send("Failed to update audio list after adding a new song.");
+                    message.channel.send(err.message);
                 }
                 fs.rename(file_path, stored_file_path, (err) => {
                     if(err) {
