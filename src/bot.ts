@@ -19,6 +19,8 @@ Sentry.init({
 // eslint-disable-next-line no-unused-vars
 
 import { CustomNodeJsGlobal } from "./types/CustomNodeJsGlobal"
+import {Snowflake}            from "discord.js";
+import {Tag}                  from "./types/Tag";
 
 declare const global: CustomNodeJsGlobal;
 global.servers = new Map();
@@ -46,7 +48,9 @@ global.image_dirs["tmp"] = path.resolve("images", "tmp");
 global.image_dirs["hashed"] = path.resolve("images", "hashed");
 global.image_dirs["trash"] = path.resolve("images", "trash");
 
-global.img_resp_to_tag_order = []
+
+global.img_resp_to_tag = new Map<Snowflake, Tag>();
+global.img_resp_to_tag_order = [];
 global.img_resp_to_tag_max_len = 100;
 global.clip_length = 30;
 

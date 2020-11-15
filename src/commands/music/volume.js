@@ -13,7 +13,7 @@ exports.run = (client, message, args) => {
         return message.channel.send("No audio is playing.  You must be hearing things.")
     }
 
-    if(args.length == 1) { //1 args, set volume.
+    if(args.length === 1) { //1 args, set volume.
         let num_vol = Number(args[0])
         if(num_vol) {
             let req_vol = Math.round(((num_vol > 1 ? num_vol / 100.0 : num_vol) + Number.EPSILON) * 100) / 100
@@ -52,7 +52,6 @@ exports.run = (client, message, args) => {
             return message.channel.send(`Dude, I dont even know how I got here, let alone what the volume is.`);
         });
     }
-
 }
 
 exports.help = () =>{
