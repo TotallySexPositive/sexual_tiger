@@ -2,8 +2,8 @@ import * as DAL  from "../../dal";
 import * as UTIL from "../../utils";
 
 exports.run = (client, message, args) => {
-    let end = global.metrics.summaries.labels('wii').startTimer()
     let server = global.servers[message.guild.id]
+
 
     let vc = message.member.voice.channel
     if(vc === undefined){
@@ -28,7 +28,6 @@ exports.run = (client, message, args) => {
         server.song_queue.push(song);
         UTIL.playAudio(vc)
     }
-    end()
 }
 
 exports.help = () =>{

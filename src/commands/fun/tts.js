@@ -3,9 +3,12 @@ const TTS   = require('google-tts-api');
 const parser    = require('yargs-parser')
 
 exports.run = (client, message, args) => {
+
     message.channel.send("TTS is currently dead while the google API is changing and the TTS library is in a rewrite.")
-    /*let end = global.metrics.summaries.labels('tts').startTimer()
-    let opts = {
+    /*
+
+    var opts = {
+
         alias: {
             text: ['t'],
             language: ['l'],
@@ -55,7 +58,6 @@ exports.run = (client, message, args) => {
     .catch(function (err) {
         console.error(err.stack);
     });
-    end()
      */
 }
 

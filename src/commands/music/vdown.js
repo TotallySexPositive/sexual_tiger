@@ -1,5 +1,5 @@
 exports.run = (client, message, args) => {
-    let end = global.metrics.summaries.labels('vdown').startTimer()
+    
     var server  = global.servers[message.guild.id];
     let vc      = message.member.voice.channel
     let promise = server.connectionPromise
@@ -18,7 +18,7 @@ exports.run = (client, message, args) => {
             console.log(reason)
         });
     }
-    end()
+
 }
 
 exports.help = () => {

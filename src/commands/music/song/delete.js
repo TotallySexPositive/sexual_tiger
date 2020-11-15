@@ -4,7 +4,7 @@ import * as UTIL from "../../../utils";
 const fs    = require('fs');
 
 exports.run = (client, message, args) => {
-    let end = global.metrics.summaries.labels('delete').startTimer()
+    
     let server = global.servers[message.guild.id];
     var identifier  = args.join(" ");
     let playlist_id = undefined;
@@ -67,7 +67,7 @@ exports.run = (client, message, args) => {
             }
         }
     }
-    end()
+
 };
 
 exports.docs = () => {

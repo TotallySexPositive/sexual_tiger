@@ -1,8 +1,5 @@
 exports.run = (client, message, args) => {
-    let end = global.metrics.summaries.labels('audio').startTimer()
-    let server = global.servers[message.guild.id];
     message.channel.send("You lazy sack of feces, here...\n<https://tiger.wentzel.dev/audio.html>")
-    end()
 }
 
 exports.help = () =>{

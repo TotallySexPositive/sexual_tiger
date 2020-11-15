@@ -2,9 +2,9 @@ const path  = require("path");
 import * as UTIL from "../../utils";
 
 exports.run = (client, message, args) => {
-    let end = global.metrics.summaries.labels('nuke').startTimer()
+    
     UTIL.postRandomImageByTag(message, "nuke");	
-    end()
+
 }
 
 exports.help = () =>{

@@ -3,7 +3,7 @@ const fs        = require("fs");
 import * as DAL from "../../../dal";
 
 exports.run = (client, message, args) => {
-    let end = global.metrics.summaries.labels('image_untag').startTimer()
+    
     if(args.length !== 1) {
         message.channel.send("Must send message id. EX: $image untag [MESSAGE_ID]\nTo get message_id, Go to Discord Settings -> Appearance -> Toggle Developer Mode on.\nThen right click image/post and click 'Copy Id'");
     } else {
@@ -57,7 +57,7 @@ exports.run = (client, message, args) => {
         })
         .catch(console.error);
     }
-    end()
+
 }
 
 exports.help = () =>{

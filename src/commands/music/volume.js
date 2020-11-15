@@ -1,5 +1,5 @@
 exports.run = (client, message, args) => {
-    let end = global.metrics.summaries.labels('volume').startTimer()
+    
     let vc = message.member.voice.channel
 
     if(vc === undefined || vc == null) {
@@ -52,7 +52,7 @@ exports.run = (client, message, args) => {
             return message.channel.send(`Dude, I dont even know how I got here, let alone what the volume is.`);
         });
     }
-    end()
+
 }
 
 exports.help = () =>{

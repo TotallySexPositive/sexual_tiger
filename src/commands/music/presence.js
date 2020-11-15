@@ -1,5 +1,5 @@
 exports.run =  (client, message, args)=>{
-    let end = global.metrics.summaries.labels('presence').startTimer()
+    
 	let server = global.servers[message.guild.id];
     server.maintain_presence = !server.maintain_presence;
     let m = ""
@@ -11,7 +11,7 @@ exports.run =  (client, message, args)=>{
 
     message.channel.send(m)
     //Could make it leave here if you want
-    end()
+
 }
 
 exports.help = ()=>{

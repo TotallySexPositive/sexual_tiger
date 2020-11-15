@@ -3,7 +3,7 @@ const path = require("path")
 const dir = require("node-dir")
 
 exports.run = (client, message, args) => {
-    let end = global.metrics.summaries.labels('admin_reload').startTimer()
+    
     if(!args || args.length < 1 || args.length == undefined) return message.reply("Must provide a command name to reload.");
     // the path is relative to the *current folder*, so just ./filename.js
     let arg = args[0];
@@ -44,7 +44,7 @@ exports.run = (client, message, args) => {
         })
         message.reply(`Reloaded ${arg}.`);
     }
-    end()
+
 };
 
 exports.help = () =>{
