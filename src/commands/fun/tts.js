@@ -3,21 +3,35 @@ import * as TTS from 'google-tts-api';
 const parser    = require('yargs-parser')
 
 exports.run = (client, message, args) => {
-    var opts = {
 
-        alias: {
-            text: ['t'],
-            language: ['l'],
-            rate: ['r']
+    function getBoolean(value){
+        switch(value){
+            case true:
+            case "true":
+            case 1:
+            case "1":
+            case "on":
+            case "yes":
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    const opts = {
+        alias        : {
+            text    : ["t"],
+            language: ["l"],
+            slow    : ["s"]
         },
         configuration: {
-            'short-option-groups': false
-          }
-    }
+            "short-option-groups": false
+        }
+    };
     let arg_string = message.content.slice(4); //Chop off $tts
     let argv = parser(arg_string.replace(/= +/g, "="), opts)
 
-    let lang = 'en'
+    let lang = 'en-US'
     let slow = false
     let text = `${message.author.username} is an idiot`
 
@@ -25,14 +39,16 @@ exports.run = (client, message, args) => {
         lang = argv.l
     }
     if(argv.s) {
-        slow = argv.s
+        slow = getBoolean(argv.s)
     }
-    if(argv.t) {
+    if(argv.t && argv.t.trim() !== "") {
         text = argv.t
     }
-    if(!argv.t && !argv.l && !argv.r) {
+
+    if((!argv.t || argv.t.trim() !== "") && !argv.l && !argv.s && arg_string.trim() !== "") {
         text = arg_string
     }
+
     let url = TTS.getAudioUrl(text, {
         lang: lang,
         slow: slow,
@@ -46,9 +62,7 @@ exports.run = (client, message, args) => {
         message.channel.send("You must be in a Voice Channel, I'm not gonna play this shit for no one.");
         return;
     }
-console.log("play")
     UTIL.playUrl(url, vc)
-    console.log("play2")
 }
 
 exports.help = () =>{
