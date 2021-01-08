@@ -59,50 +59,24 @@ var playAudio = async function(voice_channel) {
     })
 }
 
-var playUrl = function(client, connection, message, url, callBack) {
-    var server = global.servers[message.guild.id]
-    let dispatcher = null;
+var playUrl = function (url, voice_channel) {
+    const server = global.servers[voice_channel.guild.id];
+    server.connectionPromise    = voice_channel.join()
 
-    if (server.dispatcher) {
-        server.dispatcher.end("remain")
-    }
-    if (connection.status == 4) { //4 = dead connection
-        let vc = message.member.voiceChannel;
-        vc.join()
-        .then(connection => {
-            playUrl(client, connection, message, url, callBack);
+    server.connectionPromise.then(connection => {
+        let dispatcher  = connection.play(url, {volume: 1});
+        dispatcher.setVolume(server.clip_volume)
+
+        dispatcher.on('finish', () => {
+            if(!server.maintain_presence) {
+                server.current_song = undefined
+                connection.disconnect()
+            }
         })
-        .catch(console.error);
-        return;
-    } else {         
-        dispatcher = connection.playArbitraryInput(url, {volume: server.volume});
-        server.dispatcher = dispatcher;
-    }
-    
-    dispatcher.on('end', (m) => {
-        // The song has finished
-        callBack(client, connection, message, url, callBack, m);
+    }).catch(reason => {
+        console.log(reason)
     });
-
-    dispatcher.on('error', e => {
-        // Catch any errors that may arise
-        console.log(e);
-        message.channel.send("all fuck, it broke!");
-        connection.disconnect()
-    });
-}
-
-var playAudioBasicCallBack = function(client, connection, message, song, callBack, end_m) {
-    let server = global.servers[message.guild.id];
-    if (server.repeat && end_m !== "remain"){
-        playAudio(client, connection, message, song, callBack); // play it again!
-    } else {
-        if(!server.maintain_presence && end_m !== "remain") {//Fuckoff means we have more media incoming, dont kill connection.
-            connection.disconnect();
-        }
-    }
-}
-
+};
 
 var processAudioFileTask = function(t_obj, cb) {
     return processAudioFile(t_obj.file_path, t_obj.url, t_obj.message, cb)
@@ -493,7 +467,7 @@ let updateMembersList = function(members) {
 module.exports.isInt = isInt;
 module.exports.isAdmin = isAdmin;
 module.exports.playAudio = playAudio;
-
+module.exports.playUrl = playUrl;
 module.exports.processAudioFile = processAudioFile;
 module.exports.rebuildAudioGist = rebuildAudioGist;
 module.exports.generateAudioList = generateAudioList;
@@ -511,6 +485,7 @@ module.exports.updateMembersList = updateMembersList;
 export {isInt};
 export {isAdmin};
 export {playAudio};
+export {playUrl};
 export {processAudioFile};
 export {rebuildAudioGist};
 export {generateAudioList};
