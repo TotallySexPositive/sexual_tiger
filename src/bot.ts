@@ -114,7 +114,7 @@ client.on('message', message => {
                 const commandFile = require(p);
 
                 //Check User Access
-                const isAllowed = UTIL.isUserActionAllowed(message.author, commandFile)
+                const isAllowed = UTIL.isUserActionAllowed(message.author, commandFile, message.guild.id)
                 
                 if (isAllowed) {
                     const transaction = Sentry.startTransaction({
