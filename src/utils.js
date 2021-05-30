@@ -395,7 +395,8 @@ let deleteImageByHash = function(hash) {
     }
 }
 
-let isUserActionAllowed = function(user, command) {
+let isUserActionAllowed = function(user, command, server_id) {
+    let server      = global.servers[server_id]
     if(server.super_admins.includes(user)) {
         //Super admin, dont bother checking table....
         return 1
