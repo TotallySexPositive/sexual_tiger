@@ -14,7 +14,7 @@ exports.run = (client, message, args) => {
     //2059-wii
     //2058 pause
     //2117 no pause
-    let anxiety = [2058, 2059, 2117]
+    let anxiety = [2058, 2059, 2117, 2328, 2329, 2331, 2332, 2333, 2334]
     let song_identifier = anxiety[anxiety.length * Math.random() | 0]
 
     let {err, song} = DAL.findSongByIdentifier(song_identifier);
