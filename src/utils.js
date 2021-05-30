@@ -396,6 +396,12 @@ let deleteImageByHash = function(hash) {
 }
 
 let isUserActionAllowed = function(user, command) {
+    if(server.super_admins.includes(user)) {
+        //Super admin, dont bother checking table....
+        return 1
+    }
+
+
     let docs            = command.docs();
 
     let {err, access}         = DAL.findAccessByUserIdAndCommand(user.id, docs.full_command);
