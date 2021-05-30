@@ -401,10 +401,8 @@ let isUserActionAllowed = function(user, command) {
         return 1
     }
 
-
-    let docs            = command.docs();
-
-    let {err, access}         = DAL.findAccessByUserIdAndCommand(user.id, docs.full_command);
+    let docs          = command.docs();
+    let {err, access} = DAL.findAccessByUserIdAndCommand(user.id, docs.full_command);
 
     if(access === undefined) { //This user is missing permissions, lets set them.
         DAL.initUserAccess(user.id)
