@@ -707,7 +707,7 @@ let grantAccessByUserIdAndCommand = function (user_id, command, admin) {
 }
 
 let insertCommands = function (commands) {
-    const insert = DB.prepare(`INSERT OR REPLACE INTO ${COMMAND_TABLE} (command, default_access) VALUES (@command, @default_access) `);
+    const insert = DB.prepare(`INSERT INTO ${COMMAND_TABLE} (command, default_access) VALUES (@command, @default_access) ON CONFLICT(command) DO UPDATE SET default_access=@default_access`);
     const insertMany = DB.transaction((commands) => {
         for (const cmd of commands) insert.run(cmd);
     });
