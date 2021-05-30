@@ -124,6 +124,7 @@ client.on('message', message => {
                     try {
                         commandFile.run(client, message, args);
                     } catch (e) {
+                        console.error(e);
                         Sentry.captureException(e);
                     } finally {
                         transaction.finish();

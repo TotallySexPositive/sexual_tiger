@@ -5,15 +5,13 @@ const path      = require("path");
 import * as DAL from "../../dal";
 import * as UTIL from "../../utils";
 const sanitize  = require("sanitize-filename");
-const youtubedl = require('youtube-dl');
+const youtubedl = require('youtube-dl-exec');
 const extractDomain  = require('extract-domain');
 const validator = require('validator');
 
 exports.run = (client, message, args) => {
-    
     let server = global.servers[message.guild.id];
     
- 
     if(args.length !== 1) {
         return message.channel.send("It seems you sent too much or too little info.");
     }
@@ -34,19 +32,12 @@ exports.run = (client, message, args) => {
     } else if (song !== undefined) {
         return message.channel.send(`That clip is already in the DB under the name, ${song.name}`);
     } else {
-        youtubedl.getInfo(url, undefined, function(err, info) {
-            if(err) {
-                console.log(err);
-                return message.channel.send(`Something happened while trying to download audio from that ${domain} link.`);
-            } else if (info.length_seconds > 600) { //10 minutes
+        youtubedl(url, {"dumpSingleJson": true}).then(output => {
+            let save_to     = path.resolve(global.audio_dirs.tmp, sanitize(output.title) + `.mp3`);
+            if (output.duration > 600) { //10 minutes
                 return message.channel.send("That video is too fucking long.")
             } else {
-                let save_to     = path.resolve(global.audio_dirs.tmp, sanitize(info.title) + `.mp3`);
-                let write_steam = youtubedl(url, ['-x', '--audio-format', 'mp3']).pipe(fs.createWriteStream(save_to))
-
-                message.channel.send(`Download of, ${info.title}, from ${domain} has started.`)
-                
-                write_steam.on('finish', () => {
+                youtubedl(url, {'extract-audio': true, 'audio-format': 'mp3', 'output': save_to}).then(output => {
                     message.channel.send(`Done downloading the audio from ${domain}.`)
                     UTIL.processAudioFile(save_to, url, message, (err, success) => {
                         if(err) {
@@ -56,6 +47,7 @@ exports.run = (client, message, args) => {
                         }
                     });
                 })
+                return message.channel.send(`Download of, ${output.title}, from ${domain} has started.`)
             }
         })
     }
