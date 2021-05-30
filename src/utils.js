@@ -121,15 +121,15 @@ var processAudioFile = function(file_path, url, message, cb) {
                 console.log("Couldnt run command");
                 console.log(err);
             } 
-            // fs.unlink(file_path, function(err3){
-            //     if(err3) {
-            //         console.log(`Failed to Deleted offending file. ${file_path}`)
-            //         console.log(err3);
-            //     } else {
-            //         console.log(`Deleted offending file. ${file_path}`);
-            //         message.channel.send("I dont know what the fuck you just tried to get me to process, but I deleted it. :stuck_out_tongue: ")
-            //     }
-            // })
+            fs.unlink(file_path, function(err3){
+                if(err3) {
+                    console.log(`Failed to Deleted offending file. ${file_path}`)
+                    console.log(err3);
+                } else {
+                    console.log(`Deleted offending file. ${file_path}`);
+                    message.channel.send("I dont know what the fuck you just tried to get me to process, but I deleted it. :stuck_out_tongue: ")
+                }
+            })
             cb(new Error(`Failed to run ffmpeg-normalize. ${err.message}`), undefined);
         } else {
             let {err, info} = DAL.insertIntoSongs(file_hash, cleaned_file_name, stored_file_path, url, message.author.id);
