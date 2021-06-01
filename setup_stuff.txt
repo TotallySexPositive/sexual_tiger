@@ -1,0 +1,22 @@
+sudo apt install autoconf automake g++ libtool
+sudo apt install build-essential checkinstall libssl-dev
+#Do not use snap version of curl....
+sudo apt install curl 
+curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.35.1/install.sh | bash
+nvm install v16.2.0
+npm install typescript -g
+sudo apt install ffmpeg
+sudo apt install python
+sudo apt install python3-pip
+pip install ffmpeg-normalize
+
+#If binding errors
+rm -rf node_modules/better-sqlite3/
+npm install
+
+node_modules/google-tts-api/dist/getAudioUrl.d.ts 
+delete url import.
+
+
+sudo apt install sqlite3
+sqlite3 playlists.sql ".read build.sql"

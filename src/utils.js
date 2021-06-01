@@ -7,7 +7,7 @@ const md5       = require('md5');
 const { exec }  = require('child_process');
 const auth      = require(path.resolve("auth.json"));
 const { Octokit } = require("@octokit/rest");
-const mdt       = require("markdown-table")
+import {mdt} from 'markdown-table'
 const probe     = require('node-ffprobe');
 const recursive     = require("recursive-readdir");
 const Permissions = require("discord.js").Permissions
