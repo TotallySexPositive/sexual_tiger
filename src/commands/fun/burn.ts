@@ -1,7 +1,7 @@
 const path  = require("path");
 import { Client, Message } from "discord.js";
 import {Command} from "../../types/Command"
-
+import {postRandomImageByTag} from "../../utils"
 class Burn extends Command {
 	constructor(obj: any) {
 		super(obj)
@@ -9,7 +9,8 @@ class Burn extends Command {
 
     execute(_client: Client, message: Message, _args: Array<string>): void {
 		console.log("FUCK")
-		message.channel.send("Fucking Burn bro.")
+		message.channel.send("Fucking burn bro.")
+		postRandomImageByTag(message, "burn");
     }
     help(): void {
         console.log("Help")
