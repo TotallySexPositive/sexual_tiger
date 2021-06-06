@@ -6,12 +6,14 @@ import { Message } from "discord.js";
 import glob from "glob"
 import { promisify } from "util"
 import {Command} from "./types/Command"
-
+import {Server} from "./types/Server"
 const globPromise = promisify(glob)
-
+import {CustomNodeJsGlobal} from "./types/CustomNodeJsGlobal"
+import * as UTIL from "./tsutils"
 const commands: Record<string,Command> = {};
 //commands.push(burn)
 
+declare const global: CustomNodeJsGlobal
 const client = new Discord.Client();
 
 client.on('ready', async () => {
@@ -22,6 +24,16 @@ client.on('ready', async () => {
         const command = await import(file)
         commands[command.default.name] = command.default
     }
+
+    client.user.setActivity("pick up sticks.");
+
+    //Init servers array and update member list
+    client.guilds.cache.each(guild => {
+        global.servers[guild.id] = new Server();
+        guild.members.fetch().then(members => {
+            UTIL.updateMembersList(members);
+        }).catch(console.error)
+    })
 });
 client.on('message', (message: Message) =>  {
     if (message.author.bot || message.content.indexOf(config.prefix) !== 0) {
