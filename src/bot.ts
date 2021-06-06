@@ -1,23 +1,32 @@
-const path = require("path");
-const Discord = require('discord.js');
-const auth = require(path.resolve('auth.json'));
-const config = require(path.resolve('configure.json'));
 import { Message } from "discord.js";
 import glob from "glob"
 import { promisify } from "util"
 import {Command} from "./types/Command"
 import {Server} from "./types/Server"
-const globPromise = promisify(glob)
 import {CustomNodeJsGlobal} from "./types/CustomNodeJsGlobal"
 import * as UTIL from "./tsutils"
-const commands: Record<string,Command> = {};
-//commands.push(burn)
+import * as Sentry from '@sentry/node';
 
-declare const global: CustomNodeJsGlobal
+const path = require("path");
+const Discord = require('discord.js');
+const auth = require(path.resolve('auth.json'));
+const config = require(path.resolve('configure.json'));
+const globPromise = promisify(glob)
+
+const commands: Record<string, Command> = {};
+
+declare const global: CustomNodeJsGlobal;
+
+Sentry.init({ 
+    dsn: auth["sentry"],
+    tracesSampleRate: 1.0,
+    environment: "dev"
+ });
+
+
 const client = new Discord.Client();
 
 client.on('ready', async () => {
-    console.log('I am ready!');
     const commandFiles = await globPromise(`${__dirname}/commands/fun/*{.js,.ts}`)
 
     for (const file of commandFiles) {
@@ -33,8 +42,11 @@ client.on('ready', async () => {
         guild.members.fetch().then(members => {
             UTIL.updateMembersList(members);
         }).catch(console.error)
-    })
+    });
+
+    console.log('I am ready!');
 });
+
 client.on('message', (message: Message) =>  {
     if (message.author.bot || message.content.indexOf(config.prefix) !== 0) {
         return;

@@ -2,18 +2,16 @@ import path from "path"
 import fs from "fs"
 import md5 from "md5"
 import {exec} from "child_process"
-import auth from require(path.resolve("auth.json"))
-import {Octokit} from "@octokit/rest"
 import probe from "node-ffprobe"
 import recursive from "recursive-readdir"
 import {GuildMember, Message, Permissions, VoiceChannel} from "discord.js"
-import {Command} from "./types/Command"
+
 
 import * as DAL from "./dal"
 import {mdt} from "markdown-table"
 import { CustomNodeJsGlobal } from "./types/CustomNodeJsGlobal"
 import { Server } from "./types/Server"
-import { processAudioFile } from "./utils"
+
 declare const global: CustomNodeJsGlobal;
 
 export function isInt(value: string) : boolean
@@ -151,7 +149,7 @@ export function processAudioFile(file_path:string, url:string, message: Message,
                 const err = generateAudioList();
                 if(err) {
                     message.channel.send("Failed to update audio list after adding a new song.");
-                    message.channel.send(err.message);
+                    message.channel.send(err.err.message);
                 }
                 fs.rename(file_path, stored_file_path, (err) => {
                     if(err) {
@@ -163,4 +161,272 @@ export function processAudioFile(file_path:string, url:string, message: Message,
             }
         }
     });
+}
+
+export function processImageFile(file_path, tag_names, user_id) {
+    let hashed_image_path       = global.image_dirs.hashed;
+    let file_name               = path.basename(file_path);
+    let ext                     = path.extname(file_path).replace(/\?.*$/, "");
+    let tag_id                  = -1;
+
+    if(ext === "" || ext === "." || ext.length > 5) ext = ".gif";
+
+    let file_hash           = md5(fs.readFileSync(file_path));
+    let new_file_name       = file_hash + ext
+    let hashed_file_path    = path.resolve(hashed_image_path, new_file_name);
+
+    //Check if the tags passed in exist.
+    let {err: v_err, tags} = verifyTags(tag_names)
+    if(v_err && tags === undefined) {
+        console.log(v_err)
+        return v_err;
+    } else if(v_err && tags !== undefined) { //At least one of the tags didnt exist.
+        return new Error(`The following tags do not exist. ${tags.join(', ')}`);
+    } //All tags are valid, lets just move on.
+
+    let image_id        = undefined;
+    let {err, image}    = DAL.findImageByHashId(file_hash);
+
+    if(err) {
+        console.log(err);
+    } else if (image !== undefined) {
+        fs.unlink(file_path, function(err3) {
+            if(err3) {
+                console.log("Failed to delete duplicate file.")
+                console.log(err3);
+            }
+        });
+        image_id = image.image_id;
+    }
+
+    if(image_id === undefined)
+    {
+        let {err: err_i, info} = DAL.insertIntoImages(file_hash, ext, user_id);
+    
+        if(err_i) {
+            console.log(err_i);
+            return new Error(`Error while inserting image.`);
+        } else {
+            fs.rename(file_path, hashed_file_path, (err) => {
+                if(err) {
+                    console.log(`Failed to move file, ${file_path} to ${hashed_file_path}`);
+                    console.log(err);
+                }
+            });
+            image_id = info.lastInsertRowid;
+        }
+    }
+
+    if(image_id === undefined) {
+        return Error(`Failed to add image to DB.`)
+    } else {
+        let tag_ids = tags.map(function(tag) {return tag['tag_id'];})
+        let {err: it_err, info:it_info} = DAL.insertIntoImageTag([image_id], tag_ids);
+        if(it_err) {
+            return Error(`Failed to create relationship between Image: ${it_info.lastInsertRowid} and Tag: ${tag_id}`)
+        }
+    }
+}
+
+export function verifyTags(tag_names) {
+    let {err, tags} = DAL.findTagsByNames(tag_names)
+    if(err) {
+        console.log(err)
+        return {err: new Error("Crashed while verifying tags."), tags: undefined};
+    } else if(tag_names.length !== tags.length) { //At least one of the tags didnt exist.
+        var found_tags = tags.map(function(tag) {
+            return tag['name'];
+        });
+
+        let invalid_tags = tag_names.filter(tag => !found_tags.includes(tag));
+        return {err: new Error(`Invalid tags passed.`), tags: invalid_tags};
+    } else {
+        return {err: undefined, tags: tags}
+    }
+}
+
+export function probe_audio_file(file_hash) {
+    probe(path.resolve(global.audio_dirs.hashed, file_hash + ".mp3"), function(err, data) {
+        let {err: s_err, song} = DAL.findSongByIdentifier(file_hash)
+        if(s_err) {
+            console.log("Probe Audio File: Uh oh...");
+            console.log(file_hash);
+        } else {
+            song.duration = Math.ceil(data.streams[0].duration);
+            if(song.duration <= global.clip_length) {
+                song.is_clip = 1;
+            } else {
+                song.is_clip = 0;
+            }
+
+            DAL.updateSong(song);
+        }
+    });
+}
+
+export function getFileSizeInMegaBytes(file) {
+    const stats = fs.statSync(file)
+    const file_size_in_bytes = stats.size
+    const file_size_in_mb = file_size_in_bytes / 1000000.0
+    return file_size_in_mb;
+}
+
+export function postRandomImageByTag(message, tag_name) {
+    const time = process.hrtime();
+    const NS_PER_SEC = 1e9;
+
+    let {err: t_err, tag} = DAL.findTagByName(tag_name);
+    if(t_err) {
+        return message.channel.send("Crashed while finding tag.")
+    } else if (tag === undefined) {
+        return message.channel.send(`There is no tag with the name. ${tag_name}.`)
+    } //Valid tag.
+
+    let {err, image} = DAL.getRandomImageByTag(tag.tag_id);
+    if(err) {
+        console.log(err);
+        message.channel.send("Crashed finding image");
+    } else if(image === undefined) {
+        message.channel.send(`Couldnt find any images for ${tag.name}.`);
+    } else {
+        let file = path.resolve(global.image_dirs.hashed, image.hash_id + image.extension);
+        message.channel.send("", {"files": [file]})
+        .then(post => {
+            const diff = process.hrtime(time);
+            console.log(`Posted ${(diff[0] * NS_PER_SEC + diff[1])/1000000} ms`);
+            //Store the posted image message_id to the tag/cmd that was called.  For use in untagging/retagging
+            global.img_resp_to_tag[post.id] = tag
+            global.img_resp_to_tag_order.push(post.id)
+
+            if(global.img_resp_to_tag_order.length > global.img_resp_to_tag_max_len) {
+                let old_id = global.img_resp_to_tag_order.shift()
+                delete global.img_resp_to_tag[old_id]
+            }
+
+            const filter = (reaction, user) => {
+                return reaction.emoji.name === '❌' && isAdmin(message.guild.members.get(user.id))
+            };
+
+            const collector = post.createReactionCollector(filter, { time: 30000 });
+            collector.on('collect', r => {
+                console.log(`Collected ${r.emoji.name}`);
+
+                let attachments = post.attachments.array();
+                let hash = attachments[0].filename.replace(/\.[^/.]+$/, ""); //Strip off extention
+                let {err, image} = deleteImageByHash(hash);
+                if(err) {
+                    message.channel.send(err.message);
+                } else if (image === undefined) {
+                    message.channel.send("No image to delete");
+                } else {
+                    message.channel.send(`Image: ${image.hash_id}${image.extension}  has been removed.`);
+                    post.delete();
+                }
+            });
+        })
+        .catch(console.error);
+    }
+}
+
+//{err: Error, image: {}}
+export function deleteImageByHash(hash) {
+    let {err, image} = DAL.findImageByHashId(hash);
+    if(err) {
+        console.log(err);
+        return {err: new Error("Crashed while finding image."), image: undefined}
+    } else if (image === undefined) {
+        return {err: undefined, image: undefined} //no image
+    } else {
+        let {err: d_err, info} = DAL.deleteImageById(image.image_id);
+        if(d_err) {
+            console.log(d_err);
+            return {err: new Error("Crashed while deleting image."), image: undefined} //no image
+        } else if (info.changes === 0) {
+            return {err: new Error("There was no image with that hash."), image: undefined} //no image
+        } else {
+            let file_path = path.resolve(global.image_dirs.hashed, image.hash_id + image.extension)
+            let trash_path = path.resolve(global.image_dirs.trash, image.hash_id + image.extension)
+            fs.rename(file_path, trash_path, (err) => {
+                if(err) {
+                    console.log(`Failed to move deleted image, ${file_path} to ${trash_path}`);
+                    console.log(err);
+                }
+            })
+           return {err: undefined, image: image}
+        }
+    }
+}
+
+export function isUserActionAllowed(user, command, server_id) {
+    let server      = global.servers[server_id]
+    if(server.super_admins.includes(user.id)) {
+        //Super admin, dont bother checking table....
+        return 1
+    }
+
+    let docs          = command.docs();
+    let {err, access} = DAL.findAccessByUserIdAndCommand(user.id, docs.full_command);
+
+    if(access === undefined) { //This user is missing permissions, lets set them.
+        DAL.initUserAccess(user.id)
+    }
+
+    if(access) { //User has an access entry for this command.
+        return access.is_allowed
+    } else {// User has no access entry, rely on default restriction.
+        return docs.default_access //Return true if command is not restricted
+    }
+}
+
+export function updateCommandList() {
+    let command_folders_path = path.resolve("built", "commands");
+    let commands = [];
+
+    recursive(command_folders_path, function (err, files) {
+        files.forEach((file) => {
+            if(file.endsWith('.js') && file.indexOf("burn") === -1) {
+                let temp = require(file);
+                let keys = Object.keys(temp);
+                if (keys.includes("docs")) {
+                    let docs = temp.docs();
+                    let command = {command: docs.full_command, default_access: docs.default_access}
+                    commands.push(command)
+                } 
+            }
+        });
+        //Got all the commands
+        DAL.insertCommands(commands);
+    });
+}
+
+export function generateAudioList() {
+    let {err, songs} = DAL.getSongListData()
+
+    if(err) {
+        console.log(err);
+        return {err: new Error("Crashed while finding image."), image: undefined}
+    } else {
+        const fs = require('fs')
+        //let data_path = path.resolve("src", "website", "data", "data.json");
+        try {
+            fs.writeFile("/var/www/html/data.json", JSON.stringify(songs), function(err) {
+                if(err) {
+                    console.log(err);
+                    return {err: new Error("Failed to write updated songs json to website/data.json."), image: undefined}
+                }
+            });
+
+        } catch (err) {
+            console.error(err)
+        }
+    }
+}
+
+export function updateMembersList(members) {
+    let members_list = Array()
+    members.forEach((val, key) => {
+        members_list.push({member_id: val.id, username: val.user.username})
+    });
+
+    DAL.updateMembersList(members_list)
 }
