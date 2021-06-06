@@ -4,13 +4,13 @@ const auth = require(path.resolve('auth.json'));
 const config = require(path.resolve('configure.json'));
 import glob from "glob"
 import { promisify } from "util"
-import { Command } from "./types/Command"
+import {Command} from "./types/Command"
 import burn from "./commands/fun/burn"
 
 const globPromise = promisify(glob)
 
 const commands: Command[] = []
-commands.push(burn)
+//commands.push(burn)
 
 const client = new Discord.Client();
 
@@ -28,7 +28,7 @@ client.on('message', message => {
         return;
     }
     
-    commands[0].execute(client, message, []);
+    burn.execute(client, message, []);
 });
 
 client.login(auth.token);
