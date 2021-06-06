@@ -1,6 +1,6 @@
 const path  = require("path");
 import { Client, Message } from "discord.js";
-import {Command}  from "src/types/Command";
+import {Command} from "../../types/Command"
 
 class Burn extends Command {
 	constructor(obj: any) {
@@ -8,7 +8,8 @@ class Burn extends Command {
 	}
 
     execute(_client: Client, message: Message, _args: Array<string>): void {
-        console.log("FUCK")
+		console.log("FUCK")
+		message.channel.send("Fucking Burn bro.")
     }
     help(): void {
         console.log("Help")
