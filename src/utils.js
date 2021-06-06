@@ -2,15 +2,16 @@
 
 const path      = require("path")
 const fs        = require('fs');
-import * as DAL from "./dal";
 const md5       = require('md5');
 const { exec }  = require('child_process');
 const auth      = require(path.resolve("auth.json"));
 const { Octokit } = require("@octokit/rest");
-import {mdt} from 'markdown-table'
 const probe     = require('node-ffprobe');
 const recursive     = require("recursive-readdir");
 const Permissions = require("discord.js").Permissions
+
+import * as DAL from "./dal";
+import {mdt} from 'markdown-table'
 
 var isInt = function(value) {
     var er = /^-?[0-9]+$/;
@@ -422,7 +423,7 @@ let updateCommandList = function() {
 
     recursive(command_folders_path, function (err, files) {
         files.forEach((file) => {
-            if(file.endsWith('.js')) {
+            if(file.endsWith('.js') && file.indexOf("burn") === -1) {
                 let temp = require(file);
                 let keys = Object.keys(temp);
                 if (keys.includes("docs")) {

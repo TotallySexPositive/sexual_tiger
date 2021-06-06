@@ -3,7 +3,7 @@ import {CustomNodeJsGlobal} from "./CustomNodeJsGlobal";
 import {Playlist}           from "./Playlist";
 import {PlaylistSong}       from "./PlaylistSong";
 import validator            from "validator";
-import * as Database        from "better-sqlite3";
+let Database    = require('better-sqlite3')
 import * as path            from "path";
 import * as fs              from "fs";
 
