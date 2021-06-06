@@ -8,7 +8,6 @@ class Burn extends Command {
 	}
 
     execute(_client: Client, message: Message, _args: Array<string>): void {
-		console.log("FUCK")
 		message.channel.send("Fucking burn bro.")
 		postRandomImageByTag(message, "burn");
     }
@@ -17,7 +16,7 @@ class Burn extends Command {
     }
 }
 
-const burn = new Burn({
+const burn: Command = new Burn({
     name: "burn",
 	aliases: [],
 	description: "Post an image of anime burn.",
