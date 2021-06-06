@@ -2,31 +2,31 @@ import { Client, Message } from "discord.js";
 import { Command } from "../../types/Command";
 import { postRandomImageByTag } from "../../utils";
 
-class NoseBleed extends Command {
+class TigerFucking extends Command {
 	constructor(obj: any) {
 		super(obj);
 	}
 
 	execute(_client: Client, message: Message, _args: Array<string>): void {
-		postRandomImageByTag(message, "nosebleed");
+		postRandomImageByTag(message, "tigerfucking");
 	}
 }
 
-const nosebleed: Command = new NoseBleed({
-	name: "nosebleed",
+const tigerfucking: Command = new TigerFucking({
+	name: "tigerfucking",
 	aliases: [],
-	description: "Post an image of anime nosebleed.",
+	description: "Post an image of anime tigerfucking.",
 	defaultAccess: 1,
 	parent: "",
-	syntax: "nosebleed",
+	syntax: "tigerfucking",
 	category: "Image",
 	subcategory: "Pictures",
 	examples: [
 		{
-			description: "Post image of nosebleed",
-			code: `nosebleed`,
+			description: "Post image of tigerfucking",
+			code: `tigerfucking`,
 		},
 	],
 });
 
-export default nosebleed;
+export default tigerfucking;

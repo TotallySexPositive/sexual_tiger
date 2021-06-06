@@ -1,32 +1,32 @@
-const path  = require("path");
-import * as UTIL from "../../utils";
+import { Client, Message } from "discord.js";
+import { Command } from "../../types/Command";
+import { postRandomImageByTag } from "../../utils";
 
-exports.run = (client, message, args) => {
-    
-    UTIL.postRandomImageByTag(message, "nuke");	
+class Nuke extends Command {
+	constructor(obj: any) {
+		super(obj);
+	}
 
+	execute(_client: Client, message: Message, _args: Array<string>): void {
+		postRandomImageByTag(message, "nuke");
+	}
 }
 
-exports.help = () =>{
-    return "KaBoom!";
-};
+const nuke: Command = new Nuke({
+	name: "nuke",
+	aliases: [],
+	description: "Post an image of anime nuke.",
+	defaultAccess: 1,
+	parent: "",
+	syntax: "nuke",
+	category: "Image",
+	subcategory: "Pictures",
+	examples: [
+		{
+			description: "Post image of nuke",
+			code: `nuke`,
+		},
+	],
+});
 
-exports.docs = () => {
-    let docs = {
-        default_access: 1,
-        tab: "image",
-        link: "Pictures",
-        parent: "",
-        full_command: "nuke",
-        command: "nuke",
-        description: "Post an image of anime nuke.",
-        syntax: 'nuke',
-        examples: [
-            {
-                description: "Post image of nuke",
-                code: `nuke`
-            }
-        ]
-    }
-    return docs;
-};
+export default nuke;

@@ -1,32 +1,32 @@
-const path  = require("path");
-import * as UTIL from "../../utils";
+import { Client, Message } from "discord.js";
+import { Command } from "../../types/Command";
+import { postRandomImageByTag } from "../../utils";
 
-exports.run = (client, message, args) => {
-    
-    UTIL.postRandomImageByTag(message, "death");	
+class Death extends Command {
+	constructor(obj: any) {
+		super(obj);
+	}
 
+	execute(_client: Client, message: Message, _args: Array<string>): void {
+		postRandomImageByTag(message, "death");
+	}
 }
 
-exports.help = () =>{
-    return "X.X";
-};
+const death: Command = new Death({
+	name: "death",
+	aliases: [],
+	description: "Post an image of anime death.",
+	defaultAccess: 1,
+	parent: "",
+	syntax: "death",
+	category: "Image",
+	subcategory: "Pictures",
+	examples: [
+		{
+			description: "Post image of death",
+			code: `death`,
+		},
+	],
+});
 
-exports.docs = () => {
-    let docs = {
-        default_access: 1,
-        tab: "image",
-        link: "Pictures",
-        parent: "",
-        full_command: "death",
-        command: "death",
-        description: "Post an image of anime death.",
-        syntax: 'death',
-        examples: [
-            {
-                description: "Post image of death",
-                code: `death`
-            }
-        ]
-    }
-    return docs;
-};
+export default death;
