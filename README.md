@@ -1,5 +1,12 @@
 # sexual_tiger
 
+![example workflow](https://github.com/TotallySexPositive/sexual_tiger/blob/master/.github/workflows/main.yml/badge.svg)
+[![Quality Gate Status](https://sonarqube.rieger.page/api/project_badges/measure?project=TotallySexPositive_sexual_tiger&metric=alert_status)](https://sonarqube.rieger.page/dashboard?id=TotallySexPositive_sexual_tiger)
+[![Reliability Rating](https://sonarqube.rieger.page/api/project_badges/measure?project=TotallySexPositive_sexual_tiger&metric=reliability_rating)](https://sonarqube.rieger.page/dashboard?id=TotallySexPositive_sexual_tiger)
+[![Security Rating](https://sonarqube.rieger.page/api/project_badges/measure?project=TotallySexPositive_sexual_tiger&metric=security_rating)](https://sonarqube.rieger.page/dashboard?id=TotallySexPositive_sexual_tiger)
+[![Technical Debt](https://sonarqube.rieger.page/api/project_badges/measure?project=TotallySexPositive_sexual_tiger&metric=sqale_index)](https://sonarqube.rieger.page/dashboard?id=TotallySexPositive_sexual_tiger)
+[![Vulnerabilities](https://sonarqube.rieger.page/api/project_badges/measure?project=TotallySexPositive_sexual_tiger&metric=vulnerabilities)](https://sonarqube.rieger.page/dashboard?id=TotallySexPositive_sexual_tiger)
+
 ## Setup
 
 Copy `auth.json.example` to `auth.json` and add the token.
