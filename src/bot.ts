@@ -1,6 +1,6 @@
 import * as Sentry from "@sentry/node";
 import { Message } from "discord.js";
-import { recursive } from "recursive-readdir";
+import recursive from "recursive-readdir";
 import { Command } from "./types/Command";
 import { AudioDirectories, CustomNodeJsGlobal, ImageDirectories } from "./types/CustomNodeJsGlobal";
 import { Server } from "./types/Server";
@@ -55,7 +55,7 @@ const required_folders = [
 	path.resolve("images", "trash"),
 ];
 //Loop the array of required folders and create any missing ones.
-required_folders.forEach(function (dir) {
+required_folders.forEach(function(dir) {
 	if (!fs.existsSync(dir)) {
 		console.log(`Created missing directory: ${dir}`);
 		fs.mkdirSync(dir);
@@ -70,7 +70,7 @@ client.on("ready", async () => {
 	client.user.setActivity("pick up sticks.");
 
 	//Loop through the commands directory and get all paths to files, then add the command to the commands map.
-	recursive(path.resolve("built", "commands"), function (err, files) {
+	recursive(path.resolve("built", "commands"), function(err, files) {
 		files.forEach(async (file) => {
 			if (file.endsWith(".js")) {
 				const command = await import(file);
@@ -98,7 +98,10 @@ client.on("message", (message: Message) => {
 	}
 
 	//Split into args
-	const args: Array<string> = message.content.slice(config.prefix.length).trim().split(/ +/g);
+	const args: Array<string> = message.content
+		.slice(config.prefix.length)
+		.trim()
+		.split(/ +/g);
 	//Get just the command
 	const commandName = args.shift().toLowerCase();
 	//Need to sanitize the user input
@@ -147,6 +150,3 @@ client.on("guildMemberAdd", (member) => {
 });
 
 client.login(auth.token);
-function recursive(command_folders_path: any, arg1: (err: any, files: any) => void) {
-	throw new Error("Function not implemented.");
-}

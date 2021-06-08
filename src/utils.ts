@@ -4,7 +4,7 @@ import { readFileSync, rename, statSync, unlink, writeFile } from "fs";
 import md5 from "md5";
 import probe from "node-ffprobe";
 import { basename, extname, resolve } from "path";
-import { recursive } from "recursive-readdir";
+import recursive from "recursive-readdir";
 import * as DAL from "./dal";
 import { Command } from "./types/Command";
 import { CustomNodeJsGlobal } from "./types/CustomNodeJsGlobal";
@@ -84,7 +84,7 @@ export function processAudioFileTask(t_obj: any, cb: any): void {
 	return processAudioFile(t_obj.file_path, t_obj.url, t_obj.message, cb);
 }
 export function deleteFile(file_path: string): void {
-	unlink(file_path, function (err) {
+	unlink(file_path, function(err) {
 		if (err) {
 			console.log(`Failed to delete file. ${file_path}`);
 			console.log(err);
@@ -185,7 +185,7 @@ export function processImageFile(file_path, tag_names, user_id) {
 	if (err) {
 		console.log(err);
 	} else if (image !== undefined) {
-		unlink(file_path, function (err3) {
+		unlink(file_path, function(err3) {
 			if (err3) {
 				console.log("Failed to delete duplicate file.");
 				console.log(err3);
@@ -214,7 +214,7 @@ export function processImageFile(file_path, tag_names, user_id) {
 	if (image_id === undefined) {
 		return Error(`Failed to add image to DB.`);
 	} else {
-		let tag_ids = tags.map(function (tag) {
+		let tag_ids = tags.map(function(tag) {
 			return tag["tag_id"];
 		});
 		let { err: it_err, info: it_info } = DAL.insertIntoImageTag([image_id], tag_ids);
@@ -231,7 +231,7 @@ export function verifyTags(tag_names) {
 		return { err: new Error("Crashed while verifying tags."), tags: undefined };
 	} else if (tag_names.length !== tags.length) {
 		//At least one of the tags didnt exist.
-		var found_tags = tags.map(function (tag) {
+		var found_tags = tags.map(function(tag) {
 			return tag["name"];
 		});
 
@@ -243,7 +243,7 @@ export function verifyTags(tag_names) {
 }
 
 export function probe_audio_file(file_hash) {
-	probe(resolve(global.audio_dirs.hashed, file_hash + ".mp3"), function (err, data) {
+	probe(resolve(global.audio_dirs.hashed, file_hash + ".mp3"), function(err, data) {
 		let { err: s_err, song } = DAL.findSongByIdentifier(file_hash);
 		if (s_err) {
 			console.log("Probe Audio File: Uh oh...");
@@ -381,7 +381,7 @@ export function updateCommandList() {
 	let command_folders_path = resolve("built", "commands");
 	let commands = [];
 
-	recursive(command_folders_path, function (err, files) {
+	recursive(command_folders_path, function(err, files) {
 		files.forEach((file) => {
 			if (file.endsWith(".js") && file.indexOf("burn") === -1) {
 				let temp = require(file);
@@ -406,7 +406,7 @@ export function generateAudioList() {
 		return { err: new Error("Crashed while finding image."), image: undefined };
 	} else {
 		try {
-			writeFile("/var/www/html/data.json", JSON.stringify(songs), function (err) {
+			writeFile("/var/www/html/data.json", JSON.stringify(songs), function(err) {
 				if (err) {
 					console.log(err);
 					return { err: new Error("Failed to write updated songs json to website/data.json."), image: undefined };
