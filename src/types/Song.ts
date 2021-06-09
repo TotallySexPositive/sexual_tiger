@@ -1,11 +1,11 @@
 "use strict";
-import {CustomNodeJsGlobal} from "./CustomNodeJsGlobal";
-import {Playlist}           from "./Playlist";
-import {PlaylistSong}       from "./PlaylistSong";
-import validator            from "validator";
-import * as Database        from "better-sqlite3";
-import * as path            from "path";
-import * as fs              from "fs";
+import Database from "better-sqlite3";
+import * as fs from "fs";
+import * as path from "path";
+import validator from "validator";
+import { CustomNodeJsGlobal } from "./CustomNodeJsGlobal";
+import { Playlist } from "./Playlist";
+import { PlaylistSong } from "./PlaylistSong";
 
 declare const global: CustomNodeJsGlobal;
 const DB = new Database("playlists.sql");
@@ -15,7 +15,7 @@ DB.pragma("journal_mode = WAL");
 
 export class Song {
 	static FIELDS: string = "song.song_id, song.name, song.hash_id, song.source, song.num_plays, song.last_played, song.url, song.is_clip, song.duration, song.added_by ";
-	static TABLE: string  = "song";
+	static TABLE: string = "song";
 
 	id: string;
 	name: string;
@@ -29,25 +29,23 @@ export class Song {
 	added_by: string;
 
 	constructor(obj: any) {
-
 		const errors = [];
 
-		this.id          = obj.song_id;
-		this.name        = obj.name;
-		this.hash_id     = obj.hash_id;
-		this.source      = obj.source;
-		this.num_plays   = obj.num_plays;
+		this.id = obj.song_id;
+		this.name = obj.name;
+		this.hash_id = obj.hash_id;
+		this.source = obj.source;
+		this.num_plays = obj.num_plays;
 		this.last_played = obj.last_played;
-		this.url         = obj.url;
-		this.is_clip     = obj.is_clip;
-		this.duration    = obj.duration;
-		this.added_by    = obj.added_by;
+		this.url = obj.url;
+		this.is_clip = obj.is_clip;
+		this.duration = obj.duration;
+		this.added_by = obj.added_by;
 
 		if (errors.length) {
 			throw new Error(errors.join("\n"));
 		}
 	}
-
 
 	/**
 	 * Get a song by one of its unique identifiers.
@@ -63,7 +61,8 @@ export class Song {
 				identifier_type = "hash_id";
 			} else if (validator.isURL(identifier)) {
 				identifier_type = "url";
-			} else { //Welp, I guess its a song name
+			} else {
+				//Welp, I guess its a song name
 				identifier_type = "name";
 			}
 
@@ -71,7 +70,7 @@ export class Song {
 
 			try {
 				const song_obj = DB.prepare(query).get(identifier);
-				const song     = song_obj ? new Song(song_obj) : undefined;
+				const song = song_obj ? new Song(song_obj) : undefined;
 				resolve(song);
 			} catch (err) {
 				console.log(`Song.get: ${identifier} \nError: `);
@@ -95,9 +94,14 @@ export class Song {
 				reject(new Error("max_songs must be a positive number."));
 			}
 
-			const clauses      = [];
+			const clauses = [];
 			const prepped_args = [];
-			const args         = name.replace(/ +/, " ").split(" ").filter((word) => { return word.trim() !== ""; });
+			const args = name
+				.replace(/ +/, " ")
+				.split(" ")
+				.filter((word) => {
+					return word.trim() !== "";
+				});
 
 			args.forEach((arg) => {
 				clauses.push("name LIKE ?");
@@ -108,8 +112,12 @@ export class Song {
 			const query = `SELECT * FROM ${Song.TABLE} WHERE ${prepped_statement} LIMIT ${max_songs}`;
 
 			try {
-				let songs: Array<Song> = DB.prepare(query).all(prepped_args).map(song => { return new Song(song);});
-				songs                  = songs.length ? songs : undefined;
+				let songs: Array<Song> = DB.prepare(query)
+					.all(prepped_args)
+					.map((song) => {
+						return new Song(song);
+					});
+				songs = songs.length ? songs : undefined;
 				resolve(songs);
 			} catch (err) {
 				console.log(`Song.search: ${name} \nError: `);
@@ -127,8 +135,12 @@ export class Song {
 			const query = `SELECT * FROM ${Song.TABLE}`;
 
 			try {
-				let songs = DB.prepare(query).all().map(song => { return new Song(song);});
-				songs     = songs.length ? songs : undefined;
+				let songs = DB.prepare(query)
+					.all()
+					.map((song) => {
+						return new Song(song);
+					});
+				songs = songs.length ? songs : undefined;
 				resolve(songs);
 			} catch (err) {
 				console.log(`Song.all: \nError: `);
@@ -151,9 +163,13 @@ export class Song {
 
 			if (this.id) {
 				console.log("Updating");
-				this.update().then(song => resolve(song)).catch(err => reject(err));
+				this.update()
+					.then((song) => resolve(song))
+					.catch((err) => reject(err));
 			} else {
-				this.insert().then(song => resolve(song)).catch(err => reject(err));
+				this.insert()
+					.then((song) => resolve(song))
+					.catch((err) => reject(err));
 			}
 		});
 	}
@@ -167,22 +183,23 @@ export class Song {
 
 			try {
 				const info = DB.prepare(query).run({
-					name    : this.name,
-					hash_id : this.hash_id,
-					source  : this.source,
-					url     : this.url,
-					is_clip : this.is_clip,
+					name: this.name,
+					hash_id: this.hash_id,
+					source: this.source,
+					url: this.url,
+					is_clip: this.is_clip,
 					duration: this.duration,
-					added_by: this.added_by
+					added_by: this.added_by,
 				});
 
-				Song.get("" + info.lastInsertRowid).then(song => {
-					resolve(song);
-				}).catch(err => {
-					const error = new Error("Failed to get song after Insert.\n" + err);
-					reject(error);
-				});
-
+				Song.get("" + info.lastInsertRowid)
+					.then((song) => {
+						resolve(song);
+					})
+					.catch((err) => {
+						const error = new Error("Failed to get song after Insert.\n" + err);
+						reject(error);
+					});
 			} catch (err) {
 				console.log(`Song.insert: \nError: `);
 				console.log(err);
@@ -196,23 +213,25 @@ export class Song {
 	 */
 	update(): Promise<Song> {
 		return new Promise((resolve, reject) => {
-			const query  = `UPDATE song SET name = :name, is_clip = :is_clip, duration = :duration WHERE song_id = :song_id;`;
+			const query = `UPDATE song SET name = :name, is_clip = :is_clip, duration = :duration WHERE song_id = :song_id;`;
 			this.is_clip = Number(this.duration <= global.clip_length);
 
 			try {
 				DB.prepare(query).run({
-					name    : this.name,
-					is_clip : this.is_clip,
+					name: this.name,
+					is_clip: this.is_clip,
 					duration: this.duration,
-					song_id : this.id
+					song_id: this.id,
 				});
 
-				Song.get(this.id).then((song) => {
-					resolve(song);
-				}).catch(err => {
-					const error = new Error("Failed to get song after Update.\n" + err);
-					reject(error);
-				});
+				Song.get(this.id)
+					.then((song) => {
+						resolve(song);
+					})
+					.catch((err) => {
+						const error = new Error("Failed to get song after Update.\n" + err);
+						reject(error);
+					});
 			} catch (err) {
 				console.log(`Song.update: \nError: `);
 				console.log(err);
@@ -229,43 +248,45 @@ export class Song {
 			const query = `DELETE FROM ${Song.TABLE} WHERE song_id = :song_id;`;
 
 			try {
-				this.playlists().then(playlists => {
-					if (playlists) {
-						const playlist_names: string = (playlists.map(playlist => playlist.name)).join(", ");
-						reject(new Error(`You can not delete a song that is on a playlist.  This song is on the following ${playlists.length} playlist(s), ${playlist_names}.`));
-					} else { //Delete the song.
-						const info = DB.prepare(query).run({
-							song_id: this.id
-						});
-
-						if (info.changes) {
-							//Delete the hashed file.
-							const hashed_file = path.resolve(global.audio_dirs["hashed"], this.hash_id + ".mp3");
-							fs.unlink(hashed_file, function (err) {
-								if (err) {
-									console.log(`Failed to delete requested hashed file. File: ${hashed_file}`);
-									console.log(err);
-								}
-							});
-							//Delete the source file.
-							const source_file = this.source;
-							fs.unlink(source_file, function (err) {
-								if (err) {
-									console.log(`Failed to delete requested stored file. File: ${source_file}`);
-									console.log(err);
-								}
-							});
-							resolve(this);
+				this.playlists()
+					.then((playlists) => {
+						if (playlists) {
+							const playlist_names: string = playlists.map((playlist) => playlist.name).join(", ");
+							reject(
+								new Error(`You can not delete a song that is on a playlist.  This song is on the following ${playlists.length} playlist(s), ${playlist_names}.`)
+							);
 						} else {
-							resolve(undefined);
+							//Delete the song.
+							const info = DB.prepare(query).run({
+								song_id: this.id,
+							});
+
+							if (info.changes) {
+								//Delete the hashed file.
+								const hashed_file = path.resolve(global.audio_dirs["hashed"], this.hash_id + ".mp3");
+								fs.unlink(hashed_file, function(err) {
+									if (err) {
+										console.log(`Failed to delete requested hashed file. File: ${hashed_file}`);
+										console.log(err);
+									}
+								});
+								//Delete the source file.
+								const source_file = this.source;
+								fs.unlink(source_file, function(err) {
+									if (err) {
+										console.log(`Failed to delete requested stored file. File: ${source_file}`);
+										console.log(err);
+									}
+								});
+								resolve(this);
+							} else {
+								resolve(undefined);
+							}
 						}
-					}
-
-				}).catch(err => {
-					reject(err);
-				});
-
-
+					})
+					.catch((err) => {
+						reject(err);
+					});
 			} catch (err) {
 				console.log(`Song.delete: \nError: `);
 				console.log(err);
@@ -282,7 +303,11 @@ export class Song {
 			const query = `SELECT DISTINCT ${Playlist.FIELDS} FROM ${Playlist.TABLE} JOIN ${PlaylistSong.TABLE} USING (playlist_id) WHERE song_id = ?`;
 
 			try {
-				const playlists = DB.prepare(query).all(this.id).map(playlist => { return new Playlist(playlist);});
+				const playlists = DB.prepare(query)
+					.all(this.id)
+					.map((playlist) => {
+						return new Playlist(playlist);
+					});
 				resolve(playlists);
 			} catch (err) {
 				console.log(`Song.playlists:  \nError: `);
@@ -291,5 +316,4 @@ export class Song {
 			}
 		});
 	}
-
 }

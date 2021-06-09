@@ -27,6 +27,7 @@
 	},
 	"dependencies": {
 		"@discordjs/opus": "^0.3.3",
+		"@giphy/js-fetch-api": "^4.0.1",
 		"@octokit/rest": "^18.0.12",
 		"@sentry/node": "^5.29.2",
 		"@sentry/tracing": "^5.29.2",
@@ -40,7 +41,6 @@
 		"discord.js": "^12.5.1",
 		"erlpack": "github:discord/erlpack",
 		"extract-domain": "^2.2.1",
-		"giphy-api": "^2.0.1",
 		"google-tts-api": "2.0.2",
 		"handlebars": "^4.7.6",
 		"image-downloader": "^4.0.2",
