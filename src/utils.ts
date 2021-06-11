@@ -4,7 +4,6 @@ import { readFileSync, rename, statSync, unlink, writeFile } from "fs";
 import md5 from "md5";
 import probe from "node-ffprobe";
 import { basename, extname, resolve } from "path";
-import recursive from "recursive-readdir";
 import * as DAL from "./dal";
 import { Command } from "./types/Command";
 import { CustomNodeJsGlobal } from "./types/CustomNodeJsGlobal";
@@ -375,27 +374,6 @@ export function isUserActionAllowed(user: User, command: Command, server_id: str
 		// User has no access entry, rely on default restriction.
 		return command.defaultAccess === 1; //Return true if command is not restricted
 	}
-}
-
-export function updateCommandList() {
-	let command_folders_path = resolve("built", "commands");
-	let commands = [];
-
-	recursive(command_folders_path, function(err, files) {
-		files.forEach((file) => {
-			if (file.endsWith(".js") && file.indexOf("burn") === -1) {
-				let temp = require(file);
-				let keys = Object.keys(temp);
-				if (keys.includes("docs")) {
-					let docs = temp.docs();
-					let command = { command: docs.full_command, default_access: docs.default_access };
-					commands.push(command);
-				}
-			}
-		});
-		//Got all the commands
-		DAL.insertCommands(commands);
-	});
 }
 
 export function generateAudioList() {

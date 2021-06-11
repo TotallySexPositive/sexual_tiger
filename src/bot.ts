@@ -1,6 +1,6 @@
 import * as Sentry from "@sentry/node";
 import { Message } from "discord.js";
-import recursive from "recursive-readdir";
+import glob from "glob";
 import { Command } from "./types/Command";
 import { AudioDirectories, CustomNodeJsGlobal, ImageDirectories } from "./types/CustomNodeJsGlobal";
 import { Server } from "./types/Server";
@@ -63,21 +63,24 @@ required_folders.forEach(function(dir) {
 });
 
 //Update the command table incase any new commands were added or a default access has been changed.
-UTIL.updateCommandList();
+glob(`${__dirname}/commands/**/*.js`, function(er, files) {
+	files.forEach(async (file) => {
+		try {
+			const command = await import(file);
+			if (command.default.name !== undefined) {
+				commands[command.default.name] = command.default;
+				console.log(`Imported ${file}, Command Name: ${command.default.name}`);
+			}
+		} catch (err) {
+			console.log(`Failed to import ${file}`);
+			console.log(err);
+		}
+	});
+});
 
 client.on("ready", async () => {
 	console.log("I am ready!");
 	client.user.setActivity("pick up sticks.");
-
-	//Loop through the commands directory and get all paths to files, then add the command to the commands map.
-	recursive(path.resolve("built", "commands"), function(err, files) {
-		files.forEach(async (file) => {
-			if (file.endsWith(".js")) {
-				const command = await import(file);
-				commands[command.default.name] = command.default;
-			}
-		});
-	});
 
 	//Init servers array and update member list
 	client.guilds.cache.each((guild) => {
@@ -108,7 +111,7 @@ client.on("message", (message: Message) => {
 
 	try {
 		const c: Command = commands[commandName];
-		if (c !== null) {
+		if (c !== undefined) {
 			//Check User Access
 			const isAllowed = UTIL.isUserActionAllowed(message.author, c, message.guild.id);
 

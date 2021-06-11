@@ -1,4 +1,4 @@
 {
-  "prefix": "$",
-  "python": "python3"
+	"prefix": "!",
+	"python": "python3"
 }
