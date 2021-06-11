@@ -52,13 +52,13 @@ exports.run = (client, message, args) => {
         
         var myData = Object.keys(full_docs).map(key => {
             let tab = full_docs[key];
-            var links = Object.keys(tab).map(key => {
-                let link = tab[key];
-                var commands = Object.keys(link).map(key => {
-                    return link[key];
+            var links = Object.keys(tab).map(tabKey => {
+                let link = tab[tabKey];
+                var commands = Object.keys(link).map(linkKey => {
+                    return link[linkKey];
                 });
                 
-                link.name = key;
+                link.name = tabKey;
                 commands.forEach( cmd => {
                     delete link[cmd.command]
                 })
