@@ -17,10 +17,10 @@ exports.run = (client, message, args) => {
         const page = await browser.newPage();
         const navigationPromise = page.waitForNavigation();
 
-        await page.goto(src),
-        await page.click("#fbutton"),
-        await navigationPromise,
-        x = await page.evaluate( () => {
+        await page.goto(src);
+        await page.click("#fbutton");
+        await navigationPromise;
+        const x = await page.evaluate( () => {
             console.log("In the function")
             var multiplier = 1;
             var combined = document.getElementById("canvas_download");
