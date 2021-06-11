@@ -262,7 +262,7 @@ export class Song {
 				console.log(`Song.delete: \nError: `);
 				console.log(err);
 				reject(err);
-			});
+			}
 		});
 	}
 
