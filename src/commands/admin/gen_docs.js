@@ -59,15 +59,15 @@ exports.run = (client, message, args) => {
                 });
                 
                 link.name = key;
-                commands.map(cmd => {
-                    delete link[cmd.command];
+                commands.forEach( cmd => {
+                    delete link[cmd.command]
                 })
                 link.commands = commands;
                 return link;
             });
             tab.links = links;
             
-            links.map(link => {
+            links.forEach(link => {
                 delete tab[link.name];
             })
 
