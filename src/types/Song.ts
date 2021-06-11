@@ -3,12 +3,13 @@ import {CustomNodeJsGlobal} from "./CustomNodeJsGlobal";
 import {Playlist}           from "./Playlist";
 import {PlaylistSong}       from "./PlaylistSong";
 import validator            from "validator";
-import * as Database        from "better-sqlite3";
+const lame_database = require('better-sqlite3')
+import {Database}			from "better-sqlite3"
 import * as path            from "path";
 import * as fs              from "fs";
 
 declare const global: CustomNodeJsGlobal;
-const DB = new Database("playlists.sql");
+const DB : Database = new lame_database("playlists.sql");
 
 DB.pragma("foreign_keys = ON;");
 DB.pragma("journal_mode = WAL");
@@ -220,7 +221,7 @@ export class Song {
 			}
 		});
 	}
-
+	
 	/**
 	 * Delete the song from the database. Also removes the file from both the Hash and Source folders.
 	 */
@@ -262,7 +263,7 @@ export class Song {
 				console.log(`Song.delete: \nError: `);
 				console.log(err);
 				reject(err);
-			}
+			});
 		});
 	}
 
@@ -283,5 +284,4 @@ export class Song {
 			}
 		});
 	}
-
 }
