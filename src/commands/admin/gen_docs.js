@@ -12,7 +12,7 @@ exports.run = (client, message, args) => {
     }
 
     handlebars.registerHelper('capitalize', function(title){
-        return title.charAt(0).toUpperCase() + title.slice(1);;
+        return title.charAt(0).toUpperCase() + title.slice(1);
       })
 
     let command_folders_path = path.resolve("built", "commands");
@@ -23,9 +23,7 @@ exports.run = (client, message, args) => {
                 let keys = Object.keys(temp);
                 if (keys.includes("docs")) {
                     
-                    let docs = temp.docs();
-                    let command_info = { description: docs.description, examples: docs.examples}
-                    let command = {[docs.command]: command_info}
+                    let docs = temp.docs(); 
 
                     let rt = {
                         [docs.tab]: {
@@ -80,12 +78,10 @@ exports.run = (client, message, args) => {
         fs.readFile(index_template_path, 'utf-8', function(error, source){
             var template = handlebars.compile(source);
             var html = template(test);
-
-            let index_path = path.resolve("src", "website", "index.html")
             
-            fs.writeFile("/var/www/html/index.html", html, function(err) {
-                if(err) {
-                    console.log(err);
+            fs.writeFile("/var/www/html/index.html", html, function(writeErr) {
+                if(writeErr) {
+                    console.log(writeErr);
                     return message.channel.send("Failed to write updated Docs to website/index.html")
                 }
             }); 
@@ -99,7 +95,7 @@ exports.help = () => {
 };
 
 exports.docs = () => {
-    let docs = {
+    return {
         default_access: 0,
         tab: "admin",
         link: "general",
@@ -114,6 +110,5 @@ exports.docs = () => {
                 code: "gen_docs"
             }
         ]
-    }
-    return docs;
+    };
 };
