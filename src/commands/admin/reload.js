@@ -24,7 +24,6 @@ exports.run = (client, message, args) => {
             if(err)console.error(err);
             files.some((filename)=>{
                 if(filename.endsWith(".js")){
-                    word = arg.substr(0, arg.length - 3)
                     if (filename === arg)
                     {
                         console.log("Exact match, reloading " + filename + ".")
