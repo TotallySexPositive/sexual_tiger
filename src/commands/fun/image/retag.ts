@@ -1,9 +1,11 @@
 const path = require("path");
 const fs = require("fs");
 import { Client, Message } from "discord.js";
+import { CustomNodeJsGlobal } from "src/types/CustomNodeJsGlobal";
 import * as DAL from "../../../dal";
 import { Command } from "../../../types/Command";
 import * as UTIL from "../../../utils";
+declare const global: CustomNodeJsGlobal;
 
 class Retag extends Command {
 	constructor(obj: any) {
