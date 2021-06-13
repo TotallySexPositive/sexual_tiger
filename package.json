@@ -75,6 +75,7 @@
 		"@types/chai": "^4.2.14",
 		"@types/mocha": "^8.2.0",
 		"@types/node": "^15.6.1",
+		"@types/node-dir": "0.0.33",
 		"@types/node-fetch": "^2.5.10",
 		"@types/recursive-readdir": "^2.2.0",
 		"@types/validator": "^13.1.2",
