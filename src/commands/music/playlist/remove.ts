@@ -63,7 +63,7 @@ class Add extends Command {
 
 			if (s_err) {
 				skipped_songs.push(`X_X: ${identifier}`);
-				console.log(s_rr);
+				console.log(s_err);
 			} else if (song === undefined) {
 				skipped_songs.push(`DNE: ${identifier}`);
 			} else {
