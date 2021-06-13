@@ -1,44 +1,47 @@
+import { Client, Message } from "discord.js";
+import { Command } from "../../types/Command";
 import * as UTIL from "../../utils";
-import { CustomNodeJsGlobal } from "../../types/CustomNodeJsGlobal"
-import { Doc } from "../../types/Doc"
-import { Example } from "../../types/Example";
-import { Message, Client } from "discord.js";
-declare const global: CustomNodeJsGlobal;
 
-exports.run = (client: Client, message: Message, _args) => {
-    const author = message.author;
-    const member = message.member;
+class WhoAmI extends Command {
+	constructor(obj: any) {
+		super(obj);
+	}
 
-    const is_admin: boolean = UTIL.isAdmin(member);
+	execute(client: Client, message: Message, _args: Array<string>): void {
+		const author = message.author;
+		const member = message.member;
 
-    const description = `
-    User id: ${author.id}
-    Username: ${author.username}
-    Nickname: ${member.nickname}
-    Display Name: ${member.displayName}
-    Discriminator: ${author.discriminator}
-    On Server: ${message.guild.id}
-    isAdmin: ${is_admin}
-    `.replace(/\n +/g, `\n`);
+		const is_admin: boolean = UTIL.isAdmin(member);
 
-    message.channel.send(description);
+		const description = `
+            User id: ${author.id}
+            Username: ${author.username}
+            Nickname: ${member.nickname}
+            Display Name: ${member.displayName}
+            Discriminator: ${author.discriminator}
+            On Server: ${message.guild.id}
+            isAdmin: ${is_admin}
+        `.replace(/\n +/g, `\n`);
+
+		message.channel.send(description);
+	}
 }
 
-exports.help = () => {
-    return "I don't know. Who are you people?!";
-};
+const whoami: Command = new WhoAmI({
+	name: "whoami",
+	aliases: [],
+	description: "Displays some general information about the user.",
+	defaultAccess: 1,
+	parent: "",
+	syntax: "whoami",
+	category: "Misc",
+	subcategory: "General",
+	examples: [
+		{
+			description: "Get info on yourself",
+			code: "whoami",
+		},
+	],
+});
 
-exports.docs = () => {
-    const doc = new Doc(
-        1,
-        "Misc",
-        "general",
-        "",
-        "whoami",
-        "whoami",
-        "Displays some general information about the user.",
-        "whoami"
-    );
-    doc.addExample( new Example("Get info on myself", "whoami"));
-    return doc;
-};
+export default whoami;

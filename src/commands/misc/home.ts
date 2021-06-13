@@ -1,29 +1,31 @@
-import { CustomNodeJsGlobal } from "../../types/CustomNodeJsGlobal"
-import { Doc } from "../../types/Doc"
-import { Example } from "../../types/Example";
-import { Message, Client } from "discord.js";
-declare const global: CustomNodeJsGlobal;
-exports.run = (client: Client, message: Message, _args) => {
-    message.channel.send("Come visit me at, https://tiger.wentzel.dev")
+import { Client, Message } from "discord.js";
+import { Command } from "../../types/Command";
+
+class Home extends Command {
+	constructor(obj: any) {
+		super(obj);
+	}
+
+	execute(_client: Client, message: Message, _args: Array<string>): void {
+		message.channel.send("Come visit me at, https://tiger.wentzel.dev");
+	}
 }
 
-exports.help = () => {
-    return "Display link to my home";
-};
+const home: Command = new Home({
+	name: "home",
+	aliases: [],
+	description: "Displays the link to the Sexual Tiger website.",
+	defaultAccess: 1,
+	parent: "",
+	syntax: "home",
+	category: "Misc",
+	subcategory: "General",
+	examples: [
+		{
+			description: "Get Link",
+			code: "home",
+		},
+	],
+});
 
-exports.docs = () => {
-    const doc = new Doc(
-        1,
-        "Misc",
-        "general",
-        "",
-        "home",
-        "home",
-        "Displays the link to the Sexual Tiger website.",
-        "home"
-    );
-    doc.addExample(
-        new Example("Get Link", "home")
-    )
-    return doc;
-};
+export default home;
