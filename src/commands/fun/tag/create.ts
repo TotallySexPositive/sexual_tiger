@@ -1,4 +1,3 @@
-const path = require("path");
 import { Client, Message } from "discord.js";
 import * as DAL from "../../../dal";
 import { Command } from "../../../types/Command";
@@ -9,7 +8,7 @@ class Create extends Command {
 	}
 
 	execute(_client: Client, message: Message, args: Array<string>): void {
-		let name = args.join(" ");
+		const name = args.join(" ");
 		if (DAL.isInt(name)) {
 			message.channel.send("Tag names can not be Integers.  Just because.");
 			return;
@@ -19,7 +18,7 @@ class Create extends Command {
 			return;
 		}
 
-		let { err, _info } = DAL.createTag(name);
+		const { err, _info } = DAL.createTag(name);
 
 		if (err && err.message.indexOf("UNIQUE") > -1) {
 			//Unique constraint error
