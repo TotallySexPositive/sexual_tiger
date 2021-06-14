@@ -17,7 +17,6 @@ class Delete extends Command {
 	execute(_client: Client, message: Message, args: Array<string>): void {
 		let server = global.servers[message.guild.id];
 		var identifier = args.join(" ");
-		let playlist_id = undefined;
 
 		let user_is_super_admin = server.super_admins.includes(message.author.id);
 		if (!UTIL.isInt(identifier)) {
@@ -36,8 +35,8 @@ class Delete extends Command {
 				//Yell at the user for trying to delete other peoples stuff, unless this user is a super admin. (Adam/Steve)
 				message.channel.send("Hey, how about you dont be a twat and not try and delete other peoples uploads.");
 			} else {
-				let { err, info } = DAL.deleteSongById(song.song_id);
-				if (err) {
+				let { delErr, _info } = DAL.deleteSongById(song.song_id);
+				if (delErr) {
 					if (err.message.includes("FOREIGN KEY")) {
 						let { err: pl_err, playlists } = DAL.getPlaylistsWithSong(song.song_id);
 						if (pl_err) {

@@ -14,8 +14,6 @@ const options = {
 	],
 };
 
-const parser = require("yargs-parser");
-
 class Top extends Command {
 	constructor(obj: any) {
 		super(obj);

@@ -8,15 +8,16 @@ class Tag extends Command {
 		super(obj);
 	}
 
-	execute(client: Client, message: Message, args: Array<string>): void {
-		//if(args.length < 2) return message.channel.send("Incorrect usage, Check the help file.")
-		var playlist_command = args[0];
-		var tail = args.slice(1);
+	async execute(client: Client, message: Message, args: Array<string>): Promise<void> {
+		if (args.length != 2) {
+			message.channel.send("Incorrect usage, Check the manual.");
+			return;
+		}
 
-		let p = path.resolve("built", "commands", "fun", "tag", `${playlist_command}.js`);
+		const p = path.resolve("built", "commands", "fun", "tag", `${args[0]}.js`);
 		if (fs.existsSync(p)) {
-			let commandFile = require(p);
-			commandFile.run(client, message, tail);
+			const commandFile = await import(p);
+			commandFile.default.execute(client, message, args[1]);
 		} else {
 			message.channel.send("That isnt a valid tag command.");
 		}

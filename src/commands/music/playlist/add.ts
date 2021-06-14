@@ -63,7 +63,7 @@ class Add extends Command {
 			} else if (song === undefined) {
 				skipped_songs.push(`DNE: ${identifier}`);
 			} else {
-				let { err, info } = DAL.addToPlaylist(playlist.playlist_id, song.song_id);
+				let { err, _info } = DAL.addToPlaylist(playlist.playlist_id, song.song_id);
 				if (err) {
 					console.log(err);
 					skipped_songs.push(`X_X: ${song.song_id}: ${song.name}`);

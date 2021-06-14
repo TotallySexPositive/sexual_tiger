@@ -28,9 +28,9 @@ class Delete extends Command {
 			}
 		}
 
-		var { err, info } = DAL.deletePlaylistById(playlist_id);
+		var { delErr, info } = DAL.deletePlaylistById(playlist_id);
 
-		if (err) {
+		if (delErr) {
 			message.channel.send(`Sorry, ${message.author.username}, it seems something unexpected happened.`);
 		} else if (info.changes == 0) {
 			message.channel.send(`Sorry, ${message.author.username}, but that playlist didn't exist.`);
