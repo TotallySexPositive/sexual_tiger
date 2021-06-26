@@ -37,7 +37,7 @@ class Revoke extends Command {
 				return;
 			}
 
-			let { find_err, access } = DAL.findAccessByUserIdAndCommand(user, command.command);
+			let { err: find_err, access } = DAL.findAccessByUserIdAndCommand(user, command.command);
 			if (find_err) {
 				console.log("Failed to find access for a command during revoke, oops");
 				console.log(find_err);
@@ -47,9 +47,9 @@ class Revoke extends Command {
 				return;
 			}
 
-			let { grant_err, result } = DAL.revokeAccessByUserIdAndCommand(user, command.command, message.author.id);
-			if (grant_err) {
-				message.channel.send(`Something went wrong Error: ${grant_err}`);
+			let { err: revoke_err, info } = DAL.revokeAccessByUserIdAndCommand(user, command.command, message.author.id);
+			if (revoke_err) {
+				message.channel.send(`Something went wrong Error: ${revoke_err}`);
 			} else {
 				message.channel.send(`That user's access has been revoked for the command, ${command.command}`);
 			}

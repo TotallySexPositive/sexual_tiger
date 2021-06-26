@@ -35,7 +35,7 @@ class Grant extends Command {
 				return;
 			}
 
-			let { find_err, access } = DAL.findAccessByUserIdAndCommand(user, command.command);
+			let { err: find_err, access } = DAL.findAccessByUserIdAndCommand(user, command.command);
 
 			if (find_err) {
 				console.log("Failed to find access for a command during grant, oops");
@@ -45,7 +45,7 @@ class Grant extends Command {
 				message.channel.send(`That user already has access to the command, ${command.command}`);
 				return;
 			}
-			let { grant_err, result } = DAL.grantAccessByUserIdAndCommand(user, command.command, message.author.id);
+			let { err: grant_err, info } = DAL.grantAccessByUserIdAndCommand(user, command.command, message.author.id);
 
 			if (grant_err) {
 				console.log(grant_err);

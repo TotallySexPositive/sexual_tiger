@@ -17,7 +17,9 @@ class Tag extends Command {
 		const p = path.resolve("built", "commands", "fun", "tag", `${args[0]}.js`);
 		if (fs.existsSync(p)) {
 			const commandFile = await import(p);
-			commandFile.default.execute(client, message, args[1]);
+			//Throw away "create"
+			args.shift();
+			commandFile.default.execute(client, message, args);
 		} else {
 			message.channel.send("That isnt a valid tag command.");
 		}

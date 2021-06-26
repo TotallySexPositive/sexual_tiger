@@ -86,7 +86,7 @@ class Add extends Command {
 }
 
 const add: Command = new Add({
-	name: "burn",
+	name: "add",
 	aliases: [],
 	description: "Add a new image to the database.",
 	defaultAccess: 1,

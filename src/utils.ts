@@ -4,7 +4,7 @@ import { readFileSync, rename, statSync, unlink, writeFile } from "fs";
 import md5 from "md5";
 import probe from "node-ffprobe";
 import { basename, extname, resolve } from "path";
-import * as DAL from "./dal";
+import * as DAL from "./dal.js";
 import { Command } from "./types/Command";
 import { CustomNodeJsGlobal } from "./types/CustomNodeJsGlobal";
 import { Server } from "./types/Server";

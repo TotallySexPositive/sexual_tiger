@@ -47,7 +47,7 @@ class Tag extends Command {
 							let tag_ids = tags.map(function(tag) {
 								return tag["tag_id"];
 							});
-							let { err: it_err, _info } = DAL.insertIntoImageTag([image.image_id], tag_ids);
+							let { err: it_err, info } = DAL.insertIntoImageTag([image.image_id], tag_ids);
 							if (it_err) {
 								return message.channel.send("Crashed adding tags to image.");
 							} else {

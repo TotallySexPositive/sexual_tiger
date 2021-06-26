@@ -68,8 +68,12 @@ glob(`${__dirname}/commands/**/*.js`, function(er, files) {
 		try {
 			const command = await import(file);
 			if (command.default.name !== undefined) {
-				commands[command.default.name] = command.default;
-				console.log(`Imported ${file}, Command Name: ${command.default.name}`);
+				if (commands[command.default.name] !== undefined) {
+					console.error("Duplicate Command name found.\n" + commands[command.default.name].toJson() + "\n" + command.toJson());
+				} else {
+					commands[command.default.name] = command.default;
+					console.log(`Imported ${file}, Command Name: ${command.default.name}`);
+				}
 			}
 		} catch (err) {
 			console.log(`Failed to import ${file}`);

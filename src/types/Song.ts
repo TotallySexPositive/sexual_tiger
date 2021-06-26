@@ -247,51 +247,43 @@ export class Song {
 		return new Promise((resolve, reject) => {
 			const query = `DELETE FROM ${Song.TABLE} WHERE song_id = :song_id;`;
 
-			try {
-				this.playlists()
-					.then((playlists) => {
-						if (playlists) {
-							const playlist_names: string = playlists.map((playlist) => playlist.name).join(", ");
-							reject(
-								new Error(`You can not delete a song that is on a playlist.  This song is on the following ${playlists.length} playlist(s), ${playlist_names}.`)
-							);
-						} else {
-							//Delete the song.
-							const info = DB.prepare(query).run({
-								song_id: this.id,
-							});
+			this.playlists()
+				.then((playlists) => {
+					if (playlists) {
+						const playlist_names: string = playlists.map((playlist) => playlist.name).join(", ");
+						reject(new Error(`You can not delete a song that is on a playlist.  This song is on the following ${playlists.length} playlist(s), ${playlist_names}.`));
+					} else {
+						//Delete the song.
+						const info = DB.prepare(query).run({
+							song_id: this.id,
+						});
 
-							if (info.changes) {
-								//Delete the hashed file.
-								const hashed_file = path.resolve(global.audio_dirs["hashed"], this.hash_id + ".mp3");
-								fs.unlink(hashed_file, function(err) {
-									if (err) {
-										console.log(`Failed to delete requested hashed file. File: ${hashed_file}`);
-										console.log(err);
-									}
-								});
-								//Delete the source file.
-								const source_file = this.source;
-								fs.unlink(source_file, function(err) {
-									if (err) {
-										console.log(`Failed to delete requested stored file. File: ${source_file}`);
-										console.log(err);
-									}
-								});
-								resolve(this);
-							} else {
-								resolve(undefined);
-							}
+						if (info.changes) {
+							//Delete the hashed file.
+							const hashed_file = path.resolve(global.audio_dirs["hashed"], this.hash_id + ".mp3");
+							fs.unlink(hashed_file, function(err) {
+								if (err) {
+									console.log(`Failed to delete requested hashed file. File: ${hashed_file}`);
+									console.log(err);
+								}
+							});
+							//Delete the source file.
+							const source_file = this.source;
+							fs.unlink(source_file, function(err) {
+								if (err) {
+									console.log(`Failed to delete requested stored file. File: ${source_file}`);
+									console.log(err);
+								}
+							});
+							resolve(this);
+						} else {
+							resolve(undefined);
 						}
-					})
-					.catch((err) => {
-						reject(err);
-					});
-			} catch (err) {
-				console.log(`Song.delete: \nError: `);
-				console.log(err);
-				reject(err);
-			}
+					}
+				})
+				.catch((err) => {
+					reject(err);
+				});
 		});
 	}
 

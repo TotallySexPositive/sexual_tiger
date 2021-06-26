@@ -15,12 +15,12 @@ export class Command {
 	examples: Example[];
 
 	constructor(obj: any) {
-		this.name          = obj.name;
-		this.aliases       = obj.aliases;
-		this.description   = obj.description;
+		this.name = obj.name;
+		this.aliases = obj.aliases;
+		this.description = obj.description;
 		this.defaultAccess = obj.default_access;
-		this.syntax        = obj.usage;
-		this.parent        = obj.parent;
+		this.syntax = obj.usage;
+		this.parent = obj.parent;
 	}
 
 	execute(client: Client, message: Message, args: Array<string>) {
@@ -28,5 +28,8 @@ export class Command {
 	}
 	help(client: Client, message: Message, args: Array<string>) {
 		message.reply("Sorry, this command's help function has not be implemented.");
+	}
+	toJson(): string {
+		return JSON.stringify(this, null, "\t");
 	}
 }

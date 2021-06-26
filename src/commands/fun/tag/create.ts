@@ -18,7 +18,7 @@ class Create extends Command {
 			return;
 		}
 
-		const { err, _info } = DAL.createTag(name);
+		const { err, info } = DAL.createTag(name);
 
 		if (err && err.message.indexOf("UNIQUE") > -1) {
 			//Unique constraint error
