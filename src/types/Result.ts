@@ -8,13 +8,15 @@ export interface ResultBase {
 }
 
 export interface SongResult extends ResultBase {
-	result: Song;
+	song?: Song;
 }
 
 export interface PlaylistResult extends ResultBase {
-	result: Playlist;
+	playlist?: Playlist;
 }
 
 export interface PlaylistSongResult extends ResultBase {
-	result: PlaylistSong;
+	playlistSong?: PlaylistSong;
 }
+
+export type SongIdentifier = "song_id" | "hash_id" | "name" | "url" | undefined;

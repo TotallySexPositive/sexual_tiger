@@ -1,6 +1,7 @@
-let Database = require("better-sqlite3");
+import Database from "better-sqlite3";
 import validator from "validator";
 import { CustomNodeJsGlobal } from "./types/CustomNodeJsGlobal";
+import { SongIdentifier, SongResult } from "./types/Result";
 
 const SONG_TABLE = "song";
 const PLAYLIST_TABLE = "playlist";
@@ -37,88 +38,76 @@ let isInt = function(value) {
  *
  * @param {Integer} song_id - The id of the song to find
  */
-const findSongById = function(song_id) {
-	if (!isInt(song_id)) {
-		let err = new Error("song_id must be an integer.");
-		return { err: err, song: undefined };
+const findSongById = function(song_id: number): SongResult {
+	if (!validator.isInt(song_id + "")) {
+		return { err: new Error("song_id must be an integer.") };
 	}
-	let query = `SELECT ${SONG_FIELDS} FROM ${SONG_TABLE} WHERE song_id = ?`;
 
 	try {
-		return { err: undefined, song: DB.prepare(query).get(song_id) };
+		const query = `SELECT ${SONG_FIELDS} FROM ${SONG_TABLE} WHERE song_id = ?`;
+		return { song: DB.prepare(query).get(song_id) };
 	} catch (err) {
-		console.log(`findSongById song_id: ${song_id} \nError: `);
-		console.log(err);
-		return { err: err, song: undefined };
+		console.error(`findSongById song_id: ${song_id} \nError: `);
+		console.error(err);
+		return { err: err };
 	}
 };
 
-const findSongByHashId = function(hash_id) {
-	let query = `SELECT ${SONG_FIELDS} FROM ${SONG_TABLE} WHERE hash_id = ?`;
-
+const findSongByHashId = function(hash_id: string): SongResult {
+	if (!validator.isMD5(hash_id)) {
+		return { err: new Error("song_id must be an MD5 Hash.") };
+	}
 	try {
-		return { err: undefined, song: DB.prepare(query).get(hash_id) };
+		const query = `SELECT ${SONG_FIELDS} FROM ${SONG_TABLE} WHERE hash_id = ?`;
+		return { song: DB.prepare(query).get(hash_id) };
 	} catch (err) {
-		console.log(`findSongByHashId song_id: ${hash_id} \nError: `);
-		console.log(err);
-		return { err: err, song: undefined };
+		console.error(`findSongByHashId song_id: ${hash_id} \nError: `);
+		console.error(err);
+		return { err: err };
 	}
 };
 
-const findSongByName = function(name) {
-	if (isInt(name)) {
-		let err = new Error("name must NOT be an integer.");
-		return { err: err, song: undefined };
+const findSongByName = function(name: string): SongResult {
+	if (validator.isInt(name) || validator.isMD5(name)) {
+		return { err: new Error("name must NOT be an integer/MD5 Hash.") };
 	}
-	let query = `SELECT ${SONG_FIELDS} FROM ${SONG_TABLE} WHERE name = ?`;
 
 	try {
-		return { err: undefined, song: DB.prepare(query).get(name) };
+		const query = `SELECT ${SONG_FIELDS} FROM ${SONG_TABLE} WHERE name = ?`;
+		return { song: DB.prepare(query).get(name) };
 	} catch (err) {
-		console.log(`findSongById name: ${name} \nError: `);
-		console.log(err);
-		return { err: err, song: undefined };
+		console.error(`findSongByName name: ${name} \nError: `);
+		console.error(err);
+		return { err: err };
 	}
 };
 
-let findSongByUrl = function(url) {
-	let query = `SELECT ${SONG_FIELDS} FROM ${SONG_TABLE} WHERE url = ?`;
-
+const findSongByUrl = function(url: string): SongResult {
+	if (!validator.isURL(url)) {
+		return { err: new Error("Url was invalid.") };
+	}
 	try {
-		return { err: undefined, song: DB.prepare(query).get(url) };
+		const query = `SELECT ${SONG_FIELDS} FROM ${SONG_TABLE} WHERE url = ?`;
+		return { song: DB.prepare(query).get(url) };
 	} catch (err) {
-		console.log(`findSongByUrl url: ${url} \nError: `);
-		console.log(err);
-		return { err: err, song: undefined };
+		console.error(`findSongByUrl url: ${url} \nError: `);
+		console.error(err);
+		return { err: err };
 	}
 };
 
-let findSongByIdentifier = function(identifier, identifier_type = null) {
+const findSongByIdentifier = function(identifier: string, identifier_type: SongIdentifier): SongResult {
 	let valid_identifiers = ["song_id", "hash_id", "name", "url"];
 
-	if (identifier_type === null) {
-		//Type not specified, lets figure it out
-
-		if (isInt(identifier)) {
-			return findSongById(identifier);
-		} else if (validator.isMD5(identifier)) {
-			return findSongByHashId(identifier);
-		} else if (validator.isURL(identifier)) {
-			return findSongByUrl(identifier);
-		} else {
-			//Welp, I guess its a song name
-			return findSongByName(identifier);
-		}
-	} else {
+	if (identifier_type) {
 		if (!valid_identifiers.includes(identifier_type)) {
 			//Invalid identifier type sent
-			let err = new Error(`Invalid identifier_type passed. Valid types: ${valid_identifiers.join(", ")}.`);
-			return { err: err, song: undefined };
+			return { err: new Error(`Invalid identifier_type passed. Valid types: ${valid_identifiers.join(", ")}.`) };
 		} else {
 			//Valid identifier type sent, just run the query
 			switch (identifier_type) {
 				case "song_id":
-					return findSongById(identifier);
+					return findSongById(parseInt(identifier));
 				case "hash_id":
 					return findSongByHashId(identifier);
 				case "name":
@@ -126,6 +115,18 @@ let findSongByIdentifier = function(identifier, identifier_type = null) {
 				case "url":
 					return findSongByUrl(identifier);
 			}
+		}
+	} else {
+		//Type not specified, lets figure it out
+		if (validator.isInt(identifier)) {
+			return findSongById(parseInt(identifier));
+		} else if (validator.isMD5(identifier)) {
+			return findSongByHashId(identifier);
+		} else if (validator.isURL(identifier)) {
+			return findSongByUrl(identifier);
+		} else {
+			//Welp, I guess its a song name
+			return findSongByName(identifier);
 		}
 	}
 };
