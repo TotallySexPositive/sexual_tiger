@@ -33,8 +33,6 @@ exports.run = (client, message, args) => {
 		return message.channel.send(`That clip is already in the DB under the name, ${song.name}`);
 	} else {
 		youtubedl(url, { dumpSingleJson: true }).then((output) => {
-			console.log(output);
-			console.log(JSON.stringify(output));
 			let save_to = path.resolve(global.audio_dirs.tmp, sanitize(output.title) + `.mp3`);
 			if (output.duration > 600) {
 				//10 minutes
