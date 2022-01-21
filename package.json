@@ -63,6 +63,7 @@
     "request": "^2.88.2",
     "sanitize-filename": "^1.6.3",
     "sodium": "^3.0.2",
+    "uberduck-api": "^1.2.2",
     "utf-8-validate": "^5.0.3",
     "validator": "^13.5.2",
     "xkcd-api": "^1.2.0",
