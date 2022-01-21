@@ -68,8 +68,8 @@
     "validator": "^13.5.2",
     "xkcd-api": "^1.2.0",
     "yargs-parser": "^20.2.4",
-    "youtube-dl-exec": "^1.2.3",
-    "ytdl-core": "^4.3.1",
+    "youtube-dl-exec": "^1.2.4",
+    "ytdl-core": "^4.9.2",
     "zlib-sync": "^0.1.7"
   },
   "devDependencies": {
