@@ -1,5 +1,6 @@
 import { getAudioUrl } from "uberduck-api";
 import * as UTIL from "../../utils";
+const path      = require("path");
 const auth      = require(path.resolve('auth.json'));
 const parser = require("yargs-parser");
 
