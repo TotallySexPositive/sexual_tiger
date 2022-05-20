@@ -2025,8 +2025,9 @@ exports.run = (client, message, args) => {
 		message.channel.send("You must be in a Voice Channel, I'm not gonna play this shit for no one.");
 		return;
 	}
+
 	getAudioUrl("pub_agcuopesxljrnbwrgj", auth.uber_duck, character, text).then((url) => {
-        message.channel.send(`${character} says, "${text}"`)
+    message.channel.send(`${character} says, "${text}"`)
 		UTIL.playUrl(url, vc);
 	});
 };
