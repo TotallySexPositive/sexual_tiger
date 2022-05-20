@@ -140,7 +140,7 @@ var processAudioFile = function(file_path, url, message, cb) {
             } else {
                 probe_audio_file(file_hash);
 
-                let err = generateAudioList();
+                let err = generateAudioList(message);
                 if(err) {
                     message.channel.send("Failed to update audio list after adding a new song.");
                     message.channel.send(err.message);
@@ -437,7 +437,7 @@ let updateCommandList = function() {
     });
 }
 
-let generateAudioList = function() {
+let generateAudioList = function(message) {
     let {err, songs} = DAL.getSongListData()
 
     if(err) {
