@@ -1,5 +1,5 @@
 import {Server} from "./types/Server";
-
+import {run as build_table} from "./commands/admin/build_table"
 const path = require("path");
 const fs = require("fs")
 const Discord = require('discord.js');
@@ -75,6 +75,7 @@ required_folders.forEach(function (dir) {
 });
 
 //Update the command table incase any new commands were added or a default access has been changed.
+build_table();
 UTIL.updateCommandList();
 
 client.on('ready', () => {

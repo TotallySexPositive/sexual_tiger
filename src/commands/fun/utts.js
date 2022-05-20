@@ -1,5 +1,7 @@
 import { getAudioUrl } from "uberduck-api";
 import * as UTIL from "../../utils";
+const path      = require("path");
+const auth      = require(path.resolve('auth.json'));
 const parser = require("yargs-parser");
 
 exports.run = (client, message, args) => {
@@ -2023,8 +2025,9 @@ exports.run = (client, message, args) => {
 		message.channel.send("You must be in a Voice Channel, I'm not gonna play this shit for no one.");
 		return;
 	}
-	getAudioUrl("pub_suwbkktlrzjhkfmhtv", "pk_1727bccc-8168-4992-8443-8285dc700737", character, text).then((url) => {
-        message.channel.send(`${character} says, "${text}"`)
+
+	getAudioUrl("pub_agcuopesxljrnbwrgj", auth.uber_duck, character, text).then((url) => {
+    message.channel.send(`${character} says, "${text}"`)
 		UTIL.playUrl(url, vc);
 	});
 };
