@@ -38,7 +38,7 @@
     "better-queue": "^3.8.10",
     "better-sqlite3": "^7.1.2",
     "bufferutil": "^4.0.3",
-    "class-validator": "^0.12.2",
+    "class-validator": "^0.13.2",
     "discord.js": "^12.5.1",
     "erlpack": "github:discordapp/erlpack",
     "extract-domain": "^2.2.1",
