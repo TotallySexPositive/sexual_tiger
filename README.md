@@ -1,5 +1,5 @@
 # sexual_tiger
-
+[![CI](https://github.com/TotallySexPositive/sexual_tiger/actions/workflows/main.yml/badge.svg)](https://github.com/TotallySexPositive/sexual_tiger/actions/workflows/main.yml)
 ## Setup
 
 Copy `auth.json.example` to `auth.json` and add the token.

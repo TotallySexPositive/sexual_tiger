@@ -23,11 +23,7 @@ jobs:
       - uses: actions/checkout@v2
         with:
           fetch-depth: 0
-      #- uses: docker://sonarsource/sonar-scanner-cli:latest
-      #  env:
-      #    GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      #    SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-      #    SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+          
       - name: Setup Node.js environment
         uses: actions/setup-node@v2.1.5
         #with:
@@ -48,10 +44,11 @@ jobs:
           # Deprecated. Use node-version instead. Will not be supported after October 1, 2019
           #version: # optional
 
-      # Runs a single command using the runners shell
       - name: update node
         run: npm update
 
-      # Runs a set of commands using the runners shell
+      - name: update stupid google ts file
+        run: sed -i '1 s/./\/\/&/' node_modules/google-tts-api/dist/getAudioUrl.d.ts 
+      
       - name: build typescript
         run: tsc --build tsconfig.json
