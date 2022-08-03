@@ -1,0 +1,27 @@
+version: '3.4'
+
+services:
+  sexualtiger:
+    image: asralis/my-sexual-tiger:latest
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    environment:
+      NODE_ENV: production
+    volumes:
+      - type: bind
+        source: ./auth.json 
+        target: /usr/src/app/auth.json
+      - type: bind
+        source: ./configure.json 
+        target: /usr/src/app/configure.json
+      - type: bind
+        source: ./playlists.sql 
+        target: /usr/src/app/playlists.sql
+      - type: bind
+        source: ./images 
+        target: /usr/src/app/images
+      - type: bind
+        source: ./audio
+        target: /usr/src/app/audio
+

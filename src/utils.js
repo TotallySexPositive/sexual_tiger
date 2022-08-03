@@ -114,8 +114,11 @@ var processAudioFile = function(file_path, url, message, cb) {
         cb(new Error(`The given file already exists on the server by name, ${song.name}`), undefined);
         return;
     }
-        
-    exec(`nice ffmpeg-normalize "${file_path}" -c:a libmp3lame -ofmt mp3 -ext mp3 -o ${hashed_file_path} -f -t -20`, (err, stdout, stderr) => {
+    
+    let cmd = "nice "
+    let args = ["ffmpeg-normalize", "\""+ file_path+"\"", "-c:a", "libmp3lame", "-ofmt", "mp3", "-o", "\""+hashed_file_path+"\"", "-f", "-t", "-20"]
+    
+    exec(cmd + args.join(" "), (err, stdout, stderr) => {
         if (err) {// node couldn't execute the command
             if(err.message.indexOf("Invalid data found") == -1) { //Only output error if we dont know why it happened.
                 console.log("Couldnt run command");

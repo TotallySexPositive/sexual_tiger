@@ -15,6 +15,10 @@ exports.run = (client, message, args) => {
 
     if(args.length === 1) { //1 args, set volume.
         let num_vol = Number(args[0])
+        if (num_vol == 69)
+        {
+            message.channel.send("Hehe nice.");
+        }
         if(num_vol) {
             let req_vol = Math.round(((num_vol > 1 ? num_vol / 100.0 : num_vol) + Number.EPSILON) * 100) / 100
             

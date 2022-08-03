@@ -1,0 +1,29 @@
+version: '3.4'
+
+services:
+  sexualtiger:
+    image: sexualtiger
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    environment:
+      NODE_ENV: development
+    ports:
+      - 9229:9229
+    command: ["node", "--inspect=0.0.0.0:9229", "bot.js"]
+    volumes:
+      - type: bind
+        source: ./auth.json 
+        target: /usr/src/app/auth.json
+      - type: bind
+        source: ./configure.json 
+        target: /usr/src/app/configure.json
+      - type: bind
+        source: ./playlists.sql 
+        target: /usr/src/app/playlists.sql
+      - type: bind
+        source: ./images 
+        target: /usr/src/app/images
+      - type: bind
+        source: ./audio
+        target: /usr/src/app/audio
