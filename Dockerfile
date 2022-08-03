@@ -20,7 +20,7 @@ RUN apk add --no-cache --virtual .build-deps alpine-sdk autoconf libtool automak
    pip install ffmpeg-normalize && \
    ln -s /usr/bin/python3 /usr/bin/python && \
    npm install --production && \
-   apk del .build-deps && \
+   apk del .build-deps py3-pip && \
    chown node:node /usr/src/app
 USER node
 CMD ["npm", "run", "start"]

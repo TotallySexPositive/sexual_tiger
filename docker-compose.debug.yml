@@ -22,8 +22,17 @@ services:
         source: ./playlists.sql 
         target: /usr/src/app/playlists.sql
       - type: bind
+        source: ./playlists.sql-shm 
+        target: /usr/src/app/playlists.sql-shm
+      - type: bind
+        source: ./playlists.sql-wal
+        target: /usr/src/app/playlists.sql-wal
+      - type: bind
         source: ./images 
         target: /usr/src/app/images
       - type: bind
         source: ./audio
         target: /usr/src/app/audio
+      - type: bind
+        source: ./html
+        target: /var/www/html
