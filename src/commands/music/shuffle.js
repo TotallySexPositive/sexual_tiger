@@ -1,65 +1,39 @@
-const path      = require("path")
-const fs        = require('fs');
-const shuffle   = require('array-shuffle');
+import { SlashCommandBuilder } from 'discord.js';
+
+const shuffle = require('array-shuffle');
 import * as DAL from "../../dal";
 import * as UTIL from "../../utils";
 
-exports.run = (client, message, args) => {
-    
-    var server  = global.servers[message.guild.id]
-    let vc      = message.member.voice.channel
-    let playlist_identifier = args.join(" ");
+export const data = new SlashCommandBuilder()
+    .setName('shuffle')
+    .setDescription("Shuffle the current song queue or replace with a shuffled playlist.")
+    .addStringOption(opt => opt
+        .setName('playlist')
+        .setDescription('Playlist name or ID to shuffle and play. Omit to shuffle current queue.')
+        .setRequired(false));
 
-    if(vc === null) {
-        return message.channel.send("You must be in a Voice Channel, I'm not gonna play this shit for no one.");
+export async function execute(interaction) {
+    var server = global.servers[interaction.guildId];
+    let vc = interaction.member.voice.channel;
+    let playlist_identifier = interaction.options.getString('playlist');
+
+    if (!vc) {
+        return interaction.reply({ content: "You must be in a Voice Channel, I'm not gonna play this shit for no one.", ephemeral: true });
     }
 
-    if(args.length <= 0) { //Just shuffle the current song queue
-        server.song_queue = shuffle(server.song_queue)
-        return message.channel.send("Shuffled the remaining songs in the queue.")
-    } else { //Try and set the song_queue to the playlist specified and shuffle it.
-        let {err, songs} = DAL.getSongsByPlaylistIdentifier(playlist_identifier)
+    if (!playlist_identifier) {
+        server.song_queue = shuffle(server.song_queue);
+        return interaction.reply("Shuffled the remaining songs in the queue.");
+    } else {
+        let { err, songs } = DAL.getSongsByPlaylistIdentifier(playlist_identifier);
 
-        if(err) {
-            return message.channel.send("Unknown error occured while fetching playlist songs.");
-        } else if(songs === undefined || songs.length == 0) {
-            return message.channel.send("This playlist has no songs, you suck as a DJ.")
+        if (err) {
+            return interaction.reply({ content: "Unknown error occured while fetching playlist songs.", ephemeral: true });
+        } else if (songs === undefined || songs.length == 0) {
+            return interaction.reply({ content: "This playlist has no songs, you suck as a DJ.", ephemeral: true });
         }
-        
+
         server.song_queue = shuffle(songs);
-        UTIL.playAudio(vc)
+        UTIL.playAudio(interaction, vc, server);
     }
-
 }
-
-exports.help = () => {
-    return "Shuffle the current song queue or replace the song queue with a shuffled playlist.";
-};
-
-exports.docs = () => {
-    let docs = {
-        default_access: 1,
-        tab: "music",
-        link: "general",
-        parent: "",
-        full_command: "shuffle",
-        command: "shuffle",
-        description: "Shuffle the current song queue or replace the song queue with a shuffled playlist.",
-        syntax: "shuffle [playlist_identifier]",
-        examples: [
-            {
-                description: "Shuffle the remaining songs in the queue.",
-                code: "shuffle"
-            },
-            {
-                description: "Replace the current song queue with a shuffled playlist 14.",
-                code: "shuffle 14"
-            },
-            {
-                description: "Replace the current song queue with a shuffled playlist viscera.",
-                code: "shuffle viscera"
-            }
-        ]
-    }
-    return docs;
-};

@@ -1,38 +1,39 @@
-const path      = require("path");
-const fs        = require("fs");
+import { SlashCommandBuilder } from 'discord.js';
 
-exports.run = (client, message, args) => {
-    
-    //if(args.length < 2) return message.channel.send("Incorrect usage, Check the help file.")
-    var playlist_command    = args[0];
-    var tail                = args.slice(1);
+import * as DAL from "../../dal";
 
-    let p = path.resolve("built", "commands", "fun", "tag",`${playlist_command}.js`)
-    if (fs.existsSync(p)) {
-        let commandFile = require(p);
-        commandFile.run(client, message, tail);
-    } else {
-       message.channel.send("That isnt a valid tag command.")
+export const data = new SlashCommandBuilder()
+    .setName('tag')
+    .setDescription("Manage image tags.")
+    .addSubcommand(sub => sub
+        .setName('create')
+        .setDescription("Create a new tag. Tag names must be 1 word.")
+        .addStringOption(opt => opt
+            .setName('name')
+            .setDescription('Tag name (single word)')
+            .setRequired(true)));
+
+export async function execute(interaction) {
+    const subcommand = interaction.options.getSubcommand();
+
+    if (subcommand === 'create') {
+        let name = interaction.options.getString('name');
+        if (DAL.isInt(name)) {
+            return interaction.reply({ content: "Tag names can not be Integers. Just because.", ephemeral: true });
+        }
+        if (name.indexOf(" ") > -1) {
+            return interaction.reply({ content: "Tag names must only be a single word.", ephemeral: true });
+        }
+
+        let { err, info } = DAL.createTag(name);
+
+        if (err && err.message.indexOf("UNIQUE") > -1) {
+            await interaction.reply(`That tag already exists.`);
+        } else if (err) {
+            console.log(err);
+            await interaction.reply(`Sorry, ${interaction.user.username}, it seems something unexpected happened.`);
+        } else {
+            await interaction.reply(`The tag ${name} has been created!`);
+        }
     }
-
 }
-
-exports.docs = () => {
-    let docs = {
-        default_access: 1,
-        tab: "image",
-        link: "Pictures",
-        parent: "",
-        full_command: "tag",
-        command: "tag",
-        description: "This command has no direct usage.",
-        syntax: 'tag',
-        examples: [
-            {
-                description: "N/A",
-                code: `n/a`
-            }
-        ]
-    }
-    return docs;
-};

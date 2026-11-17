@@ -1,4 +1,4 @@
-"use strict";
+import { SlashCommandBuilder } from 'discord.js';
 
 const fs = require("fs");
 const path = require("path");
@@ -6,79 +6,56 @@ import * as DAL from "../../dal";
 import * as UTIL from "../../utils";
 const sanitize = require("sanitize-filename");
 const youtubedl = require("youtube-dl-exec");
-const extractDomain = require("extract-domain");
+const extractDomain = require("extract-domain").default;
 const validator = require("validator");
 
-exports.run = (client, message, args) => {
-	let server = global.servers[message.guild.id];
+export const data = new SlashCommandBuilder()
+    .setName('download')
+    .setDescription("Download a video's audio and store it in the DB.")
+    .addStringOption(opt => opt
+        .setName('url')
+        .setDescription('URL of the video to download audio from')
+        .setRequired(true));
 
-	if (args.length !== 1) {
-		return message.channel.send("It seems you sent too much or too little info.");
-	}
+export async function execute(interaction) {
+    let server = global.servers[interaction.guildId];
+    let url = interaction.options.getString('url');
 
-	let url = args[0];
+    if (!validator.isURL(url)) {
+        return interaction.reply({ content: "Invalid url sent.", ephemeral: true });
+    }
 
-	if (!validator.isURL(url)) {
-		return message.channel.send("Invalid url sent.");
-	}
+    await interaction.deferReply();
 
-	let domain = extractDomain(url);
-	let { err, song } = DAL.findSongByUrl(url);
+    let domain = extractDomain(url);
+    let { err, song } = DAL.findSongByUrl(url);
 
-	if (err) {
-		console.log("Shit, what?");
-		console.log(err);
-		message.channel.send("Ummm, we kind of crashed but are trying to continue, wish me luck.");
-	} else if (song !== undefined) {
-		return message.channel.send(`That clip is already in the DB under the name, ${song.name}`);
-	} else {
-		youtubedl(url, { dumpSingleJson: true }).then((output) => {
-			let save_to = path.resolve(global.audio_dirs.tmp, sanitize(output.title) + `.mp3`);
-			if (output.duration > 600) {
-				//10 minutes
-				return message.channel.send("That video is too fucking long.");
-			} else {
-				youtubedl(url, { "extract-audio": true, "audio-format": "mp3", output: save_to }).then((output) => {
-					message.channel.send(`Done downloading the audio from ${domain}.`);
-					UTIL.processAudioFile(save_to, url, message, (err, success) => {
-						if (err) {
-							message.channel.send(err.message);
-						} else {
-							message.channel.send(success);
-						}
-					});
-				});
-				return message.channel.send(`Download of, ${output.title}, from ${domain} has started.`);
-			}
-		});
-	}
-};
-
-exports.help = () => {
-	return "Downloads a video's audio and stores it in the DB";
-};
-
-exports.docs = () => {
-	let docs = {
-		default_access: 1,
-		tab: "music",
-		link: "general",
-		parent: "",
-		full_command: "download",
-		command: "download",
-		description:
-			"Download a video from a website and add the audio to the bot.  All supported sites can be found here, https://ytdl-org.github.io/youtube-dl/supportedsites.html",
-		syntax: "download [url]",
-		examples: [
-			{
-				description: "Add a song from youtube to the bot",
-				code: "download https://www.youtube.com/watch?v=U9t-slLl30E",
-			},
-			{
-				description: "Add a song from soundcloud to the bot",
-				code: "download https://soundcloud.com/exploita/mr-krabs-robot-dance",
-			},
-		],
-	};
-	return docs;
-};
+    if (err) {
+        console.log("Shit, what?");
+        console.log(err);
+        return interaction.editReply("Ummm, we kind of crashed but are trying to continue, wish me luck.");
+    } else if (song !== undefined) {
+        return interaction.editReply(`That clip is already in the DB under the name, ${song.name}`);
+    } else {
+        try {
+            let info = await youtubedl(url, { dumpSingleJson: true });
+            let save_to = path.resolve(global.audio_dirs.get('tmp'), sanitize(info.title) + `.mp3`);
+            if (info.duration > 600) {
+                return interaction.editReply("That video is too fucking long.");
+            } else {
+                await youtubedl(url, { "extract-audio": true, "audio-format": "mp3", output: save_to, jsRuntimes:  "node"});
+                UTIL.processAudioFile(save_to, url, { channel: { send: (msg) => interaction.followUp(msg).catch(() => {}) }, author: interaction.user }, (err, success) => {
+                    if (err) {
+                        interaction.followUp(err.message).catch(() => {});
+                    } else {
+                        interaction.followUp(success).catch(() => {});
+                    }
+                });
+                return interaction.editReply(`Download of, ${info.title}, from ${domain} has started.`);
+            }
+        } catch (e) {
+            console.error(e);
+            return interaction.editReply("Failed to download audio.");
+        }
+    }
+}

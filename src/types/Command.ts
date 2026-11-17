@@ -12,7 +12,7 @@ export class Command {
 
 	constructor(obj: any) {
 
-		const errors = [];
+		const errors: string[] = [];
 
 		this.name           = obj.name;
 		this.aliases        = obj.aliases;

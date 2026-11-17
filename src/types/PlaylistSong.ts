@@ -26,7 +26,7 @@ export class PlaylistSong {
 	 * Get a PlaylistSong relationship by id
 	 * @param identifier
 	 */
-	static get(identifier: string): Promise<PlaylistSong> {
+	static get(identifier: string): Promise<PlaylistSong | undefined> {
 		return new Promise((resolve, reject) => {
 			const query = `SELECT * FROM ${PlaylistSong.TABLE} WHERE relation_id = ?`;
 
@@ -43,7 +43,7 @@ export class PlaylistSong {
 		});
 	}
 
-	save(): Promise<PlaylistSong> {
+	save(): Promise<PlaylistSong | undefined> {
 		return new Promise((resolve, reject) => {
 			if (!this.id) {
 				this.insert().then(playlist => resolve(playlist)).catch(err => reject(err));
@@ -56,7 +56,7 @@ export class PlaylistSong {
 	/**
 	 * Inserts a new playlist record into the database
 	 */
-	insert(): Promise<PlaylistSong> {
+	insert(): Promise<PlaylistSong | undefined> {
 		return new Promise((resolve, reject) => {
 			const query = `INSERT INTO ${PlaylistSong.TABLE} (playlist_id, song_id) VALUES (:playlist_id, :song_id)`;
 

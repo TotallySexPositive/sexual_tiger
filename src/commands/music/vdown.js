@@ -1,46 +1,18 @@
-exports.run = (client, message, args) => {
-    
-    var server  = global.servers[message.guild.id];
-    let vc      = message.member.voice.channel
-    let promise = server.connectionPromise
+import { SlashCommandBuilder } from 'discord.js';
 
-    if(vc === undefined) {
-        return message.channel.send("You must be in a Voice Channel to change the volume.");
+
+export const data = new SlashCommandBuilder()
+    .setName('vdown')
+    .setDescription("Turn down the volume the bot is playing at.");
+
+export async function execute(interaction) {
+    var server = global.servers[interaction.guildId];
+    let vc = interaction.member.voice.channel;
+
+    if (!vc) {
+        return interaction.reply({ content: "You must be in a Voice Channel to change the volume.", ephemeral: true });
     }
 
     server.volume = server.volume / 2;
-
-    if(vc && promise != null) {
-        promise.then(connection => {
-            connection.dispatcher.setVolume(server.volume)
-            message.channel.send(`Lowered volume: ${server.volume * 100}%`)
-        }).catch(reason => {
-            console.log(reason)
-        });
-    }
-
+    await interaction.reply(`Lowered volume: ${server.volume * 100}%`);
 }
-
-exports.help = () => {
-    return "Turn the volume down.";
-};
-
-exports.docs = () => {
-    let docs = {
-        default_access: 1,
-        tab: "music",
-        link: "general",
-        parent: "",
-        full_command: "vdown",
-        command: "vdown",
-        description: "Turn down the volume the bot is playing at.",
-        syntax: "vdown",
-        examples: [
-            {
-                description: "Turn down the volume",
-                code: "vdown"
-            }
-        ]
-    }
-    return docs;
-};

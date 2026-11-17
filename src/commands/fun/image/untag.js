@@ -38,8 +38,8 @@ exports.run = (client, message, args) => {
                                 console.log("Crashed while deleting image with no more tags", i_err)
                                 return message.channel.send(`Tags have been updated but most likely there is no an orphaned image, ${image.hash_id}`)
                             } else if (i_info.changes === 1) {
-                                let file_path = path.resolve(global.image_dirs.hashed, image.hash_id + image.extension)
-                                let trash_path = path.resolve(global.image_dirs.trash, image.hash_id + image.extension)
+                                let file_path = path.resolve(global.image_dirs.get('hashed'), image.hash_id + image.extension)
+                                let trash_path = path.resolve(global.image_dirs.get('trash'), image.hash_id + image.extension)
                                 fs.rename(file_path, trash_path, (err) => {
                                     if(err) {
                                         console.log(`Failed to move deleted image, ${file_path} to ${trash_path}`);

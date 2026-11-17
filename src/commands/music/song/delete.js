@@ -51,13 +51,13 @@ exports.run = (client, message, args) => {
                 let hashed_file = song.hash_id + ".mp3"
                 let stored_file = song.source
 
-                fs.unlink(path.resolve(global.audio_dirs.hashed, hashed_file), function(err3){
+                fs.unlink(path.resolve(global.audio_dirs.get('hashed'), hashed_file), function(err3){
                     if(err3) {
                         console.log("Failed to delete requested hashed file.")
                         console.log(err3);
                     }
                 });
-                fs.unlink(path.resolve(global.audio_dirs.stored, stored_file), function(err3){
+                fs.unlink(path.resolve(global.audio_dirs.get('stored'), stored_file), function(err3){
                     if(err3) {
                         console.log("Failed to delete requested stored file.")
                         console.log(err3);

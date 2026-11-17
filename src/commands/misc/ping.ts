@@ -1,23 +1,10 @@
-import { CustomNodeJsGlobal } from "../../types/CustomNodeJsGlobal"
-import { Client, Message } from "discord.js"
-import { Doc } from "../../types/Doc";
-import { Example } from "../../types/Example";
-declare const global: CustomNodeJsGlobal;
+import { SlashCommandBuilder } from 'discord.js';
+import type { ChatInputCommandInteraction } from 'discord.js';
 
-exports.run = (client: Client, message: Message, _args: Array<string>) => {
-    message.channel.send("pong!").catch(console.error);
-    message.channel.send(`My sexual ping is ${client.ws.ping}ms`)
+export const data = new SlashCommandBuilder()
+    .setName('ping')
+    .setDescription('Pings the bot to check if it is alive.');
+
+export async function execute(interaction: ChatInputCommandInteraction) {
+    await interaction.reply(`My sexual ping is ${interaction.client.ws.ping}ms`);
 }
-exports.help = () => {
-    return "Will pong you so hard.";
-};
-
-exports.docs = () => {
-    const docs = new Doc(
-        1, "Misc", "general", "", "ping", "ping",
-        "Pings the bot and has the bot acknowledge its alive.",
-        "ping"
-    );
-    docs.addExample(new Example("Ping.....pong?", "ping"))
-    return docs;
-};

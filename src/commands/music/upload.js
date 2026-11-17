@@ -1,53 +1,37 @@
-const {spawn}   = require('child_process');
-const path      = require("path");
-const request   = require("request");
-const fs        = require("fs");
+import { SlashCommandBuilder, Attachment } from 'discord.js';
+
+const path = require("path");
+const request = require("request");
+const fs = require("fs");
 import * as UTIL from "../../utils";
 
-exports.run = (client, message, args) => {
-    
-    let attachments = message.attachments.array()
-    if (attachments.length < 0) return message.channel.send("Need to actually attach something");
-	message.channel.send(`Downloading ${attachments.length} attachments.`);
+export const data = new SlashCommandBuilder()
+    .setName('upload')
+    .setDescription("Upload a song to the bot so it can be played back. Max file size is 8MB.")
+    .addAttachmentOption(opt => opt
+        .setName('file')
+        .setDescription('Audio file to upload')
+        .setRequired(true));
 
-    attachments.forEach(item => {
-        let fpath = path.resolve(global.audio_dirs.uploaded,item.name)
-        request(item.url)
-            .pipe(fs.createWriteStream(fpath))
-            .on('finish', () => {
-                UTIL.processAudioFile(fpath, null, message, (err, success) => {
-                    if(err) {
-                        message.channel.send(err.message);
-                    } else {
-                        message.channel.send(success);
-                    }
-                });
-            })
-            .on('error', (err) => {console.error(err)})
-    })
-
-}
-
-exports.help = () =>{
-    return "Upload a music file!";
-};
-
-exports.docs = () => {
-    let docs = {
-        default_access: 1,
-        tab: "music",
-        link: "general",
-        parent: "",
-        full_command: "upload",
-        command: "upload",
-        description: "Upload a song to the bot so it can be played back.  Max file size is 8MB due to discord limitations.  Most audio and video formats accepted.  Upload a file and type the command as the comment on the upload.",
-        syntax: "upload",
-        examples: [
-            {
-                description: "Upload a song.",
-                code: "upload"
-            }
-        ]
+export async function execute(interaction) {
+    const attachment = interaction.options.getAttachment('file');
+    if (!attachment) {
+        return interaction.reply({ content: "Need to actually attach something", ephemeral: true });
     }
-    return docs;
-};
+
+    await interaction.deferReply();
+
+    let fpath = path.resolve(global.audio_dirs.get('uploaded'), attachment.name);
+    request(attachment.url)
+        .pipe(fs.createWriteStream(fpath))
+        .on('finish', () => {
+            UTIL.processAudioFile(fpath, null, { channel: { send: (msg) => interaction.followUp(msg).catch(() => {}) }, author: interaction.user }, (err, success) => {
+                if (err) {
+                    interaction.followUp(err.message).catch(() => {});
+                } else {
+                    interaction.followUp(success).catch(() => {});
+                }
+            });
+        })
+        .on('error', (err) => { console.error(err); interaction.editReply("Failed to download attachment.").catch(() => {}); });
+}

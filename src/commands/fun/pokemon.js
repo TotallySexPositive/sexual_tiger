@@ -1,27 +1,28 @@
-const path          = require("path");
-const auth          = require(path.resolve('auth.json'));
-var giphy           = require('giphy-api')(auth.giphy);
-var request         = require('request');
+import { SlashCommandBuilder } from 'discord.js';
 
-exports.run = (client, message, args) => {
-    
-    var rand1   = Math.floor((Math.random() * 867) + 1); //494
-    var rand2   = Math.floor((Math.random() * 867) + 1); //494
-	
-    //var src     = `https://japeal.com/wordpress/wp-content/themes/total/PKM/EHF.php?type=all&p1=${rand1}&p2=${rand2}`
-    var src     = "https://japeal.com/pkm/"
-    const puppeteer = require('puppeteer');
 
-    (async () => {
-        const browser = await puppeteer.launch({headless: false});
+export const data = new SlashCommandBuilder()
+    .setName('pokemon')
+    .setDescription("Create a Pocket Monster");
+
+export async function execute(interaction) {
+    await interaction.deferReply();
+
+    try {
+        var rand1 = Math.floor((Math.random() * 867) + 1);
+        var rand2 = Math.floor((Math.random() * 867) + 1);
+        var src = "https://japeal.com/pkm/";
+        const puppeteer = require('puppeteer');
+
+        const browser = await puppeteer.launch({ headless: true });
         const page = await browser.newPage();
         const navigationPromise = page.waitForNavigation();
 
-        await page.goto(src),
-        await page.click("#fbutton"),
-        await navigationPromise,
-        x = await page.evaluate( () => {
-            console.log("In the function")
+        await page.goto(src);
+        await page.click("#fbutton");
+        await navigationPromise;
+
+        let imageDL = await page.evaluate(() => {
             var multiplier = 1;
             var combined = document.getElementById("canvas_download");
             var ctx = combined.getContext("2d");
@@ -32,7 +33,6 @@ exports.run = (client, message, args) => {
             var combinedGC = document.getElementById("canvas_GlowCurrent");
             var tempvar80 = combinedGC.width - combined.width;
             tempvar80 = tempvar80 / 2;
-            console.log("In the function")
 
             combined.width = combinedX2.width * multiplier;
             combined.height = combinedX2.height * multiplier;
@@ -45,39 +45,21 @@ exports.run = (client, message, args) => {
 
             var combinedL1 = document.getElementById("canvas_SSJ2Lightning");
             ctx.drawImage(combinedL1, 0, 0, combinedL1.width * multiplier, combinedL1.height * multiplier);
-            console.log("In the function")
 
-            var imageDL = document.getElementById("canvas_download").toDataURL("image/png").replace("image/png", "image/octet-stream");
-            console.log(imageDL)
-            return Promise.resolve(imageDL);
-          });
-        
-        //await browser.close();
-        console.log(x)
-    })();
+            return document.getElementById("canvas_download").toDataURL("image/png").replace("image/png", "image/octet-stream");
+        });
 
-}
+        await browser.close();
 
-exports.help = () =>{
-    return "Grab a Random Pokemon from Pokemon Fusion";
-};
+        const fs = require('fs');
+        const path = require('path');
+        let tmpPath = path.resolve(global.image_dirs.get('tmp'), `pokemon_${Date.now()}.png`);
+        let base64Data = imageDL.replace(/^data:image\/\w+;base64,/, "");
+        fs.writeFileSync(tmpPath, Buffer.from(base64Data, 'base64'));
 
-exports.docs = () => {
-    let docs = {
-        default_access: 1,
-        tab: "image",
-        link: "Pictures",
-        parent: "",
-        full_command: "pokemon",
-        command: "pokemon",
-        description: "Create a Pocket Monster",
-        syntax: 'pokemon',
-        examples: [
-            {
-                description: "Conjure a Pocket Monster",
-                code: `pokemon`
-            }
-        ]
+        await interaction.editReply({ files: [tmpPath] });
+    } catch (err) {
+        console.error(err);
+        await interaction.editReply("Failed to create Pokemon fusion.");
     }
-    return docs;
-};
+}
