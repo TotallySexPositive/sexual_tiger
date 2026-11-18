@@ -1,8 +1,9 @@
 const path = require("path")
 import * as DAL from "../../../dal";
+import * as UTIL from "../../../utils";
 const asciitable = require("asciitable")
 
-exports.run = (client, message, args) => {
+exports.run = async (client, message, args) => {
     
     var playlists_options = {
         skinny: true,
@@ -31,7 +32,10 @@ exports.run = (client, message, args) => {
             message.channel.send(`Sorry, ${message.author.username}, it seems something unexpected happened.`);
         } else {
             let table = asciitable(playlists_options, playlists);
-            message.channel.send(table, {code: true, split: true});
+            let chunks = UTIL.splitTable(table);
+            for (let i = 0; i < chunks.length; i++) {
+                await message.channel.send("```" + chunks[i] + "```");
+            }
         }
     } else {
         let playlist_identifier = args.join(" ")
@@ -40,7 +44,10 @@ exports.run = (client, message, args) => {
             message.channel.send(`Sorry, ${message.author.username}, it seems something unexpected happened.`)
         } else {
             let table = asciitable(songs_options, songs);
-            message.channel.send(table, {code: true, split: true});
+            let chunks = UTIL.splitTable(table);
+            for (let i = 0; i < chunks.length; i++) {
+                await message.channel.send("```" + chunks[i] + "```");
+            }
         }
     }
 

@@ -1,5 +1,4 @@
-import { SlashCommandBuilder } from 'discord.js';
-
+import { SlashCommandBuilder, MessageFlags } from 'discord.js';
 import * as DAL from "../../dal";
 import * as UTIL from "../../utils";
 const asciitable = require("asciitable");
@@ -22,7 +21,6 @@ export const data = new SlashCommandBuilder()
         .setRequired(true));
 
 export async function execute(interaction) {
-    await interaction.deferReply();
     var server = global.servers.get(interaction.guildId);
     let vc = interaction.member.voice.channel;
 
@@ -46,7 +44,12 @@ export async function execute(interaction) {
             found_song = songs[0];
         } else {
             await interaction.editReply("That song didnt exist and we found several close matches. Pick one to play.");
-            return interaction.followUp({ content: "```" + asciitable(options, songs) + "```", split: true });
+            let table = asciitable(options, songs);
+            let chunks = UTIL.splitTable(table);
+            for (let i = 0; i < chunks.length; i++) {
+                await interaction.channel.send({ content: "```" + chunks[i] + "```" });
+            }
+            return;
         }
     } else {
         found_song = song;
@@ -54,5 +57,9 @@ export async function execute(interaction) {
 
     server.song_queue = [];
     server.song_queue.push(found_song);
+    await interaction.reply({ 
+      content: 'Done.', 
+      flags: MessageFlags.Ephemeral 
+    });
     UTIL.playAudio(interaction, vc, server);
 }

@@ -15,7 +15,7 @@ export async function execute(interaction) {
         return interaction.reply({ content: "I'm not even in a channel.", ephemeral: true });
     }
 
-    let server = global.servers[interaction.guildId];
+    let server = global.servers.get(interaction.guildId);
     if (server.audioPlayer === undefined) {
         return interaction.reply({ content: "No audio is playing. You must be hearing things.", ephemeral: true });
     }

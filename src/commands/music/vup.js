@@ -6,7 +6,7 @@ export const data = new SlashCommandBuilder()
     .setDescription("Turn up the volume the bot is playing at.");
 
 export async function execute(interaction) {
-    var server = global.servers[interaction.guildId];
+    var server = global.servers.get(interaction.guildId);
     let vc = interaction.member.voice.channel;
 
     if (!vc) {

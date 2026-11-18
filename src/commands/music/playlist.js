@@ -1,4 +1,4 @@
-import { SlashCommandBuilder } from 'discord.js';
+import { SlashCommandBuilder, MessageFlags } from 'discord.js';
 
 import * as DAL from "../../dal";
 import * as UTIL from "../../utils";
@@ -154,7 +154,11 @@ export async function execute(interaction) {
                 return interaction.reply({ content: `Sorry, ${interaction.user.username}, it seems something unexpected happened.`, ephemeral: true });
             } else {
                 let table = asciitable(playlists_options, playlists);
-                await interaction.reply({ content: "```" + table + "```", split: true });
+                let chunks = UTIL.splitTable(table);
+                await interaction.reply({ content: "```" + chunks[0] + "```" });
+                for (let i = 1; i < chunks.length; i++) {
+                    await interaction.channel.send({ content: "```" + chunks[i] + "```" });
+                }
             }
         } else {
             let { err, songs } = DAL.getSongsByPlaylistIdentifier(playlist_identifier);
@@ -162,7 +166,11 @@ export async function execute(interaction) {
                 return interaction.reply({ content: `Sorry, ${interaction.user.username}, it seems something unexpected happened.`, ephemeral: true });
             } else {
                 let table = asciitable(songs_options, songs);
-                await interaction.reply({ content: "```" + table + "```", split: true });
+                let chunks = UTIL.splitTable(table);
+                await interaction.reply({ content: "```" + chunks[0] + "```" });
+                for (let i = 1; i < chunks.length; i++) {
+                    await interaction.channel.send({ content: "```" + chunks[i] + "```" });
+                }
             }
         }
     } else if (subcommand === 'delete') {
@@ -192,7 +200,7 @@ export async function execute(interaction) {
             await interaction.reply(`The playlist ${identifier} has been deleted, your DJ career is over, ${interaction.user.username}!`);
         }
     } else if (subcommand === 'play') {
-        let server = global.servers[interaction.guildId];
+        let server = global.servers.get(interaction.guildId);
         let vc = interaction.member.voice.channel;
 
         if (!vc) {
@@ -210,5 +218,9 @@ export async function execute(interaction) {
 
         server.song_queue = songs;
         UTIL.playAudio(interaction, vc, server);
+        await interaction.reply({ 
+              content: 'Done.', 
+              flags: MessageFlags.Ephemeral 
+            });
     }
 }

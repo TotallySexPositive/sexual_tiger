@@ -6,7 +6,7 @@ export const data = new SlashCommandBuilder()
     .setDescription("Toggles whether or not clips and songs will repeat.");
 
 export async function execute(interaction) {
-    let server = global.servers[interaction.guildId];
+    let server = global.servers.get(interaction.guildId);
     server.repeat = !server.repeat;
     let m = "";
 

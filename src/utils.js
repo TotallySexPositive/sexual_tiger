@@ -94,7 +94,7 @@ function playNextSong(server, voiceChannel) {
 }
 
 function playUrl(url, interaction, voiceChannel) {
-    const server = global.servers[voiceChannel.guild.id];
+    const server = global.servers.get(voiceChannel.guild.id);
     const connection = joinVoiceChannel({
         channelId: voiceChannel.id,
         guildId: voiceChannel.guild.id,
@@ -443,7 +443,7 @@ let deleteImageByHash = function (hash) {
 }
 
 let isUserActionAllowed = function (user_id, command_name, server_id) {
-    let server = global.servers[server_id];
+    let server = global.servers.get(server_id);
     if (!server) return true;
     if (server.super_admins.includes(user_id)) {
         return 1;
@@ -522,6 +522,32 @@ let updateMembersList = function (members) {
     DAL.updateMembersList(members_list);
 }
 
+let splitTable = function (table, maxChars) {
+    if (maxChars === undefined) maxChars = 1950;
+    const lines = table.split('\n');
+    const chunks = [];
+    let currentChunk = '';
+
+    for (const line of lines) {
+        if (currentChunk.length + line.length + 1 > maxChars && currentChunk.length > 0) {
+            chunks.push(currentChunk);
+            currentChunk = line;
+        } else {
+            if (currentChunk.length > 0) {
+                currentChunk += '\n' + line;
+            } else {
+                currentChunk = line;
+            }
+        }
+    }
+
+    if (currentChunk.length > 0) {
+        chunks.push(currentChunk);
+    }
+
+    return chunks;
+}
+
 module.exports.isInt = isInt;
 module.exports.isAdmin = isAdmin;
 module.exports.playAudio = playAudio;
@@ -538,6 +564,7 @@ module.exports.verifyTags = verifyTags;
 module.exports.isUserActionAllowed = isUserActionAllowed;
 module.exports.updateCommandList = updateCommandList;
 module.exports.updateMembersList = updateMembersList;
+module.exports.splitTable = splitTable;
 
 export { isInt };
 export { isAdmin };
@@ -555,3 +582,4 @@ export { verifyTags };
 export { isUserActionAllowed };
 export { updateCommandList };
 export { updateMembersList };
+export { splitTable };

@@ -18,7 +18,7 @@ export const data = new SlashCommandBuilder()
         .setRequired(true));
 
 export async function execute(interaction) {
-    let server = global.servers[interaction.guildId];
+    let server = global.servers.get(interaction.guildId);
     let url = interaction.options.getString('url');
 
     if (!validator.isURL(url)) {

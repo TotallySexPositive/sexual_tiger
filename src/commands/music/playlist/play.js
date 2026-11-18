@@ -6,7 +6,7 @@ import * as UTIL from "../../../utils";
 
 exports.run = (client, message, args) => {
     
-    var server  = global.servers[message.guild.id]
+    var server  = global.servers.get(message.guild.id)
     let vc      = message.member.voice.channel
 
     if(vc === null) {

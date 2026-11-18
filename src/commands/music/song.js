@@ -41,7 +41,7 @@ export async function execute(interaction) {
     const subcommand = interaction.options.getSubcommand();
 
     if (subcommand === 'current') {
-        let server = global.servers[interaction.guildId];
+        let server = global.servers.get(interaction.guildId);
         let current_song = server.current_song;
 
         if (!current_song || current_song === undefined || current_song.name === undefined) {
@@ -88,7 +88,7 @@ export async function execute(interaction) {
             }
         }
     } else if (subcommand === 'delete') {
-        let server = global.servers[interaction.guildId];
+        let server = global.servers.get(interaction.guildId);
         let song_id = interaction.options.getInteger('id');
 
         let user_is_super_admin = server.super_admins.includes(interaction.user.id);
@@ -155,7 +155,12 @@ export async function execute(interaction) {
             console.log(err);
             return interaction.reply({ content: "Failed to grab top songs", ephemeral: true });
         } else {
-            await interaction.reply({ content: "```" + asciitable(options, songs) + "```", split: true });
+            let table = asciitable(options, songs);
+            let chunks = UTIL.splitTable(table);
+            await interaction.reply({ content: "```" + chunks[0] + "```" });
+            for (let i = 1; i < chunks.length; i++) {
+                await interaction.channel.send({ content: "```" + chunks[i] + "```" });
+            }
         }
     }
 }

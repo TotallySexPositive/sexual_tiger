@@ -6,7 +6,7 @@ export const data = new SlashCommandBuilder()
     .setDescription("Stops any playing audio and empties the queue.");
 
 export async function execute(interaction) {
-    var server = global.servers[interaction.guildId];
+    var server = global.servers.get(interaction.guildId);
     let vc = interaction.member.voice.channel;
 
     if (!vc) {

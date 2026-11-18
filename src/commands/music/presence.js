@@ -6,7 +6,7 @@ export const data = new SlashCommandBuilder()
     .setDescription("Toggles whether or not the bot should stay in voice channel after playing.");
 
 export async function execute(interaction) {
-    let server = global.servers[interaction.guildId];
+    let server = global.servers.get(interaction.guildId);
     server.maintain_presence = !server.maintain_presence;
     let m = "";
     if (server.maintain_presence) {

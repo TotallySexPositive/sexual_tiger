@@ -1,6 +1,7 @@
 import { SlashCommandBuilder } from 'discord.js';
 
 import * as DAL from "../../dal";
+import { splitTable } from "../../utils";
 const asciitable = require("asciitable");
 
 var options = {
@@ -22,7 +23,7 @@ export const data = new SlashCommandBuilder()
         .setRequired(false));
 
 export async function execute(interaction) {
-    var server = global.servers[interaction.guildId];
+    var server = global.servers.get(interaction.guildId);
     let vc = interaction.member.voice.channel;
 
     if (!vc) {
@@ -32,7 +33,12 @@ export async function execute(interaction) {
     let song_identifier = interaction.options.getString('song');
     if (!song_identifier) {
         if (server.song_queue.length) {
-            await interaction.reply({ content: "```" + asciitable(options, server.song_queue) + "```", split: true });
+            let table = asciitable(options, server.song_queue);
+            let chunks = splitTable(table);
+            await interaction.reply({ content: "```" + chunks[0] + "```" });
+            for (let i = 1; i < chunks.length; i++) {
+                await interaction.channel.send({ content: "```" + chunks[i] + "```" });
+            }
             return interaction.followUp("If you wish to add a song to the queue, use /queue with a song name or id.");
         } else {
             return interaction.reply({ content: "There are no songs in the queue.", ephemeral: true });
@@ -54,7 +60,12 @@ export async function execute(interaction) {
             found_song = songs[0];
         } else {
             await interaction.reply("That song didnt exist and we found several close matches. Pick one to play.");
-            return interaction.followUp({ content: "```" + asciitable(options, songs) + "```", split: true });
+            let table = asciitable(options, songs);
+            let chunks = splitTable(table);
+            for (let i = 0; i < chunks.length; i++) {
+                await interaction.channel.send({ content: "```" + chunks[i] + "```" });
+            }
+            return;
         }
     } else {
         found_song = song;

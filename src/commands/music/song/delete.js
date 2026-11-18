@@ -5,7 +5,7 @@ const fs    = require('fs');
 
 exports.run = (client, message, args) => {
     
-    let server = global.servers[message.guild.id];
+    let server = global.servers.get(message.guild.id);
     var identifier  = args.join(" ");
     let playlist_id = undefined;
 

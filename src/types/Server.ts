@@ -5,7 +5,7 @@ export class Server {
     constructor() {
         this.repeat = false;
         this.current_song = null;
-        this.maintain_presence = false;
+        this.maintain_presence = true;
         this.default_volume = .125;
         this.volume = .125;
         this.max_volume = 1;

@@ -13,7 +13,7 @@ export const data = new SlashCommandBuilder()
         .setRequired(false));
 
 export async function execute(interaction) {
-    var server = global.servers[interaction.guildId];
+    var server = global.servers.get(interaction.guildId);
     let vc = interaction.member.voice.channel;
     let playlist_identifier = interaction.options.getString('playlist');
 

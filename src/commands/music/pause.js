@@ -7,7 +7,7 @@ export const data = new SlashCommandBuilder()
 
 export async function execute(interaction) {
     let vc = interaction.member.voice.channel;
-    var server = global.servers[interaction.guildId];
+    var server = global.servers.get(interaction.guildId);
 
     if (!vc) {
         return interaction.reply({ content: "You are not in a voice channel. I'm not going to listen to you.", ephemeral: true });

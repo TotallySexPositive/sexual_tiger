@@ -9,7 +9,7 @@ export const data = new SlashCommandBuilder()
     .addStringOption(option => option.setName('command').setDescription("The command name").setRequired(true));
 
 export async function execute(interaction) {
-    let server = global.servers[interaction.guildId];
+    let server = global.servers.get(interaction.guildId);
     let secure_commands = ["revoke", "grant"];
 
     let user = interaction.options.getUser('user');

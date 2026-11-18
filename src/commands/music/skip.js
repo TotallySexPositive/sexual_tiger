@@ -6,7 +6,7 @@ export const data = new SlashCommandBuilder()
     .setDescription("Skip to the next song in the queue.");
 
 export async function execute(interaction) {
-    var server = global.servers[interaction.guildId];
+    var server = global.servers.get(interaction.guildId);
     let vc = interaction.member.voice.channel;
 
     if (!vc) {

@@ -14,9 +14,9 @@ var options = {
     ],
 };
 
-exports.run = (client, message, args) => {
+exports.run = async (client, message, args) => {
     
-    let server = global.servers[message.guild.id];
+    let server = global.servers.get(message.guild.id);
     var r_args  = message.content.slice(9).trim(); //Chop off $song top
 
     let top_n = 5;
@@ -31,7 +31,11 @@ exports.run = (client, message, args) => {
         console.log(err);
         return message.channel.send("Failed to grab top songs")
     } else {
-        return message.channel.send(asciitable(options, songs),{code:true})
+        let table = asciitable(options, songs);
+        let chunks = UTIL.splitTable(table);
+        for (let i = 0; i < chunks.length; i++) {
+            await message.channel.send("```" + chunks[i] + "```");
+        }
     }
 
 };
