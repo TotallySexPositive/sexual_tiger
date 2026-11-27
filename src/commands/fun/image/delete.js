@@ -1,4 +1,4 @@
-/*const path  = require("path");
+const path  = require("path");
 const fs    = require("fs");
 import * as DAL from "./dal";
 import * as UTIL from "./utils.js";
@@ -44,4 +44,4 @@ exports.docs = () => {
         ]
     }
     return docs;
-};*/
+};

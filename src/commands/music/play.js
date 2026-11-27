@@ -25,7 +25,7 @@ export async function execute(interaction) {
     let vc = interaction.member.voice.channel;
 
     if (!vc) {
-        return interaction.editReply({ content: "You must be in a Voice Channel, I'm not gonna play this shit for no one.", ephemeral: true });
+        return interaction.reply({ content: "You must be in a Voice Channel, I'm not gonna play this shit for no one.", ephemeral: true });
     }
 
     let song_identifier = interaction.options.getString('song');
@@ -33,17 +33,17 @@ export async function execute(interaction) {
     let { err, song } = DAL.findSongByIdentifier(song_identifier);
 
     if (err) {
-        return interaction.editReply({ content: "An error occured while searching for song.", ephemeral: true });
+        return interaction.reply({ content: "An error occured while searching for song.", ephemeral: true });
     } else if (song === undefined) {
         let { err: err_s, songs } = DAL.searchForSongs(song_identifier, 15);
         if (err_s) {
-            return interaction.editReply({ content: "We crashed while searching for similar songs.", ephemeral: true });
+            return interaction.reply({ content: "We crashed while searching for similar songs.", ephemeral: true });
         } else if (songs === undefined || songs.length === 0) {
-            return interaction.editReply({ content: "There is no song by that name/id, and couldnt find any close matches.", ephemeral: true });
+            return interaction.reply({ content: "There is no song by that name/id, and couldnt find any close matches.", ephemeral: true });
         } else if (songs.length === 1) {
             found_song = songs[0];
         } else {
-            await interaction.editReply("That song didnt exist and we found several close matches. Pick one to play.");
+            await interaction.reply("That song didnt exist and we found several close matches. Pick one to play.");
             let table = asciitable(options, songs);
             let chunks = UTIL.splitTable(table);
             for (let i = 0; i < chunks.length; i++) {

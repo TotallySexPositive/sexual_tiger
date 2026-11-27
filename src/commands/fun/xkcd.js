@@ -22,7 +22,7 @@ export async function execute(interaction) {
                 return interaction.editReply("Error fetching comic.");
             } else {
                 const embed = new EmbedBuilder()
-                    .setColor('GOLD')
+                    .setColor('Random')
                     .setTitle(response.title)
                     .setImage(response.img)
                     .setFooter({ text: response.alt });
@@ -36,7 +36,7 @@ export async function execute(interaction) {
                 return interaction.editReply("Error fetching comic.");
             } else {
                 const embed = new EmbedBuilder()
-                    .setColor('GOLD')
+                    .setColor('Random')
                     .setTitle(response.title)
                     .setImage(response.img)
                     .setFooter({ text: response.alt });
