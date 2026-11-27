@@ -163,7 +163,7 @@ client.on('interactionCreate', async interaction => {
             console.error(error);
             await interaction.reply({ content: 'An error occurred.', ephemeral: true }).catch(() => {});
         }
-    } else if (interaction.isModalSubmit() && interaction.customId === 'search_modal') {
+    } else if (interaction.isModalSubmit() && interaction.customId.startsWith('search_')) {
         try {
             await handleSearchModal(interaction);
         } catch (error) {

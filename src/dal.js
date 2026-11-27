@@ -328,7 +328,23 @@ let getPlaylists = function () {
 }
 
 
-let searchForSongs = function (name, max_songs = 10) {
+const VALID_SONG_SORT_FIELDS = {
+    song_id: "song_id",
+    name: "name COLLATE NOCASE",
+    duration: "COALESCE(duration, 0)",
+    num_plays: "COALESCE(num_plays, 0)",
+};
+
+let buildSongOrderBy = function (sort_field = "song_id", sort_direction = "ASC") {
+    const column = VALID_SONG_SORT_FIELDS[sort_field] || VALID_SONG_SORT_FIELDS.song_id;
+    const direction = String(sort_direction).toUpperCase() === "DESC" ? "DESC" : "ASC";
+    if (sort_field === "song_id" || !VALID_SONG_SORT_FIELDS[sort_field]) {
+        return `${column} ${direction}`;
+    }
+    return `${column} ${direction}, song_id ASC`;
+};
+
+let searchForSongs = function (name, max_songs = 10, sort_field = "song_id", sort_direction = "ASC") {
 
     if (!name || name.trim() === "") {
         let err = new Error("search term must not be blank.");
@@ -344,8 +360,13 @@ let searchForSongs = function (name, max_songs = 10) {
         prepped_args.push(`%${arg}%`);
     })
     let prepped_statement = clauses.join(" AND ")
+    let orderBy = buildSongOrderBy(sort_field, sort_direction);
 
-    let query = `SELECT ${SONG_FIELDS} FROM ${SONG_TABLE} WHERE ${prepped_statement} LIMIT ${max_songs}`;
+    let query = `SELECT ${SONG_FIELDS} FROM ${SONG_TABLE} WHERE ${prepped_statement} ORDER BY ${orderBy}`;
+    if (max_songs !== null && max_songs !== undefined) {
+        query += ` LIMIT ?`;
+        prepped_args.push(max_songs);
+    }
 
     try {
         return { err: undefined, songs: DB.prepare(query).all(prepped_args) };
@@ -356,8 +377,9 @@ let searchForSongs = function (name, max_songs = 10) {
     }
 }
 
-let getAllSongs = function () {
-    let query = `SELECT ${SONG_FIELDS} FROM ${SONG_TABLE}`
+let getAllSongs = function (sort_field = "song_id", sort_direction = "ASC") {
+    let orderBy = buildSongOrderBy(sort_field, sort_direction);
+    let query = `SELECT ${SONG_FIELDS} FROM ${SONG_TABLE} ORDER BY ${orderBy}`;
 
     try {
         return { err: undefined, songs: DB.prepare(query).all() };
