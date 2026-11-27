@@ -4,7 +4,6 @@ ENV NODE_ENV=dev
 COPY ["package.json", "package-lock.json*", "npm-shrinkwrap.json*", "tsconfig.json", "./"]
 COPY src ./src
 RUN apk add --no-cache --virtual .build-deps python3 alpine-sdk autoconf libtool automake
-RUN ln -s /usr/bin/python3 /usr/bin/python
 RUN npm install 
 RUN sed -i '1 s/./\/\/&/' node_modules/google-tts-api/dist/getAudioUrl.d.ts
 RUN npm run build
@@ -18,7 +17,6 @@ COPY --chown=node:node --from=builder /usr/src/app/built ./built
 RUN apk add --no-cache --virtual .build-deps alpine-sdk autoconf libtool automake && \
    apk add --no-cache python3 py3-pip ffmpeg &&\
    pip install ffmpeg-normalize && \
-   ln -s /usr/bin/python3 /usr/bin/python && \
    npm install --production && \
    apk del .build-deps py3-pip && \
    chown node:node /usr/src/app
