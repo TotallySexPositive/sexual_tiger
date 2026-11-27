@@ -15,10 +15,11 @@ WORKDIR /usr/src/app
 COPY --chown=node:node ["package.json", "package-lock.json*", "npm-shrinkwrap.json*", "build.sql", "./"]
 COPY --chown=node:node --from=builder /usr/src/app/built ./built
 RUN apk add --no-cache --virtual .build-deps alpine-sdk autoconf libtool automake && \
-   apk add --no-cache python3 py3-pip ffmpeg &&\
-   pip install ffmpeg-normalize && \
-   npm install --production && \
-   apk del .build-deps py3-pip && \
-   chown node:node /usr/src/app
+    apk add --no-cache python3 py3-pip ffmpeg && \
+    python3 -m venv /opt/venv && \
+    /opt/venv/bin/pip install ffmpeg-normalize && \
+    npm install --production && \
+    apk del .build-deps py3-pip && \
+    chown -R node:node /usr/src/app
 USER node
 CMD ["npm", "run", "start"]
