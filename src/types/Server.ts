@@ -1,11 +1,11 @@
-import { Song } from './Song'
-import { VoiceConnection } from "discord.js"
+import { Song } from './Song';
+import { AudioPlayer, VoiceConnection } from '@discordjs/voice';
+
 export class Server {
     constructor() {
         this.repeat = false;
         this.current_song = null;
-        this.maintain_presence = false;
-        this.connectionPromise = null;
+        this.maintain_presence = true;
         this.default_volume = .125;
         this.volume = .125;
         this.max_volume = 1;
@@ -15,9 +15,10 @@ export class Server {
         this.shuffle = false;
     }
     repeat: boolean;
-    current_song: Song;
+    current_song: Song | null;
     maintain_presence: boolean;
-    connectionPromise: Promise<VoiceConnection>;
+    audioPlayer?: AudioPlayer;
+    voiceConnection?: VoiceConnection;
     default_volume: number;
     volume: number;
     max_volume: number;
@@ -25,5 +26,4 @@ export class Server {
     super_admins: Array<string>;
     song_queue: Array<Song>;
     shuffle: boolean;
-
 }

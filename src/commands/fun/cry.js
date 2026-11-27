@@ -1,32 +1,12 @@
-const path  = require("path");
+import { SlashCommandBuilder } from 'discord.js';
+
 import * as UTIL from "../../utils";
 
-exports.run = (client, message, args) => {
-    
-    UTIL.postRandomImageByTag(message, "cry");	
+export const data = new SlashCommandBuilder()
+    .setName('cry')
+    .setDescription("Post an image of anime cry.");
 
+export async function execute(interaction) {
+    await interaction.deferReply();
+    UTIL.postRandomImageByTag(interaction, "cry");
 }
-
-exports.help = () =>{
-    return "sniffle ;(";
-};
-
-exports.docs = () => {
-    let docs = {
-        default_access: 1,
-        tab: "image",
-        link: "Pictures",
-        parent: "",
-        full_command: "cry",
-        command: "cry",
-        description: "Post an image of anime cry.",
-        syntax: 'cry',
-        examples: [
-            {
-                description: "Post image of cry",
-                code: `cry`
-            }
-        ]
-    }
-    return docs;
-};

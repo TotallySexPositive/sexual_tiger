@@ -2,7 +2,7 @@ import { Server } from "./Server";
 import { Snowflake } from "discord.js";
 import { Tag } from "./Tag";
 
-export interface CustomNodeJsGlobal extends NodeJS.Global {
+export interface CustomNodeJsGlobal {
     servers: Map<string, Server>;
     commandTypes: Array<string>;
     commandTypeDesc: Map<string, string>;
@@ -13,5 +13,4 @@ export interface CustomNodeJsGlobal extends NodeJS.Global {
     img_resp_to_tag_order: Array<Snowflake>;
     img_resp_to_tag_max_len: number;
     clip_length: number;
-    sentry: any;
 }

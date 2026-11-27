@@ -3,7 +3,7 @@ import {CustomNodeJsGlobal} from "./CustomNodeJsGlobal";
 import {Playlist}           from "./Playlist";
 import {PlaylistSong}       from "./PlaylistSong";
 import validator            from "validator";
-import * as Database        from "better-sqlite3";
+import Database from "better-sqlite3";
 import * as path            from "path";
 import * as fs              from "fs";
 
@@ -30,7 +30,7 @@ export class Song {
 
 	constructor(obj: any) {
 
-		const errors = [];
+		const errors: string[] = [];
 
 		this.id          = obj.song_id;
 		this.name        = obj.name;
@@ -53,7 +53,7 @@ export class Song {
 	 * Get a song by one of its unique identifiers.
 	 * @param identifier The song id, name, hash, or url
 	 */
-	static get(identifier: string): Promise<Song> {
+	static get(identifier: string): Promise<Song | undefined> {
 		return new Promise((resolve, reject) => {
 			let identifier_type: string;
 
@@ -86,7 +86,7 @@ export class Song {
 	 * @param name The name of the song to search for
 	 * @param max_songs The max number of results to return. Default = 10
 	 */
-	static search(name: string, max_songs: number = 10): Promise<Array<Song>> {
+	static search(name: string, max_songs: number = 10): Promise<Array<Song> | undefined> {
 		return new Promise((resolve, reject) => {
 			if (!name || name.trim() === "") {
 				reject(new Error("search term must not be blank."));
@@ -95,8 +95,8 @@ export class Song {
 				reject(new Error("max_songs must be a positive number."));
 			}
 
-			const clauses      = [];
-			const prepped_args = [];
+			const clauses: string[]      = [];
+			const prepped_args: string[] = [];
 			const args         = name.replace(/ +/, " ").split(" ").filter((word) => { return word.trim() !== ""; });
 
 			args.forEach((arg) => {
@@ -108,7 +108,7 @@ export class Song {
 			const query = `SELECT * FROM ${Song.TABLE} WHERE ${prepped_statement} LIMIT ${max_songs}`;
 
 			try {
-				let songs: Array<Song> = DB.prepare(query).all(prepped_args).map(song => { return new Song(song);});
+				let songs: Array<Song> | undefined = DB.prepare(query).all(prepped_args).map(song => { return new Song(song);});
 				songs                  = songs.length ? songs : undefined;
 				resolve(songs);
 			} catch (err) {
@@ -122,12 +122,12 @@ export class Song {
 	/**
 	 * Get ALL the songs in the database
 	 */
-	static all(): Promise<Array<Song>> {
+	static all(): Promise<Array<Song> | undefined> {
 		return new Promise((resolve, reject) => {
 			const query = `SELECT * FROM ${Song.TABLE}`;
 
 			try {
-				let songs = DB.prepare(query).all().map(song => { return new Song(song);});
+				let songs: Array<Song> | undefined = DB.prepare(query).all().map(song => { return new Song(song);});
 				songs     = songs.length ? songs : undefined;
 				resolve(songs);
 			} catch (err) {
@@ -143,7 +143,7 @@ export class Song {
 	 * If the object has an id, it updates the existing record
 	 * If the object does not have id, it inserts it into the DB
 	 */
-	save(): Promise<Song> {
+	save(): Promise<Song | undefined> {
 		return new Promise((resolve, reject) => {
 			if (Number.isInteger(Number(this.name)) || 0) {
 				reject(new Error("Song name must not be an integer."));
@@ -161,7 +161,7 @@ export class Song {
 	/**
 	 * Inserts the song into the database
 	 */
-	insert(): Promise<Song> {
+	insert(): Promise<Song | undefined> {
 		return new Promise((resolve, reject) => {
 			const query = "INSERT INTO song (name, hash_id, source, url, is_clip, duration, added_by) VALUES (:name, :hash_id, :source, :url, :is_clip, :duration, :added_by)";
 
@@ -194,7 +194,7 @@ export class Song {
 	/**
 	 * Update an existing database song record
 	 */
-	update(): Promise<Song> {
+	update(): Promise<Song | undefined> {
 		return new Promise((resolve, reject) => {
 			const query  = `UPDATE song SET name = :name, is_clip = :is_clip, duration = :duration WHERE song_id = :song_id;`;
 			this.is_clip = Number(this.duration <= global.clip_length);
@@ -224,7 +224,7 @@ export class Song {
 	/**
 	 * Delete the song from the database. Also removes the file from both the Hash and Source folders.
 	 */
-	delete(): Promise<Song> {
+	delete(): Promise<Song | undefined> {
 		return new Promise((resolve, reject) => {
 			const query = `DELETE FROM ${Song.TABLE} WHERE song_id = :song_id;`;
 
@@ -240,7 +240,7 @@ export class Song {
 
 						if (info.changes) {
 							//Delete the hashed file.
-							const hashed_file = path.resolve(global.audio_dirs["hashed"], this.hash_id + ".mp3");
+							const hashed_file = path.resolve(global.audio_dirs.get("hashed")!, this.hash_id + ".mp3");
 							fs.unlink(hashed_file, function (err) {
 								if (err) {
 									console.log(`Failed to delete requested hashed file. File: ${hashed_file}`);

@@ -31,7 +31,7 @@ export class Playlist {
 	 * Get a playlist by identifier
 	 * @param identifier Playlist ID or name
 	 */
-	static get(identifier: string): Promise<Playlist> {
+	static get(identifier: string): Promise<Playlist | undefined> {
 		return new Promise((resolve, reject) => {
 			let identifier_type: string;
 
@@ -59,7 +59,7 @@ export class Playlist {
 	/**
 	 * Get all playlists
 	 */
-	static all(): Promise<Array<Playlist>> {
+	static all(): Promise<Array<Playlist> | undefined> {
 		return new Promise((resolve, reject) => {
 			const query = `SELECT * FROM ${Playlist.TABLE}`;
 
@@ -79,7 +79,7 @@ export class Playlist {
 	/**
 	 * Saves a playlist object.  Updates existing record or creates a new one if new.
 	 */
-	save(): Promise<Playlist> {
+	save(): Promise<Playlist | undefined> {
 		return new Promise((resolve, reject) => {
 			if (Number.isInteger(Number(this.name)) || 0) {
 				reject(new Error("Playlist name must not be an integer."));
@@ -96,7 +96,7 @@ export class Playlist {
 	/**
 	 * Inserts a new playlist record into the database
 	 */
-	insert(): Promise<Playlist> {
+	insert(): Promise<Playlist | undefined> {
 		return new Promise((resolve, reject) => {
 			const query = `INSERT INTO ${Playlist.TABLE} (name, created_by) VALUES (?, ?)`;
 
@@ -121,7 +121,7 @@ export class Playlist {
 	/**
 	 * Updates an existing playlist record in the database
 	 */
-	update(): Promise<Playlist> {
+	update(): Promise<Playlist | undefined> {
 		return new Promise((resolve, reject) => {
 			const query = `UPDATE ${Playlist.TABLE} SET name = :name WHERE playlist_id = :playlist_id;`;
 
@@ -145,13 +145,13 @@ export class Playlist {
 	/**
 	 * Get a list of all songs on this playlist.
 	 */
-	songs(): Promise<Array<Song>> {
+	songs(): Promise<Array<Song> | undefined> {
 		return new Promise((resolve, reject) => {
 			const query = `SELECT ${Song.FIELDS} FROM ${Song.TABLE} JOIN ${PlaylistSong.TABLE} USING (playlist_id) WHERE playlist_id = ?`;
 
 			try {
-				let songs = DB.prepare(query).all(this.id).map(song => { new Song(song);});
-				songs     = songs.length ? songs : undefined;
+				const raw_songs = DB.prepare(query).all(this.id).map(song => new Song(song));
+				let songs: Array<Song> | undefined = raw_songs.length ? raw_songs : undefined;
 
 				resolve(songs);
 			} catch (err) {
@@ -171,7 +171,7 @@ export class Playlist {
 		return new Promise((resolve, reject) => {
 			const songs: Array<Song>                     = t_songs instanceof Song ? [t_songs] : t_songs;
 			const added_songs: Array<Song>               = [];
-			const promises: Array<Promise<PlaylistSong>> = [];
+			const promises: Array<Promise<PlaylistSong | undefined>> = [];
 
 			try {
 				songs.forEach((song) => {
@@ -183,7 +183,7 @@ export class Playlist {
 				Promise.all(promises).then(plss => {
 					plss.forEach(pls => {
 						if (pls) {
-							added_songs.push(song_map[pls.song_id]);
+							added_songs.push(song_map.get(pls.song_id)!);
 						}
 					});
 					resolve(added_songs);

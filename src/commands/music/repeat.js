@@ -1,39 +1,20 @@
-exports.run = (client, message, args) => {
-    
-    let server = global.servers[message.guild.id];
-    server.repeat = !server.repeat;
-    let m = ""
+import { SlashCommandBuilder } from 'discord.js';
 
-    if (server.repeat){
+
+export const data = new SlashCommandBuilder()
+    .setName('repeat')
+    .setDescription("Toggles whether or not clips and songs will repeat.");
+
+export async function execute(interaction) {
+    let server = global.servers.get(interaction.guildId);
+    server.repeat = !server.repeat;
+    let m = "";
+
+    if (server.repeat) {
         m = "Sounds will repeat";
-    } else{
+    } else {
         m = "Sounds will not repeat";
     }
 
-    message.channel.send(m)
-
-};
-
-exports.help = () =>{
-    return "Toggles whether or not clips and songs will repeat";
-};
-
-exports.docs = () => {
-    let docs = {
-        default_access: 1,
-        tab: "music",
-        link: "general",
-        parent: "",
-        full_command: "repeat",
-        command: "repeat",
-        description: "Repeats the current song/playlist when the song/playlist ends.",
-        syntax: "repeat",
-        examples: [
-            {
-                description: "Repeat the current song.",
-                code: "repeat"
-            }
-        ]
-    }
-    return docs;
-};
+    await interaction.reply(m);
+}

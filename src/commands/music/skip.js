@@ -1,47 +1,22 @@
-exports.run = (client, message, args) => {
-    
-    var server   = global.servers[message.guild.id];
-    let vc       = message.member.voice.channel
+import { SlashCommandBuilder } from 'discord.js';
 
-    if (vc === null) {
-        return message.channel.send("You are not in a voice channel. I'm not going to listen to you.")
+
+export const data = new SlashCommandBuilder()
+    .setName('skip')
+    .setDescription("Skip to the next song in the queue.");
+
+export async function execute(interaction) {
+    var server = global.servers.get(interaction.guildId);
+    let vc = interaction.member.voice.channel;
+
+    if (!vc) {
+        return interaction.reply({ content: "You are not in a voice channel. I'm not going to listen to you.", ephemeral: true });
     }
 
-    if (server.connectionPromise) {
-        server.connectionPromise.then(connection => {
-            if(message.member.voice.channel === connection.channel) {
-                if(server.repeat) {
-                    server.song_queue.shift()
-                }
-                connection.dispatcher.end()
-            } else {
-                return message.channel.send("You are in a different voice channel. I'm not going to listen to you.")
-            }
-        })
-    }; 
-
-};
-
-exports.help = () =>{
-    return "Skip a song. Why did you even queue it up you bastard?";
-};
-
-exports.docs = () => {
-    let docs = {
-        default_access: 1,
-        tab: "music",
-        link: "general",
-        parent: "",
-        full_command: "skip",
-        command: "skip",
-        description: "Skip to the next song in the queue.",
-        syntax: "skip",
-        examples: [
-            {
-                description: "Skip the current song.",
-                code: "skip"
-            }
-        ]
+    if (server.audioPlayer) {
+        server.audioPlayer.stop();
+        await interaction.reply("Skipped.");
+    } else {
+        await interaction.reply({ content: "No audio is playing.", ephemeral: true });
     }
-    return docs;
-};
+}

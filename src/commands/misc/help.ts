@@ -1,83 +1,68 @@
+import { SlashCommandBuilder } from 'discord.js';
+import type { ChatInputCommandInteraction } from 'discord.js';
+import { EmbedBuilder } from 'discord.js';
 const fs = require('fs');
 const path = require('path');
-const c = path.resolve("configure.json")
-console.log(c)
-const cfg = require(c)
-import { MessageEmbed, Client, Message } from 'discord.js';
-import { CustomNodeJsGlobal } from '../../types/CustomNodeJsGlobal'
-import { Doc } from '../../types/Doc';
-import { Example } from '../../types/Example';
+import { CustomNodeJsGlobal } from '../../types/CustomNodeJsGlobal';
 declare const global: CustomNodeJsGlobal;
 
-exports.run = (client: Client, message: Message, args) => {
-    if (args.length < 1) {
-        const embed = new MessageEmbed()
-        embed.setTitle("Command Categories")
-        embed.setColor(16312092)
-        embed.setTimestamp()
-        global.commandTypes.forEach((i) => {
-            embed.addField(i, global.commandTypeDesc[i])
-        })
+export const data = new SlashCommandBuilder()
+    .setName('help')
+    .setDescription("Displays general usage info for commands.")
+    .addStringOption(opt => opt
+        .setName('category')
+        .setDescription('Command category to get help for')
+        .setRequired(false)
+        .addChoices(
+            { name: 'admin', value: 'admin' },
+            { name: 'fun', value: 'fun' },
+            { name: 'misc', value: 'misc' },
+            { name: 'music', value: 'music' }
+        ));
 
-        message.channel.send({ embed })
-    } else {
-        if (global.commandTypes.includes(args[0])) {
+export async function execute(interaction: ChatInputCommandInteraction) {
+    const category = interaction.options.getString('category');
+
+    if (!category) {
+        const embed = new EmbedBuilder()
+            .setTitle("Command Categories")
+            .setColor(16312092)
+            .setTimestamp();
+        global.commandTypes.forEach((i: string) => {
+            embed.addFields({ name: i, value: global.commandTypeDesc.get(i) || "" });
+        });
+        await interaction.reply({ embeds: [embed] });
+    } else if (global.commandTypes.includes(category)) {
+        const embed = new EmbedBuilder()
+            .setTitle(`${category} Commands`)
+            .setColor(global.commandTypeColor.get(category) || 0xFFFFFF)
+            .setTimestamp();
+
+        const p = path.resolve(__dirname, "..", category);
+        try {
+            const items = fs.readdirSync(p);
             let excess_commands = 0;
-            const t = args[0]
-            const embed = new MessageEmbed()
-            embed.setTitle(`${t} Commands`)
-            embed.setColor(global.commandTypeColor[t])
-            embed.setTimestamp()
-            const p = path.resolve("built", "commands", t);
-            fs.readdir(p, (err, items) => {
-                items.forEach((item) => {
-                    if (item.endsWith('.js')) {
-                        const script = path.resolve(p, item);
+            for (const item of items) {
+                if (item.endsWith('.js') || item.endsWith('.ts')) {
+                    const script = path.resolve(p, item);
+                    try {
+                        delete require.cache[require.resolve(script)];
                         const temp = require(script);
-                        const k = Object.keys(temp);
-
-                        const cmd = `${cfg.prefix}${item.replace(".js", "")}`
-                        let hlp = "empty";
-                        if (k.includes("help")) {
-                            hlp = `${temp.help()}`;
+                        if (temp.data) {
+                            embed.addFields({ name: `/${temp.data.name}`, value: temp.data.description || "empty" });
                         }
-
-                        try {
-                            embed.addField(cmd, hlp)
-                        } catch (err) {
-                            excess_commands = excess_commands + 1;
-                        }
+                    } catch (err) {
+                        excess_commands++;
                     }
-                });
-
-                message.channel.send({ embed }).catch((err) => {
-                    console.error(err.message);
-                    console.log(embed)
-                });
-                if (excess_commands > 0) {
-                    message.channel.send(`It looks like there were ${excess_commands} more commands we cant display here because we have too many fucking commands.  Oops?`);
                 }
-            })
-
+            }
+            await interaction.reply({ embeds: [embed] });
+            if (excess_commands > 0) {
+                await interaction.followUp(`It looks like there were ${excess_commands} more commands we cant display here because we have too many fucking commands. Oops?`);
+            }
+        } catch (err) {
+            console.error(err);
+            await interaction.reply({ content: "Failed to load commands for that category.", ephemeral: true });
         }
     }
 }
-
-exports.help = () => {
-    return "Really?";
-};
-
-exports.docs = () => {
-    const doc = new Doc(
-        1,
-        "Misc",
-        "general",
-        "",
-        "help",
-        "help",
-        "Displays general usage info for commands.  Not so good when looking for image commands.",
-        "help [category]"
-    );
-    doc.addExample(new Example("Get help with admin commands", "help admin"))
-    return doc;
-};

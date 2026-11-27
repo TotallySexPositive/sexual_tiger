@@ -1,13 +1,9 @@
-import { CustomNodeJsGlobal } from "../../types/CustomNodeJsGlobal"
-import { Doc } from "../../types/Doc"
-import { Example } from "../../types/Example";
-import { Message, Client } from "discord.js";
-declare const global: CustomNodeJsGlobal;
+import { SlashCommandBuilder } from 'discord.js';
+import type { ChatInputCommandInteraction } from 'discord.js';
 
-exports.run = (client: Client, message: Message, _args) => {
-    const time = timeConversion(client.uptime);
-    message.channel.send(`I've been up for ${time}!`).catch(console.error);
-}
+export const data = new SlashCommandBuilder()
+    .setName('uptime')
+    .setDescription("Display how long the bot has been up.");
 
 function timeConversion(millisec: number) {
     const secs: number = Math.floor(millisec / 1000);
@@ -23,23 +19,7 @@ function timeConversion(millisec: number) {
     return `${days} days ${hours}:${minutes}:${seconds}`;
 }
 
-exports.help = () => {
-    return "Trying to figure out how long i can keep it up?";
-};
-
-exports.docs = () => {
-    const doc = new Doc(
-        1,
-        "Misc",
-        "general",
-        "",
-        "uptime",
-        "uptime",
-        "Display how long the bot has been up.",
-        "uptime"
-    );
-    doc.addExample(
-        new Example("Get bots up time", "uptime")
-    );
-    return doc;
-};
+export async function execute(interaction: ChatInputCommandInteraction) {
+    const time = timeConversion(interaction.client.uptime);
+    await interaction.reply(`I've been up for ${time}!`);
+}

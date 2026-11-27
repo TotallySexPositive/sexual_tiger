@@ -1,48 +1,21 @@
-exports.run = (client, message, args) => {
-    
-    let vc      = message.member.voice.channel
-    var server  = global.servers[message.guild.id];
-    let promise = server.connectionPromise
+import { SlashCommandBuilder } from 'discord.js';
 
-    if(vc === null) {
-        return message.channel.send("You are not in a voice channel. I'm not going to listen to you.")
+
+export const data = new SlashCommandBuilder()
+    .setName('pause')
+    .setDescription("Pauses the currently playing song.");
+
+export async function execute(interaction) {
+    let vc = interaction.member.voice.channel;
+    var server = global.servers.get(interaction.guildId);
+
+    if (!vc) {
+        return interaction.reply({ content: "You are not in a voice channel. I'm not going to listen to you.", ephemeral: true });
     }
-    if (promise === null) {
-        return message.channel.send("No audio is playing.  You must be hearing things.")
+    if (server.audioPlayer === undefined) {
+        return interaction.reply({ content: "No audio is playing. You must be hearing things.", ephemeral: true });
     }
 
-    promise.then(connection => {
-        if(message.member.voice.channel === connection.channel) {
-            connection.dispatcher.pause()
-        } else {
-            return message.channel.send("You are in a different voice channel. I'm not going to listen to you.")
-        }
-    }).catch(reason => {
-        console.log(reason)
-    })
-
+    server.audioPlayer.pause();
+    await interaction.reply("Paused.");
 }
-
-exports.help = () =>{
-    return "Pause the currently playing song.";
-};
-
-exports.docs = () => {
-    let docs = {
-        default_access: 1,
-        tab: "music",
-        link: "general",
-        parent: "",
-        full_command: "pause",
-        command: "pause",
-        description: "Pauses the currently playing song.",
-        syntax: "pause",
-        examples: [
-            {
-                description: "Pause the current song.",
-                code: "pause"
-            }
-        ]
-    }
-    return docs;
-};

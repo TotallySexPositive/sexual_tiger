@@ -1,52 +1,24 @@
-exports.run = (client, message, args) => {
-    
-    var server = global.servers[message.guild.id];
-    let vc = message.member.voice.channel
-    let promise = server.connectionPromise
+import { SlashCommandBuilder } from 'discord.js';
 
-    if(vc === undefined) {
-        return message.channel.send("You must be in a Voice Channel to change the volume.");
+
+export const data = new SlashCommandBuilder()
+    .setName('vup')
+    .setDescription("Turn up the volume the bot is playing at.");
+
+export async function execute(interaction) {
+    var server = global.servers.get(interaction.guildId);
+    let vc = interaction.member.voice.channel;
+
+    if (!vc) {
+        return interaction.reply({ content: "You must be in a Voice Channel to change the volume.", ephemeral: true });
     }
-    
+
     let higher_volume = server.volume * 2;
 
-    if(higher_volume > server.max_volume) {
-        message.channel.send("This is plenty loud enough.")
+    if (higher_volume > server.max_volume) {
+        await interaction.reply("This is plenty loud enough.");
     } else {
         server.volume = higher_volume;
-        
-        if(vc && promise != null) {
-            promise.then(connection => {
-                connection.dispatcher.setVolume(server.volume)
-                message.channel.send(`Raised volume: ${server.volume * 100}%`)
-            }).catch(reason => {
-                console.log(reason)
-            });
-        }
+        await interaction.reply(`Raised volume: ${server.volume * 100}%`);
     }
-
 }
-
-exports.help = () =>{
-    return "Crank dat volume! But not to high ya hear?";
-};
-
-exports.docs = () => {
-    let docs = {
-        default_access: 1,
-        tab: "music",
-        link: "general",
-        parent: "",
-        full_command: "vup",
-        command: "vup",
-        description: "Turn up the volume the bot is playing at.  There is a max volume, so dont be an ass.",
-        syntax: "vup",
-        examples: [
-            {
-                description: "Turn down the volume",
-                code: "vup"
-            }
-        ]
-    }
-    return docs;
-};

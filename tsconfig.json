@@ -1,37 +1,40 @@
 {
     "compilerOptions": {
         "outDir": "./built",
-        "baseUrl": ".",
+        "rootDir": "./src",
         "paths": {
             "*": [
-                "*",
-                "built/*"
+                "./*",
+                "./built/*"
             ]
         },
         "allowJs": true,
-        "target": "ES2016",
+        "target": "ES2022",
         "module": "commonjs",
-        "moduleResolution": "node",
+        "moduleResolution": "bundler",
         "lib": [
-            "es6",
+            "es2023",
             "dom"
         ],
         "sourceMap": true,
+        "esModuleInterop": true,
         "types": [
-            "node",
-            "reflect-metadata"
+            "node"
         ],
         "typeRoots": [
             "node_modules/@types"
         ],
         "experimentalDecorators": true,
         "emitDecoratorMetadata": true,
-        "resolveJsonModule": true
+        "resolveJsonModule": true,
+        "skipLibCheck": true,
+        "noImplicitAny": false
     },
     "include": [
         "./src/**/*"
     ],
     "exclude": [
-        "node_modules"
+        "node_modules",
+        "built"
     ]
 }

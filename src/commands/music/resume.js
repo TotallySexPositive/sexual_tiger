@@ -1,48 +1,21 @@
-exports.run = (client, message, args) => {
-    
-    let vc      = message.member.voice.channel
-    var server  = global.servers[message.guild.id];
-    let promise = server.connectionPromise
+import { SlashCommandBuilder } from 'discord.js';
 
-    if(vc === null) {
-        return message.channel.send("You are not in a voice channel. I'm not going to listen to you.")
+
+export const data = new SlashCommandBuilder()
+    .setName('resume')
+    .setDescription("Resumes playing a previously paused song where it left off.");
+
+export async function execute(interaction) {
+    let vc = interaction.member.voice.channel;
+    var server = global.servers.get(interaction.guildId);
+
+    if (!vc) {
+        return interaction.reply({ content: "You are not in a voice channel. I'm not going to listen to you.", ephemeral: true });
     }
-    if (promise === null) {
-        return message.channel.send("Nothing to resume.")
+    if (server.audioPlayer === undefined) {
+        return interaction.reply({ content: "Nothing to resume.", ephemeral: true });
     }
 
-    promise.then(connection => {
-        if(message.member.voice.channel === connection.channel) {
-            connection.dispatcher.resume()
-        } else {
-            return message.channel.send("You are in a different voice channel. I'm not going to listen to you.")
-        }
-    }).catch(reason => {
-        console.log(reason)
-    })
-
+    server.audioPlayer.unpause();
+    await interaction.reply("Resumed.");
 }
-
-exports.help = () =>{
-    return "Resume the previously playing song.";
-};
-
-exports.docs = () => {
-    let docs = {
-        default_access: 1,
-        tab: "music",
-        link: "general",
-        parent: "",
-        full_command: "resume",
-        command: "resume",
-        description: "Resumes playing a previously paused song where it left off.",
-        syntax: "resume",
-        examples: [
-            {
-                description: "Resume the currently paused song.",
-                code: "resume"
-            }
-        ]
-    }
-    return docs;
-};

@@ -1,86 +1,76 @@
-const path  = require("path")
+import { SlashCommandBuilder } from 'discord.js';
+
 import * as DAL from "../../dal";
-const asciitable = require("asciitable")
+import { splitTable } from "../../utils";
+const asciitable = require("asciitable");
 
 var options = {
     skinny: true,
     intersectionCharacter: "+",
     columns: [
-        {field: "song_id",   name: "ID"},
-        {field: "name",      name: "Name"},
-        {field: "num_plays", name: "plays"}
+        { field: "song_id", name: "ID" },
+        { field: "name", name: "Name" },
+        { field: "num_plays", name: "plays" }
     ],
 };
 
-exports.run = (client, message, args) => {
-    
-    var server  = global.servers[message.guild.id]
-    let vc      = message.member.voice.channel
+export const data = new SlashCommandBuilder()
+    .setName('queue')
+    .setDescription("Queue a song by name or ID, or view the queue.")
+    .addStringOption(opt => opt
+        .setName('song')
+        .setDescription('Song name or ID to queue. Omit to view queue.')
+        .setRequired(false));
 
-    if(vc === null) {
-        return message.channel.send("You must be in a Voice Channel, I'm not gonna play this shit for no one.");
+export async function execute(interaction) {
+    var server = global.servers.get(interaction.guildId);
+    let vc = interaction.member.voice.channel;
+
+    if (!vc) {
+        return interaction.reply({ content: "You must be in a Voice Channel, I'm not gonna play this shit for no one.", ephemeral: true });
     }
 
-    if(args.length <= 0) {
+    let song_identifier = interaction.options.getString('song');
+    if (!song_identifier) {
         if (server.song_queue.length) {
-            message.channel.send(asciitable(options, server.song_queue),{code:true})
-            return message.channel.send("If you wish to add a song to the queue, add the name or id after the queue command.")
+            let table = asciitable(options, server.song_queue);
+            let chunks = splitTable(table);
+            await interaction.reply({ content: "```" + chunks[0] + "```" });
+            for (let i = 1; i < chunks.length; i++) {
+                await interaction.channel.send({ content: "```" + chunks[i] + "```" });
+            }
+            return interaction.followUp("If you wish to add a song to the queue, use /queue with a song name or id.");
         } else {
-            return message.channel.send("There are no songs in the queue.")
+            return interaction.reply({ content: "There are no songs in the queue.", ephemeral: true });
         }
     }
 
-    let song_identifier = args.join(" ");
-    let found_song      = undefined;
-    let {err, song}     = DAL.findSongByIdentifier(song_identifier);
+    let found_song = undefined;
+    let { err, song } = DAL.findSongByIdentifier(song_identifier);
 
-    if(err) {
-        return message.channel.send("An error occured while searching for song.")
-    } else if (song === undefined) { 
-        let {err: err_s, songs} = DAL.searchForSongs(song_identifier, 15)
-        if(err_s) {
-            return message.channel.send("We crashed while searching for similar songs.")
-        } else if(songs === undefined || songs.length === 0) {
-            return message.channel.send("There is no song by that name/id, and couldnt find any close matches.")
+    if (err) {
+        return interaction.reply({ content: "An error occured while searching for song.", ephemeral: true });
+    } else if (song === undefined) {
+        let { err: err_s, songs } = DAL.searchForSongs(song_identifier, 15);
+        if (err_s) {
+            return interaction.reply({ content: "We crashed while searching for similar songs.", ephemeral: true });
+        } else if (songs === undefined || songs.length === 0) {
+            return interaction.reply({ content: "There is no song by that name/id, and couldnt find any close matches.", ephemeral: true });
         } else if (songs.length === 1) {
-            message.channel.send(`Playing closest match. ID: ${songs[0].song_id}  Name: ${songs[0].name}`)
             found_song = songs[0];
         } else {
-            message.channel.send("That song didnt exist and we found several close matches. Pick one to play.")
-            return message.channel.send(asciitable(options, songs),{code:true, split: true})
+            await interaction.reply("That song didnt exist and we found several close matches. Pick one to play.");
+            let table = asciitable(options, songs);
+            let chunks = splitTable(table);
+            for (let i = 0; i < chunks.length; i++) {
+                await interaction.channel.send({ content: "```" + chunks[i] + "```" });
+            }
+            return;
         }
     } else {
         found_song = song;
     }
 
     server.song_queue.push(found_song);
-
+    await interaction.reply(`Queued: ${found_song.name}`);
 }
-
-exports.help = () =>{
-    return "Queue a specific song.";
-};
-
-exports.docs = () => {
-    let docs = {
-        default_access: 1,
-        tab: "music",
-        link: "general",
-        parent: null,
-        full_command: "queue",
-        command: "queue",
-        description: "Queue a song by name or ID.  If a number is specified an ID lookup is assumed.  Otherwise a search is performed for the entered value.  If an exact match or only 1 close match is found the clip is played.  Otherwise a list of options is displayed.",
-        syntax: "$queue [song_identifier]",
-        examples: [
-            {
-                description: "Queue the song 'Wagon Wheel' by name.",
-                code: "$queue Wagon Wheel"
-            },
-            {
-                description: "Queue the song 'Wagon Wheel' by name.",
-                code: "$queue 1650"
-            }
-        ]
-    }
-    return docs;
-};
