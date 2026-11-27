@@ -1,5 +1,6 @@
 import { Server } from "./types/Server";
 import { execute as build_table } from "./commands/admin/build_table";
+import { handleSearchButton, handleSearchModal } from "./commands/music/search";
 const path = require("path");
 const fs = require("fs");
 import { Client, GatewayIntentBits, Collection, ChannelType, REST, Routes } from 'discord.js';
@@ -145,16 +146,30 @@ client.on('clientReady', async () => {
 });
 
 client.on('interactionCreate', async interaction => {
-    if (!interaction.isChatInputCommand()) return;
+    if (interaction.isChatInputCommand()) {
+        const command = commands.get(interaction.commandName);
+        if (!command) return;
 
-    const command = commands.get(interaction.commandName);
-    if (!command) return;
-
-    try {
-        await command.execute(interaction);
-    } catch (error) {
-        console.error(error);
-        await interaction.reply({ content: 'An error occurred.', ephemeral: true }).catch(() => {});
+        try {
+            await command.execute(interaction);
+        } catch (error) {
+            console.error(error);
+            await interaction.reply({ content: 'An error occurred.', ephemeral: true }).catch(() => {});
+        }
+    } else if (interaction.isButton() && interaction.customId.startsWith('search_')) {
+        try {
+            await handleSearchButton(interaction);
+        } catch (error) {
+            console.error(error);
+            await interaction.reply({ content: 'An error occurred.', ephemeral: true }).catch(() => {});
+        }
+    } else if (interaction.isModalSubmit() && interaction.customId === 'search_modal') {
+        try {
+            await handleSearchModal(interaction);
+        } catch (error) {
+            console.error(error);
+            await interaction.reply({ content: 'An error occurred.', ephemeral: true }).catch(() => {});
+        }
     }
 });
 
