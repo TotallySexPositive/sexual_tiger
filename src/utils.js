@@ -162,7 +162,7 @@ var processAudioFile = function (file_path, url, message, cb) {
     }
 
     let cmd = "nice "
-    let args = ["ffmpeg-normalize", "\"" + file_path + "\"", "-c:a", "libmp3lame", "-ofmt", "mp3", "-o", "\"" + hashed_file_path + "\"", "-f", "-t", "-20"]
+    let args = ["/opt/venv/bin/ffmpeg-normalize", "\"" + file_path + "\"", "-c:a", "libmp3lame", "-ofmt", "mp3", "-o", "\"" + hashed_file_path + "\"", "-f", "-t", "-20"]
 
     exec(cmd + args.join(" "), (err, stdout, stderr) => {
         if (err) {
@@ -303,47 +303,6 @@ let probe_audio_file = function (file_hash) {
             DAL.updateSong(song);
         }
     });
-}
-
-let rebuildAudioGist = function () {
-    let { err, songs } = DAL.getAllSongs();
-
-    if (err) {
-        return new Error("Failed to grab all songs to build the list");
-    } else {
-        try {
-            const octokit = new Octokit({
-                auth: auth.github_token
-            });
-
-            let table = [];
-            table.push(["ID", "Song"])
-            songs.forEach((song) => {
-                table.push([song.song_id, song.name])
-            });
-
-            let payload = {};
-            payload.gist_id = "c76103763a2f785162d30c841094e795";
-            payload.description = "All the audio files avaiable to play."
-            payload.files = {
-                "Audio.md": {
-                    content: mdt(table)
-                }
-            };
-
-            octokit.gists.update(payload, (error, result) => {
-                if (error) {
-                    console.log(error);
-                    return new Error("rebuildAudioGist error'd out while PUTing gist.")
-                } else {
-                    return undefined;
-                }
-            });
-
-        } catch (err) {
-            return new Error("Something error'd out while rebuilding Gist.")
-        }
-    }
 }
 
 
@@ -553,7 +512,6 @@ module.exports.isAdmin = isAdmin;
 module.exports.playAudio = playAudio;
 module.exports.playUrl = playUrl;
 module.exports.processAudioFile = processAudioFile;
-module.exports.rebuildAudioGist = rebuildAudioGist;
 module.exports.generateAudioList = generateAudioList;
 module.exports.processImageFile = processImageFile;
 module.exports.getFileSizeInMegaBytes = getFileSizeInMegaBytes;
@@ -571,7 +529,6 @@ export { isAdmin };
 export { playAudio };
 export { playUrl };
 export { processAudioFile };
-export { rebuildAudioGist };
 export { generateAudioList };
 export { processImageFile };
 export { getFileSizeInMegaBytes };
