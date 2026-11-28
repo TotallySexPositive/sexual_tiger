@@ -1,25 +1,70 @@
-FROM node:lts-alpine as builder
-WORKDIR /usr/src/app
-ENV NODE_ENV=dev
-COPY ["package.json", "package-lock.json*", "npm-shrinkwrap.json*", "tsconfig.json", "./"]
-COPY src ./src
-RUN apk add --no-cache --virtual .build-deps python3 alpine-sdk autoconf libtool automake
-RUN npm install 
-RUN sed -i '1 s/./\/\/&/' node_modules/google-tts-api/dist/getAudioUrl.d.ts
-RUN npm run build
-RUN apk del .build-deps
+# ---------------------
+# Dependencies
+# ---------------------
+FROM node:lts-alpine AS deps
 
-FROM node:lts-alpine
-ENV NODE_ENV=production
 WORKDIR /usr/src/app
-COPY --chown=node:node ["package.json", "package-lock.json*", "npm-shrinkwrap.json*", "build.sql", "./"]
-COPY --chown=node:node --from=builder /usr/src/app/built ./built
-RUN apk add --no-cache --virtual .build-deps alpine-sdk autoconf libtool automake && \
-    apk add --no-cache python3 py3-pip ffmpeg && \
+
+COPY package*.json ./
+COPY npm-shrinkwrap.json* ./
+
+RUN apk add --no-cache \
+    python3 \
+    make \
+    g++ \
+    autoconf \
+    automake \
+    libtool
+
+# BuildKit cache
+RUN --mount=type=cache,target=/root/.npm npm ci
+
+# Patch dependency once
+RUN sed -i '1 s/./\/\/&/' node_modules/google-tts-api/dist/getAudioUrl.d.ts
+
+
+# ---------------------
+# Build
+# ---------------------
+FROM deps AS builder
+
+WORKDIR /usr/src/app
+
+COPY tsconfig.json ./
+COPY src ./src
+
+RUN npm run build
+
+# Remove dev dependencies from existing install
+RUN npm prune --omit=dev
+
+
+# ---------------------
+# Runtime
+# ---------------------
+FROM node:lts-alpine
+
+ENV NODE_ENV=production
+
+WORKDIR /usr/src/app
+
+RUN apk add --no-cache \
+    python3 \
+    py3-pip \
+    ffmpeg && \
     python3 -m venv /opt/venv && \
-    /opt/venv/bin/pip install ffmpeg-normalize && \
-    npm install --production && \
-    apk del .build-deps py3-pip && \
-    chown -R node:node /usr/src/app
+    /opt/venv/bin/pip install --no-cache-dir ffmpeg-normalize
+
+ENV PATH="/opt/venv/bin:$PATH"
+
+COPY --from=builder /usr/src/app/node_modules ./node_modules
+COPY --from=builder /usr/src/app/built ./built
+
+COPY --chown=node:node package*.json ./
+COPY --chown=node:node build.sql ./
+
+RUN chown -R node:node /usr/src/app
+
 USER node
+
 CMD ["npm", "run", "start"]

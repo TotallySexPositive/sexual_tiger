@@ -188,12 +188,7 @@ var processAudioFile = function (file_path, url, message, cb) {
                 cb(new Error(`Failed to run insert song into DB. ${err.message}`), undefined);
             } else {
                 probe_audio_file(file_hash);
-
-                let err = generateAudioList(message);
-                if (err) {
-                    message.channel.send("Failed to update audio list after adding a new song.");
-                    message.channel.send(err.message);
-                }
+               
                 fs.rename(file_path, stored_file_path, (err) => {
                     if (err) {
                         console.log(`Failed to move file, ${file_path} to ${stored_file_path}`);
@@ -303,47 +298,6 @@ let probe_audio_file = function (file_hash) {
             DAL.updateSong(song);
         }
     });
-}
-
-let rebuildAudioGist = function () {
-    let { err, songs } = DAL.getAllSongs();
-
-    if (err) {
-        return new Error("Failed to grab all songs to build the list");
-    } else {
-        try {
-            const octokit = new Octokit({
-                auth: auth.github_token
-            });
-
-            let table = [];
-            table.push(["ID", "Song"])
-            songs.forEach((song) => {
-                table.push([song.song_id, song.name])
-            });
-
-            let payload = {};
-            payload.gist_id = "c76103763a2f785162d30c841094e795";
-            payload.description = "All the audio files avaiable to play."
-            payload.files = {
-                "Audio.md": {
-                    content: mdt(table)
-                }
-            };
-
-            octokit.gists.update(payload, (error, result) => {
-                if (error) {
-                    console.log(error);
-                    return new Error("rebuildAudioGist error'd out while PUTing gist.")
-                } else {
-                    return undefined;
-                }
-            });
-
-        } catch (err) {
-            return new Error("Something error'd out while rebuilding Gist.")
-        }
-    }
 }
 
 
@@ -490,29 +444,6 @@ let updateCommandList = function () {
     });
 }
 
-let generateAudioList = function (message) {
-    let { err, songs } = DAL.getSongListData()
-
-    if (err) {
-        console.log(err);
-        return new Error("Crashed while finding image.");
-    } else {
-        try {
-            fs.writeFile("/var/www/html/data.json", JSON.stringify(songs), function (err) {
-                if (err) {
-                    console.log(err);
-                    if (message && message.channel) {
-                        message.channel.send("Failed to write updated songs json to website/data.json");
-                    }
-                }
-            });
-
-        } catch (err) {
-            console.error(err)
-        }
-    }
-}
-
 let updateMembersList = function (members) {
     let members_list = Array()
     members.forEach((val, key) => {
@@ -553,8 +484,6 @@ module.exports.isAdmin = isAdmin;
 module.exports.playAudio = playAudio;
 module.exports.playUrl = playUrl;
 module.exports.processAudioFile = processAudioFile;
-module.exports.rebuildAudioGist = rebuildAudioGist;
-module.exports.generateAudioList = generateAudioList;
 module.exports.processImageFile = processImageFile;
 module.exports.getFileSizeInMegaBytes = getFileSizeInMegaBytes;
 module.exports.processAudioFileTask = processAudioFileTask;
@@ -571,8 +500,6 @@ export { isAdmin };
 export { playAudio };
 export { playUrl };
 export { processAudioFile };
-export { rebuildAudioGist };
-export { generateAudioList };
 export { processImageFile };
 export { getFileSizeInMegaBytes };
 export { processAudioFileTask };

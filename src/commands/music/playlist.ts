@@ -27,8 +27,8 @@ export const data = new SlashCommandBuilder()
         .addStringOption(opt => opt.setName('songs').setDescription('Song IDs/names (comma separated)').setRequired(true)))
     .addSubcommand(sub => sub
         .setName('list')
-        .setDescription("List all playlists or songs in a playlist.")
-        .addStringOption(opt => opt.setName('playlist').setDescription('Playlist ID/name to list songs. Omit for all playlists.').setRequired(false)))
+        .setDescription("Search for playlists in the database.")
+        .addStringOption(opt => opt.setName('playlist').setDescription('Playlist name to search for (partial match)').setRequired(false)))
     .addSubcommand(sub => sub
         .setName('delete')
         .setDescription("Delete a playlist by ID or name.")
