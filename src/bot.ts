@@ -1,6 +1,7 @@
 import { Server } from "./types/Server";
 import { execute as build_table } from "./commands/admin/build_table";
 import { handleSearchButton, handleSearchModal } from "./commands/music/search";
+import { handlePlaylistListButton, handlePlaylistListSelect, handlePlaylistListModal } from "./commands/music/playlist/list";
 const path = require("path");
 const fs = require("fs");
 import { Client, GatewayIntentBits, Collection, ChannelType, REST, Routes } from 'discord.js';
@@ -163,9 +164,30 @@ client.on('interactionCreate', async interaction => {
             console.error(error);
             await interaction.reply({ content: 'An error occurred.', ephemeral: true }).catch(() => {});
         }
+    } else if (interaction.isButton() && interaction.customId.startsWith('playlist_list_')) {
+        try {
+            await handlePlaylistListButton(interaction);
+        } catch (error) {
+            console.error(error);
+            await interaction.reply({ content: 'An error occurred.', ephemeral: true }).catch(() => {});
+        }
+    } else if (interaction.isStringSelectMenu() && interaction.customId.startsWith('playlist_list_')) {
+        try {
+            await handlePlaylistListSelect(interaction);
+        } catch (error) {
+            console.error(error);
+            await interaction.reply({ content: 'An error occurred.', ephemeral: true }).catch(() => {});
+        }
     } else if (interaction.isModalSubmit() && interaction.customId.startsWith('search_')) {
         try {
             await handleSearchModal(interaction);
+        } catch (error) {
+            console.error(error);
+            await interaction.reply({ content: 'An error occurred.', ephemeral: true }).catch(() => {});
+        }
+    } else if (interaction.isModalSubmit() && interaction.customId.startsWith('playlist_list_')) {
+        try {
+            await handlePlaylistListModal(interaction);
         } catch (error) {
             console.error(error);
             await interaction.reply({ content: 'An error occurred.', ephemeral: true }).catch(() => {});

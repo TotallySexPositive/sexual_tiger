@@ -188,12 +188,7 @@ var processAudioFile = function (file_path, url, message, cb) {
                 cb(new Error(`Failed to run insert song into DB. ${err.message}`), undefined);
             } else {
                 probe_audio_file(file_hash);
-
-                let err = generateAudioList(message);
-                if (err) {
-                    message.channel.send("Failed to update audio list after adding a new song.");
-                    message.channel.send(err.message);
-                }
+               
                 fs.rename(file_path, stored_file_path, (err) => {
                     if (err) {
                         console.log(`Failed to move file, ${file_path} to ${stored_file_path}`);
@@ -449,29 +444,6 @@ let updateCommandList = function () {
     });
 }
 
-let generateAudioList = function (message) {
-    let { err, songs } = DAL.getSongListData()
-
-    if (err) {
-        console.log(err);
-        return new Error("Crashed while finding image.");
-    } else {
-        try {
-            fs.writeFile("/var/www/html/data.json", JSON.stringify(songs), function (err) {
-                if (err) {
-                    console.log(err);
-                    if (message && message.channel) {
-                        message.channel.send("Failed to write updated songs json to website/data.json");
-                    }
-                }
-            });
-
-        } catch (err) {
-            console.error(err)
-        }
-    }
-}
-
 let updateMembersList = function (members) {
     let members_list = Array()
     members.forEach((val, key) => {
@@ -512,7 +484,6 @@ module.exports.isAdmin = isAdmin;
 module.exports.playAudio = playAudio;
 module.exports.playUrl = playUrl;
 module.exports.processAudioFile = processAudioFile;
-module.exports.generateAudioList = generateAudioList;
 module.exports.processImageFile = processImageFile;
 module.exports.getFileSizeInMegaBytes = getFileSizeInMegaBytes;
 module.exports.processAudioFileTask = processAudioFileTask;
@@ -529,7 +500,6 @@ export { isAdmin };
 export { playAudio };
 export { playUrl };
 export { processAudioFile };
-export { generateAudioList };
 export { processImageFile };
 export { getFileSizeInMegaBytes };
 export { processAudioFileTask };

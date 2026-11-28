@@ -1,36 +1,24 @@
-import {
-    SlashCommandBuilder,
-    ActionRowBuilder,
-    ButtonBuilder,
-    ButtonStyle,
-    ModalBuilder,
-    LabelBuilder,
-    TextInputBuilder,
-    TextInputStyle,
-} from 'discord.js';
+import { SlashCommandBuilder } from 'discord.js';
 import type { ChatInputCommandInteraction, ButtonInteraction, ModalSubmitInteraction } from 'discord.js';
-import asciitable from 'asciitable';
 import * as DAL from "../../dal";
+import {
+    buildPageJumpModal,
+    buildPaginationRow,
+    buildSearchModal,
+    buildSortRow,
+    buildTableContent,
+    getState,
+    sendOrUpdatePaginatedMessage,
+    truncateText,
+} from "../../table_ui";
+import type { PaginatedInteraction, SortButtonConfig, SortDirection, TableState } from "../../table_ui";
 
 type SortField = 'song_id' | 'name' | 'duration' | 'num_plays';
-type SortDirection = 'ASC' | 'DESC';
-
-interface SearchState {
-    searchTerm: string | null;
-    page: number;
-    totalPages: number;
-    sortField: SortField;
-    sortDirection: SortDirection;
-}
 
 declare const global: any;
 if (!global.searchStates) {
-    global.searchStates = new Map<string, SearchState>();
+    global.searchStates = new Map<string, TableState<SortField>>();
 }
-
-const PAGE_SIZE = 20;
-const DISCORD_MAX_CHARS = 2000;
-const NAME_MAX_LEN = 45;
 
 const DEFAULT_SORT_DIRECTION: Record<SortField, SortDirection> = {
     song_id: 'ASC',
@@ -39,7 +27,7 @@ const DEFAULT_SORT_DIRECTION: Record<SortField, SortDirection> = {
     num_plays: 'DESC',
 };
 
-const SORT_BUTTONS: { customId: string; field: SortField; label: string }[] = [
+const SORT_BUTTONS: SortButtonConfig<SortField>[] = [
     { customId: 'search_sort_id', field: 'song_id', label: 'Sort by ID' },
     { customId: 'search_sort_name', field: 'name', label: 'Sort by Name' },
     { customId: 'search_sort_duration', field: 'duration', label: 'Sort by Duration' },
@@ -61,37 +49,6 @@ const TABLE_OPTIONS = {
     ],
 };
 
-function truncateName(name: string): string {
-    if (name.length > NAME_MAX_LEN) {
-        return name.substring(0, NAME_MAX_LEN - 3) + "...";
-    }
-    return name;
-}
-
-function buildTableContent(songs: any[], page: number): { content: string; page: number; totalPages: number } {
-    const totalPages = Math.max(1, Math.ceil(songs.length / PAGE_SIZE));
-    const clampedPage = Math.min(Math.max(1, page), totalPages);
-    const startIdx = (clampedPage - 1) * PAGE_SIZE;
-    const pageRows = songs.slice(startIdx, startIdx + PAGE_SIZE).map(song => ({
-        song_id: song.song_id,
-        name: truncateName(song.name ?? ""),
-        duration: song.duration ?? 0,
-        num_plays: song.num_plays ?? 0,
-    }));
-
-    let table = asciitable(TABLE_OPTIONS, pageRows);
-    while (table.length + 6 > DISCORD_MAX_CHARS && pageRows.length > 1) {
-        pageRows.pop();
-        table = asciitable(TABLE_OPTIONS, pageRows);
-    }
-
-    return {
-        content: "```" + table + "```",
-        page: clampedPage,
-        totalPages,
-    };
-}
-
 function getSearchResults(searchTerm: string | null, sortField: SortField, sortDirection: SortDirection): any[] {
     if (searchTerm && searchTerm.trim() !== "") {
         const result = (DAL.searchForSongs as any)(searchTerm, null, sortField, sortDirection);
@@ -110,121 +67,32 @@ function getSearchResults(searchTerm: string | null, sortField: SortField, sortD
     return result.songs || [];
 }
 
-function buildPaginationRow(page: number, totalPages: number): ActionRowBuilder<ButtonBuilder> {
-    const firstBtn = new ButtonBuilder()
-        .setCustomId('search_first')
-        .setLabel('<<')
-        .setStyle(ButtonStyle.Secondary)
-        .setDisabled(page <= 1);
-
-    const prevBtn = new ButtonBuilder()
-        .setCustomId('search_prev')
-        .setLabel('<')
-        .setStyle(ButtonStyle.Secondary)
-        .setDisabled(page <= 1);
-
-    const pageInfoBtn = new ButtonBuilder()
-        .setCustomId('search_pageinfo')
-        .setLabel(`${page}/${totalPages}`)
-        .setStyle(ButtonStyle.Primary);
-
-    const nextBtn = new ButtonBuilder()
-        .setCustomId('search_next')
-        .setLabel('>')
-        .setStyle(ButtonStyle.Secondary)
-        .setDisabled(page >= totalPages);
-
-    const lastBtn = new ButtonBuilder()
-        .setCustomId('search_last')
-        .setLabel('>>')
-        .setStyle(ButtonStyle.Secondary)
-        .setDisabled(page >= totalPages);
-
-    return new ActionRowBuilder<ButtonBuilder>().addComponents(firstBtn, prevBtn, pageInfoBtn, nextBtn, lastBtn);
-}
-
-function buildSortRow(sortField: SortField, sortDirection: SortDirection): ActionRowBuilder<ButtonBuilder> {
-    const dirIcon = sortDirection === 'ASC' ? '▲' : '▼';
-
-    const sortButtons = SORT_BUTTONS.map(({ customId, field, label }) => {
-        const isActive = sortField === field;
-        return new ButtonBuilder()
-            .setCustomId(customId)
-            .setLabel(isActive ? `${label} ${dirIcon}` : label)
-            .setStyle(isActive ? ButtonStyle.Success : ButtonStyle.Secondary);
-    });
-
-    const searchBtn = new ButtonBuilder()
-        .setCustomId('search_open_modal')
-        .setLabel('Search')
-        .setStyle(ButtonStyle.Primary);
-
-    return new ActionRowBuilder<ButtonBuilder>().addComponents(...sortButtons, searchBtn);
-}
-
-function buildSearchModal(): ModalBuilder {
-    const input = new TextInputBuilder()
-        .setCustomId('search_input')
-        .setPlaceholder('Enter a partial song name...')
-        .setStyle(TextInputStyle.Short)
-        .setRequired(false);
-
-    const label = new LabelBuilder()
-        .setLabel('Song Name')
-        .setTextInputComponent(input);
-
-    return new ModalBuilder()
-        .setCustomId('search_modal')
-        .setTitle('Search Songs')
-        .addLabelComponents(label);
-}
-
-function buildPageJumpModal(currentPage: number, totalPages: number): ModalBuilder {
-    const input = new TextInputBuilder()
-        .setCustomId('search_page_input')
-        .setPlaceholder(`1 - ${totalPages}`)
-        .setValue(String(currentPage))
-        .setStyle(TextInputStyle.Short)
-        .setRequired(true);
-
-    const label = new LabelBuilder()
-        .setLabel(`Page Number (1-${totalPages})`)
-        .setTextInputComponent(input);
-
-    return new ModalBuilder()
-        .setCustomId('search_page_modal')
-        .setTitle('Jump to Page')
-        .addLabelComponents(label);
-}
-
-type SearchInteraction = ChatInputCommandInteraction | ButtonInteraction | ModalSubmitInteraction;
-
-function getFallbackKey(interaction: SearchInteraction): string {
-    return `${interaction.guildId}:${interaction.user.id}`;
-}
-
-function getState(interaction: ButtonInteraction | ModalSubmitInteraction): SearchState | undefined {
-    if (interaction.message?.id && global.searchStates.has(interaction.message.id)) {
-        return global.searchStates.get(interaction.message.id);
-    }
-    return global.searchStates.get(getFallbackKey(interaction));
-}
-
 async function renderSearch(
-    interaction: SearchInteraction,
+    interaction: PaginatedInteraction,
     searchTerm: string | null,
     page: number,
     sortField: SortField,
     sortDirection: SortDirection
 ) {
     const songs = getSearchResults(searchTerm, sortField, sortDirection);
-    const { content: tableContent, page: clampedPage, totalPages } = buildTableContent(songs, page);
+    const { content: tableContent, page: clampedPage, totalPages } = buildTableContent(
+        songs,
+        page,
+        TABLE_OPTIONS,
+        song => ({
+            song_id: song.song_id,
+            name: truncateText(song.name ?? ""),
+            duration: song.duration ?? 0,
+            num_plays: song.num_plays ?? 0,
+        })
+    );
+
     const components = [
-        buildPaginationRow(clampedPage, totalPages),
-        buildSortRow(sortField, sortDirection),
+        buildPaginationRow('search', clampedPage, totalPages),
+        buildSortRow(SORT_BUTTONS, 'search_open_modal', sortField, sortDirection),
     ];
 
-    const state: SearchState = {
+    const state: TableState<SortField> = {
         searchTerm,
         page: clampedPage,
         totalPages,
@@ -232,20 +100,7 @@ async function renderSearch(
         sortDirection,
     };
 
-    if (interaction.isButton() || (interaction.isModalSubmit() && interaction.isFromMessage())) {
-        await interaction.update({ content: tableContent, components });
-        global.searchStates.set(interaction.message.id, state);
-        return;
-    }
-
-    const response = await interaction.reply({
-        content: tableContent,
-        components,
-        ephemeral: true,
-        withResponse: true,
-    });
-    const stateKey = response.resource?.message?.id || getFallbackKey(interaction);
-    global.searchStates.set(stateKey, state);
+    await sendOrUpdatePaginatedMessage(interaction, global.searchStates, state, tableContent, components);
 }
 
 export const data = new SlashCommandBuilder()
@@ -259,7 +114,7 @@ export async function execute(interaction: ChatInputCommandInteraction) {
 }
 
 export async function handleSearchButton(interaction: ButtonInteraction) {
-    const state = getState(interaction);
+    const state = getState<SortField>(global.searchStates, interaction);
 
     if (!state) {
         await interaction.reply({ content: "No active search. Use /search to start one.", ephemeral: true });
@@ -294,10 +149,20 @@ export async function handleSearchButton(interaction: ButtonInteraction) {
                 newPage = Number.MAX_SAFE_INTEGER;
                 break;
             case 'search_pageinfo':
-                await interaction.showModal(buildPageJumpModal(state.page, state.totalPages));
+                await interaction.showModal(
+                    buildPageJumpModal('search_page_modal', 'search_page_input', state.page, state.totalPages)
+                );
                 return;
             case 'search_open_modal':
-                await interaction.showModal(buildSearchModal());
+                await interaction.showModal(
+                    buildSearchModal(
+                        'search_modal',
+                        'Search Songs',
+                        'search_input',
+                        'Song Name',
+                        'Enter a partial song name...'
+                    )
+                );
                 return;
             default:
                 return;
@@ -308,7 +173,7 @@ export async function handleSearchButton(interaction: ButtonInteraction) {
 }
 
 export async function handleSearchModal(interaction: ModalSubmitInteraction) {
-    const state = getState(interaction);
+    const state = getState<SortField>(global.searchStates, interaction);
 
     if (interaction.customId === 'search_page_modal') {
         if (!state) {

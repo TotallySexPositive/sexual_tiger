@@ -312,11 +312,36 @@ let removeFromPlaylist = function (playlist_id, song_id) {
     }
 }
 
+const VALID_SONG_SORT_FIELDS = {
+    song_id: "song_id",
+    name: "name COLLATE NOCASE",
+    duration: "COALESCE(duration, 0)",
+    num_plays: "COALESCE(num_plays, 0)",
+};
+
+const VALID_PLAYLIST_SORT_FIELDS = {
+    playlist_id: "playlist_id",
+    name: "name COLLATE NOCASE",
+    num_songs: "COALESCE(num_songs, 0)",
+};
+
+let buildOrderBy = function (validFields, defaultField, sortField = defaultField, sortDirection = "ASC") {
+    const isValid = Object.prototype.hasOwnProperty.call(validFields, sortField);
+    const resolvedField = isValid ? sortField : defaultField;
+    const column = validFields[resolvedField];
+    const direction = String(sortDirection).toUpperCase() === "DESC" ? "DESC" : "ASC";
+    if (resolvedField === defaultField) {
+        return `${column} ${direction}`;
+    }
+    return `${column} ${direction}, ${defaultField} ASC`;
+};
+
 /**
- * Returns all playlists in the DB.  Hopefully we dont add too many.
+ * Returns all playlists in the DB.
  */
-let getPlaylists = function () {
-    let query = `SELECT ${PLAYLIST_FIELDS} FROM ${PLAYLIST_TABLE}`;
+let getPlaylists = function (sort_field = "playlist_id", sort_direction = "ASC") {
+    let orderBy = buildOrderBy(VALID_PLAYLIST_SORT_FIELDS, "playlist_id", sort_field, sort_direction);
+    let query = `SELECT ${PLAYLIST_FIELDS} FROM ${PLAYLIST_TABLE} ORDER BY ${orderBy}`;
 
     try {
         return { err: undefined, playlists: DB.prepare(query).all() };
@@ -327,22 +352,39 @@ let getPlaylists = function () {
     }
 }
 
+let searchForPlaylists = function (name, max_playlists = null, sort_field = "playlist_id", sort_direction = "ASC") {
 
-const VALID_SONG_SORT_FIELDS = {
-    song_id: "song_id",
-    name: "name COLLATE NOCASE",
-    duration: "COALESCE(duration, 0)",
-    num_plays: "COALESCE(num_plays, 0)",
-};
-
-let buildSongOrderBy = function (sort_field = "song_id", sort_direction = "ASC") {
-    const column = VALID_SONG_SORT_FIELDS[sort_field] || VALID_SONG_SORT_FIELDS.song_id;
-    const direction = String(sort_direction).toUpperCase() === "DESC" ? "DESC" : "ASC";
-    if (sort_field === "song_id" || !VALID_SONG_SORT_FIELDS[sort_field]) {
-        return `${column} ${direction}`;
+    if (!name || name.trim() === "") {
+        let err = new Error("search term must not be blank.");
+        return { err: err, playlists: undefined };
     }
-    return `${column} ${direction}, song_id ASC`;
-};
+
+    let clauses = [];
+    let prepped_args = [];
+    let args = name.split(" ").filter((word) => { return word.trim() !== "" });
+
+    args.forEach((arg) => {
+        clauses.push("name LIKE ?");
+        prepped_args.push(`%${arg}%`);
+    });
+    let prepped_statement = clauses.join(" AND ");
+    let orderBy = buildOrderBy(VALID_PLAYLIST_SORT_FIELDS, "playlist_id", sort_field, sort_direction);
+
+    let query = `SELECT ${PLAYLIST_FIELDS} FROM ${PLAYLIST_TABLE} WHERE ${prepped_statement} ORDER BY ${orderBy}`;
+    if (max_playlists !== null && max_playlists !== undefined) {
+        query += ` LIMIT ?`;
+        prepped_args.push(max_playlists);
+    }
+
+    try {
+        return { err: undefined, playlists: DB.prepare(query).all(prepped_args) };
+    } catch (err) {
+        console.log(`searchForPlaylists: \nError: `);
+        console.log(err);
+        return { err: err, playlists: undefined };
+    }
+}
+
 
 let searchForSongs = function (name, max_songs = 10, sort_field = "song_id", sort_direction = "ASC") {
 
@@ -360,7 +402,7 @@ let searchForSongs = function (name, max_songs = 10, sort_field = "song_id", sor
         prepped_args.push(`%${arg}%`);
     })
     let prepped_statement = clauses.join(" AND ")
-    let orderBy = buildSongOrderBy(sort_field, sort_direction);
+    let orderBy = buildOrderBy(VALID_SONG_SORT_FIELDS, "song_id", sort_field, sort_direction);
 
     let query = `SELECT ${SONG_FIELDS} FROM ${SONG_TABLE} WHERE ${prepped_statement} ORDER BY ${orderBy}`;
     if (max_songs !== null && max_songs !== undefined) {
@@ -378,7 +420,7 @@ let searchForSongs = function (name, max_songs = 10, sort_field = "song_id", sor
 }
 
 let getAllSongs = function (sort_field = "song_id", sort_direction = "ASC") {
-    let orderBy = buildSongOrderBy(sort_field, sort_direction);
+    let orderBy = buildOrderBy(VALID_SONG_SORT_FIELDS, "song_id", sort_field, sort_direction);
     let query = `SELECT ${SONG_FIELDS} FROM ${SONG_TABLE} ORDER BY ${orderBy}`;
 
     try {
@@ -785,6 +827,7 @@ module.exports.deletePlaylistById = deletePlaylistById;
 module.exports.addToPlaylist = addToPlaylist;
 module.exports.removeFromPlaylist = removeFromPlaylist;
 module.exports.getPlaylists = getPlaylists;
+module.exports.searchForPlaylists = searchForPlaylists;
 module.exports.searchForSongs = searchForSongs;
 module.exports.insertIntoSongs = insertIntoSongs;
 module.exports.findSongByHashId = findSongByHashId;
@@ -835,6 +878,7 @@ export { deletePlaylistById };
 export { addToPlaylist };
 export { removeFromPlaylist };
 export { getPlaylists };
+export { searchForPlaylists };
 export { searchForSongs };
 export { insertIntoSongs };
 export { findSongByHashId };
