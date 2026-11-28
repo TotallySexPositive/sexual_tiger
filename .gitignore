@@ -43,7 +43,6 @@ node_modules
 auth.json
 .idea
 .vscode
-*-lock.json
 *.swp
 *.png
 *.jpeg
