@@ -1,10 +1,17 @@
-import { SlashCommandBuilder } from 'discord.js';
-import type { ChatInputCommandInteraction, ButtonInteraction, ModalSubmitInteraction } from 'discord.js';
+import { ActionRowBuilder, SlashCommandBuilder } from 'discord.js';
+import type {
+    ChatInputCommandInteraction,
+    ButtonInteraction,
+    ModalSubmitInteraction,
+    StringSelectMenuInteraction,
+    MessageActionRowComponentBuilder,
+} from 'discord.js';
 import * as DAL from "../../dal";
 import {
     buildPageJumpModal,
     buildPaginationRow,
     buildSearchModal,
+    buildSelectRow,
     buildSortRow,
     buildTableContent,
     getState,
@@ -12,6 +19,7 @@ import {
     truncateText,
 } from "../../table_ui";
 import type { PaginatedInteraction, SortButtonConfig, SortDirection, TableState } from "../../table_ui";
+import { playSongByIdentifier } from "./play";
 
 type SortField = 'song_id' | 'name' | 'duration' | 'num_plays';
 
@@ -75,7 +83,7 @@ async function renderSearch(
     sortDirection: SortDirection
 ) {
     const songs = getSearchResults(searchTerm, sortField, sortDirection);
-    const { content: tableContent, page: clampedPage, totalPages } = buildTableContent(
+    const { content: tableContent, page: clampedPage, totalPages, displayedItems } = buildTableContent(
         songs,
         page,
         TABLE_OPTIONS,
@@ -87,10 +95,24 @@ async function renderSearch(
         })
     );
 
-    const components = [
+    const components: ActionRowBuilder<MessageActionRowComponentBuilder>[] = [
         buildPaginationRow('search', clampedPage, totalPages),
         buildSortRow(SORT_BUTTONS, 'search_open_modal', sortField, sortDirection),
     ];
+
+    if (displayedItems.length > 0) {
+        components.push(
+            buildSelectRow(
+                'search_select',
+                'Select a song to play...',
+                displayedItems.map(song => ({
+                    label: song.name || `Song ${song.song_id}`,
+                    description: `ID: ${song.song_id} | ${song.duration ?? 0}s | ${song.num_plays ?? 0} plays`,
+                    value: String(song.song_id),
+                }))
+            )
+        );
+    }
 
     const state: TableState<SortField> = {
         searchTerm,
@@ -170,6 +192,12 @@ export async function handleSearchButton(interaction: ButtonInteraction) {
     }
 
     await renderSearch(interaction, state.searchTerm, newPage, newSortField, newSortDirection);
+}
+
+export async function handleSearchSelect(interaction: StringSelectMenuInteraction) {
+    const selectedSongId = interaction.values[0];
+    if (!selectedSongId) return;
+    await playSongByIdentifier(interaction, selectedSongId);
 }
 
 export async function handleSearchModal(interaction: ModalSubmitInteraction) {

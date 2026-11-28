@@ -1,6 +1,6 @@
 import { Server } from "./types/Server";
 import { execute as build_table } from "./commands/admin/build_table";
-import { handleSearchButton, handleSearchModal } from "./commands/music/search";
+import { handleSearchButton, handleSearchSelect, handleSearchModal } from "./commands/music/search";
 import { handlePlaylistListButton, handlePlaylistListSelect, handlePlaylistListModal } from "./commands/music/playlist/list";
 const path = require("path");
 const fs = require("fs");
@@ -167,6 +167,13 @@ client.on('interactionCreate', async interaction => {
     } else if (interaction.isButton() && interaction.customId.startsWith('playlist_list_')) {
         try {
             await handlePlaylistListButton(interaction);
+        } catch (error) {
+            console.error(error);
+            await interaction.reply({ content: 'An error occurred.', ephemeral: true }).catch(() => {});
+        }
+    } else if (interaction.isStringSelectMenu() && interaction.customId.startsWith('search_')) {
+        try {
+            await handleSearchSelect(interaction);
         } catch (error) {
             console.error(error);
             await interaction.reply({ content: 'An error occurred.', ephemeral: true }).catch(() => {});

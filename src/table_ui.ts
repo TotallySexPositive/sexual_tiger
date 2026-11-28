@@ -4,6 +4,8 @@ import {
     ButtonStyle,
     ModalBuilder,
     LabelBuilder,
+    StringSelectMenuBuilder,
+    StringSelectMenuOptionBuilder,
     TextInputBuilder,
     TextInputStyle,
 } from 'discord.js';
@@ -173,6 +175,35 @@ export function buildPageJumpModal(
         .setCustomId(customId)
         .setTitle('Jump to Page')
         .addLabelComponents(label);
+}
+
+export interface SelectOptionInput {
+    label: string;
+    description?: string;
+    value: string;
+}
+
+export function buildSelectRow(
+    customId: string,
+    placeholder: string,
+    items: SelectOptionInput[]
+): ActionRowBuilder<StringSelectMenuBuilder> {
+    const options = items.map(item => {
+        const option = new StringSelectMenuOptionBuilder()
+            .setLabel(truncateText(item.label, 100))
+            .setValue(item.value);
+        if (item.description) {
+            option.setDescription(truncateText(item.description, 100));
+        }
+        return option;
+    });
+
+    const selectMenu = new StringSelectMenuBuilder()
+        .setCustomId(customId)
+        .setPlaceholder(placeholder)
+        .addOptions(options);
+
+    return new ActionRowBuilder<StringSelectMenuBuilder>().addComponents(selectMenu);
 }
 
 export function getFallbackKey(interaction: PaginatedInteraction): string {

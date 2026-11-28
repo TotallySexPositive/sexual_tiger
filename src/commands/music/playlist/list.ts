@@ -1,8 +1,4 @@
-import {
-    ActionRowBuilder,
-    StringSelectMenuBuilder,
-    StringSelectMenuOptionBuilder,
-} from 'discord.js';
+import { ActionRowBuilder } from 'discord.js';
 import type {
     ChatInputCommandInteraction,
     ButtonInteraction,
@@ -15,6 +11,7 @@ import {
     buildPageJumpModal,
     buildPaginationRow,
     buildSearchModal,
+    buildSelectRow,
     buildSortRow,
     buildTableContent,
     getState,
@@ -75,23 +72,6 @@ function getPlaylistResults(searchTerm: string | null, sortField: PlaylistSortFi
     return result.playlists || [];
 }
 
-function buildPlaylistSelectRow(playlists: any[]): ActionRowBuilder<StringSelectMenuBuilder> {
-    const options = playlists.map(playlist => {
-        const label = truncateText(playlist.name || `Playlist ${playlist.playlist_id}`, 100);
-        return new StringSelectMenuOptionBuilder()
-            .setLabel(label)
-            .setDescription(`ID: ${playlist.playlist_id} | ${playlist.num_songs ?? 0} songs`)
-            .setValue(String(playlist.playlist_id));
-    });
-
-    const selectMenu = new StringSelectMenuBuilder()
-        .setCustomId('playlist_list_select')
-        .setPlaceholder('Select a playlist to play...')
-        .addOptions(options);
-
-    return new ActionRowBuilder<StringSelectMenuBuilder>().addComponents(selectMenu);
-}
-
 async function renderPlaylistList(
     interaction: PaginatedInteraction,
     searchTerm: string | null,
@@ -117,7 +97,17 @@ async function renderPlaylistList(
     ];
 
     if (displayedItems.length > 0) {
-        components.push(buildPlaylistSelectRow(displayedItems));
+        components.push(
+            buildSelectRow(
+                'playlist_list_select',
+                'Select a playlist to play...',
+                displayedItems.map(playlist => ({
+                    label: playlist.name || `Playlist ${playlist.playlist_id}`,
+                    description: `ID: ${playlist.playlist_id} | ${playlist.num_songs ?? 0} songs`,
+                    value: String(playlist.playlist_id),
+                }))
+            )
+        );
     }
 
     const state: TableState<PlaylistSortField> = {
