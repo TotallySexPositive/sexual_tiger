@@ -1,9 +1,12 @@
-import type { ChatInputCommandInteraction } from 'discord.js';
+import type { ChatInputCommandInteraction, StringSelectMenuInteraction } from 'discord.js';
 import { MessageFlags } from 'discord.js';
 import * as DAL from "../../../dal";
 import * as UTIL from "../../../utils";
 
-export async function execute(interaction: ChatInputCommandInteraction) {
+export async function playPlaylistByIdentifier(
+    interaction: ChatInputCommandInteraction | StringSelectMenuInteraction,
+    playlist_identifier: string
+) {
     let server = global.servers.get(interaction.guildId);
     let vc = (interaction.member as any).voice.channel;
 
@@ -11,7 +14,6 @@ export async function execute(interaction: ChatInputCommandInteraction) {
         return interaction.reply({ content: "You must be in a Voice Channel, I'm not gonna play this shit for no one.", ephemeral: true });
     }
 
-    let playlist_identifier = interaction.options.getString('playlist')!;
     let result = DAL.getSongsByPlaylistIdentifier(playlist_identifier) as any;
 
     if (result.err) {
@@ -22,8 +24,13 @@ export async function execute(interaction: ChatInputCommandInteraction) {
 
     server.song_queue = result.songs;
     UTIL.playAudio(interaction, vc, server);
-    await interaction.reply({ 
-          content: 'Done.', 
-          flags: MessageFlags.Ephemeral 
-        });
+    await interaction.reply({
+        content: 'Done.',
+        flags: MessageFlags.Ephemeral,
+    });
+}
+
+export async function execute(interaction: ChatInputCommandInteraction) {
+    let playlist_identifier = interaction.options.getString('playlist')!;
+    return playPlaylistByIdentifier(interaction, playlist_identifier);
 }

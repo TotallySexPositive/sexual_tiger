@@ -1,6 +1,5 @@
 import type { ChatInputCommandInteraction } from 'discord.js';
 import * as DAL from "../../../dal";
-import * as UTIL from "../../../utils";
 import fs from "fs";
 import path from "path";
 
@@ -40,11 +39,6 @@ export async function execute(interaction: ChatInputCommandInteraction) {
                     return interaction.reply({ content: "We couldnt delete that song and have no idea why not.", ephemeral: true });
                 }
             } else {
-                let gist_err = UTIL.rebuildAudioGist();
-                if (gist_err) {
-                    console.log("Failed to update audio gist on song delete.");
-                    console.log(gist_err);
-                }
                 let hashed_file = song.hash_id + ".mp3";
                 let stored_file = song.source;
 

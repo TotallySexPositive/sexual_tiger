@@ -20,7 +20,7 @@ export const data = new SlashCommandBuilder()
         .setDescription('Song name or ID to play')
         .setRequired(true));
 
-export async function execute(interaction) {
+export async function playSongByIdentifier(interaction, song_identifier) {
     var server = global.servers.get(interaction.guildId);
     let vc = interaction.member.voice.channel;
 
@@ -28,7 +28,6 @@ export async function execute(interaction) {
         return interaction.reply({ content: "You must be in a Voice Channel, I'm not gonna play this shit for no one.", ephemeral: true });
     }
 
-    let song_identifier = interaction.options.getString('song');
     let found_song = undefined;
     let { err, song } = DAL.findSongByIdentifier(song_identifier);
 
@@ -62,4 +61,9 @@ export async function execute(interaction) {
       flags: MessageFlags.Ephemeral 
     });
     UTIL.playAudio(interaction, vc, server);
+}
+
+export async function execute(interaction) {
+    let song_identifier = interaction.options.getString('song');
+    return playSongByIdentifier(interaction, song_identifier);
 }
