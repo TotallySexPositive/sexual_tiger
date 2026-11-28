@@ -1,6 +1,5 @@
 import type { ChatInputCommandInteraction } from 'discord.js';
 import * as DAL from "../../../dal";
-import * as UTIL from "../../../utils";
 import fs from "fs";
 import path from "path";
 

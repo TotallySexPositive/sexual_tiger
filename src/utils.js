@@ -162,7 +162,7 @@ var processAudioFile = function (file_path, url, message, cb) {
     }
 
     let cmd = "nice "
-    let args = ["/opt/venv/bin/ffmpeg-normalize", "\"" + file_path + "\"", "-c:a", "libmp3lame", "-ofmt", "mp3", "-o", "\"" + hashed_file_path + "\"", "-f", "-t", "-20"]
+    let args = ["ffmpeg-normalize", "\"" + file_path + "\"", "-c:a", "libmp3lame", "-ofmt", "mp3", "-o", "\"" + hashed_file_path + "\"", "-f", "-t", "-20"]
 
     exec(cmd + args.join(" "), (err, stdout, stderr) => {
         if (err) {
